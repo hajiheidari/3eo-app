@@ -14,7 +14,7 @@
 ۱) Xcode را از App Store نصب کنید. در Terminal:  brew install xcodegen
 ۲) پوشه‌ی همین پروژه را باز کنید و بزنید:  xcodegen   (فایل ThreeEO.xcodeproj ساخته می‌شود)
 ۳) ThreeEO.xcodeproj را با Xcode باز کنید > Target ThreeEO > Signing & Capabilities > Team را حساب Apple Developer خودتان انتخاب کنید.
-   Bundle Identifier: ir.threeeo.app (اگر قبلاً در App Store Connect چیز دیگری ساخته‌اید همان را بگذارید).
+   Bundle Identifier: com.espadna.seo (اگر قبلاً در App Store Connect چیز دیگری ساخته‌اید همان را بگذارید).
 ۴) گوشی را وصل کنید و Run بزنید تا روی آیفون خودتان امتحان شود: ورود، تحلیل، کشیدن به پایین، قطع اینترنت، دکمه‌ی اشتراک در صفحه‌ی گزارش، و نبودن هر چیز مربوط به خرید.
 ۵) در App Store Connect (appstoreconnect.apple.com) > Apps > + > New App بسازید (نام، زبان فارسی، همان Bundle ID).
 ۶) در Xcode: Product > Archive > Distribute App > App Store Connect > Upload.
