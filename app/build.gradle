@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
+def buildNumber = Integer.parseInt(System.getenv('VERSION_CODE') ?: '1')
+
 android {
     namespace 'ir.threeeo.app'
     compileSdk 34
@@ -11,7 +13,7 @@ android {
         minSdk 21
         targetSdk 34
         // every GitHub build gets a higher number automatically (stores need it to grow)
-        versionCode (System.getenv('VERSION_CODE') ?: '1').toInteger()
+        versionCode buildNumber
         versionName '1.0.0'
     }
 
