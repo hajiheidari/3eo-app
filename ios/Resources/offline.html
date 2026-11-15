@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اینترنت قطع است</title>
+<style>
+html,body{height:100%;margin:0}
+body{display:flex;align-items:center;justify-content:center;background:#f5faf7;color:#0f2a20;font-family:-apple-system,system-ui,sans-serif;text-align:center;padding:24px;box-sizing:border-box}
+h1{font-size:1.3rem;margin:12px 0 6px}p{margin:0 0 20px;color:#44574e;line-height:1.8}
+button{background:#047857;color:#fff;border:0;border-radius:12px;padding:12px 28px;font-size:1rem;font-family:inherit}
+svg{width:56px;height:56px;color:#047857}
+</style></head><body><div>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0120 0M5 12.5a10 10 0 0114 0M8.5 16a5 5 0 017 0M12 19.5h.01M3 3l18 18"/></svg>
+<h1>اینترنت قطع است</h1>
+<p>اتصال به سئو برقرار نشد. اینترنت گوشی را بررسی کنید و دوباره تلاش کنید.</p>
+<button type="button" id="r">تلاش دوباره</button>
+</div>
+<script>document.getElementById('r').addEventListener('click',function(){try{window.webkit.messageHandlers.retry.postMessage(1);}catch(e){}});</script>
+</body></html>
