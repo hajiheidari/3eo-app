@@ -14,6 +14,31 @@ enum Theme {
     static func status(_ s: String) -> Color { s == "pass" ? green : (s == "warn" ? amber : red) }
     static func score(_ n: Int) -> Color { n >= 80 ? green : (n >= 50 ? amber : red) }
 
+    static func cat(_ c: String) -> Color {
+        switch c {
+        case "ai": return Color(red: 124 / 255, green: 58 / 255, blue: 237 / 255)
+        case "tech": return Color(red: 37 / 255, green: 99 / 255, blue: 235 / 255)
+        case "keyword": return Color(red: 234 / 255, green: 88 / 255, blue: 12 / 255)
+        case "content": return Color(red: 219 / 255, green: 39 / 255, blue: 119 / 255)
+        case "data": return Color(red: 8 / 255, green: 145 / 255, blue: 178 / 255)
+        default: return Color(red: 71 / 255, green: 85 / 255, blue: 105 / 255)
+        }
+    }
+
+    static func tone(_ t: String) -> Color { t == "ok" ? green : (t == "warn" ? amber : (t == "bad" ? red : muted)) }
+
+    static func catOf(_ type: String) -> String {
+        switch type {
+        case "ai", "aimon": return "ai"
+        case "cluster", "suggest", "density", "pinkw": return "keyword"
+        case "ideas", "metagen", "headings": return "content"
+        case "authority": return "data"
+        default: return "tech"
+        }
+    }
+
+    static func slugOf(_ type: String) -> String { type == "metagen" ? "metadesc" : (type.isEmpty ? "analyze" : type) }
+
     static func fa(_ s: String) -> String {
         String(s.map { c -> Character in
             if let d = c.wholeNumberValue, c.isASCII, let u = UnicodeScalar(0x06F0 + d) { return Character(u) }
@@ -86,5 +111,21 @@ struct WebSheet: View {
             WebScreen(url: item.url)
         }
         .environment(\.layoutDirection, .rightToLeft)
+    }
+}
+
+/// white line icon (asset ic_<slug>) on a colored gradient rounded tile
+struct IconTile: View {
+    let slug: String
+    let cat: String
+    var size: CGFloat = 46
+    var body: some View {
+        let c = Theme.cat(cat)
+        Image("ic_" + slug).renderingMode(.template).resizable().scaledToFit()
+            .foregroundColor(.white)
+            .padding(size * 0.25)
+            .frame(width: size, height: size)
+            .background(LinearGradient(colors: [c, c.opacity(0.72)], startPoint: .topLeading, endPoint: .bottomTrailing))
+            .clipShape(RoundedRectangle(cornerRadius: size / 3))
     }
 }

@@ -82,64 +82,44 @@ struct CategoryCard: View {
 }
 
 struct ReportView: View {
-    let report: Report
+    let report: Presented
     @State private var showShare = false
-    @State private var web: WebItem?
     @Environment(\.dismiss) private var dismiss
-
-    private var issues: [Check] {
-        report.categories.flatMap { $0.checks }.filter { $0.status != "pass" }.sorted { $0.gain > $1.gain }
-    }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Button("‹  بازگشت") { dismiss() }
                 Spacer()
-                Button("اشتراک‌گذاری") { showShare = true }
+                Text(report.title).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink)
+                Spacer()
+                Button("اشتراک") { showShare = true }.opacity((report.share ?? "").isEmpty ? 0 : 1)
             }
             .font(.system(size: 15, weight: .bold))
             .padding(14).background(Color.white)
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    Card {
-                        VStack(spacing: 8) {
-                            Text(report.host).font(.system(size: 17, weight: .bold)).foregroundColor(Theme.ink)
-                            ScoreGauge(score: report.score)
-                            HStack {
-                                Pill(label: "موفق", n: report.counts.pass, color: Theme.green)
-                                Pill(label: "هشدار", n: report.counts.warn, color: Theme.amber)
-                                Pill(label: "خطا", n: report.counts.fail, color: Theme.red)
-                            }
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 12) {
+                        IconTile(slug: Theme.slugOf(report.type ?? ""), cat: Theme.catOf(report.type ?? ""), size: 44)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(report.title).font(.system(size: 17, weight: .bold)).foregroundColor(Theme.ink)
+                            Text(report.host).font(.system(size: 13)).foregroundColor(Theme.muted)
+                                .environment(\.layoutDirection, .leftToRight)
                         }
-                        .frame(maxWidth: .infinity)
                     }
-                    if !issues.isEmpty {
-                        Text("مهم‌ترین کارها برای بهتر شدن امتیاز")
-                            .font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink).padding(.top, 12)
-                        ForEach(Array(issues.prefix(8))) { IssueCard(check: $0) }
-                    }
-                    Text("همه‌ی بخش‌ها").font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink).padding(.top, 14)
-                    ForEach(report.categories) { CategoryCard(cat: $0) }
-                    Button("گزارش کامل در وب") {
-                        if let u = URL(string: report.share) { web = WebItem(url: u) }
-                    }
-                    .font(.system(size: 15, weight: .bold)).frame(maxWidth: .infinity, minHeight: 44)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
-                    .padding(.top, 12)
+                    BlocksView(blocks: report.blocks)
                 }
                 .padding(16)
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش سئوی \(report.host)\n\(report.share)"]) }
-        .fullScreenCover(item: $web) { WebSheet(item: $0) }
+        .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش \(report.title) \(report.host)\n\(report.share ?? "")"]) }
     }
 }
 
 struct ReportLoader: View {
     let token: String
-    @State private var report: Report?
+    @State private var report: Presented?
     @State private var error: String?
     var body: some View {
         Group {
@@ -152,7 +132,7 @@ struct ReportLoader: View {
             }
         }
         .task {
-            do { report = try await API.call("GET", "/api/app/report/" + token, as: Report.self) }
+            do { report = try await API.call("GET", "/api/app/report/" + token, as: Presented.self) }
             catch { self.error = error.localizedDescription }
         }
     }
