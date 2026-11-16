@@ -9,6 +9,8 @@ struct ClientsView: View {
     @State private var site = ""
     @State private var name = ""
     @State private var error: String?
+    @State private var showRank = false
+    @State private var showMon = false
 
     var body: some View {
         ScrollView {
@@ -24,6 +26,8 @@ struct ClientsView: View {
                 }
                 Text("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.")
                     .font(.vz(12, false)).foregroundColor(Theme.muted)
+                proRow("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی") { showRank = true }
+                proRow("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند") { showMon = true }
                 if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                 if let d = data {
                     if d.clients.isEmpty {
@@ -63,7 +67,24 @@ struct ClientsView: View {
             Button("انصراف", role: .cancel) { site = ""; name = "" }
             Button("افزودن") { add() }
         }
+        .fullScreenCover(isPresented: $showRank) { RankView() }
+        .fullScreenCover(isPresented: $showMon) { MonitorView() }
         .fullScreenCover(item: $selected, onDismiss: { Task { await load() } }) { ClientDetailView(id: $0.id) }
+    }
+
+    private func proRow(_ t: String, _ sub: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Card {
+                HStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(t).font(.vz(15, true)).foregroundColor(Theme.ink)
+                        Text(sub).font(.vz(12, false)).foregroundColor(Theme.muted)
+                    }
+                    Spacer()
+                    Text("‹").font(.vz(22, true)).foregroundColor(Theme.green)
+                }
+            }
+        }.buttonStyle(.plain)
     }
 
     private func load() async {

@@ -355,6 +355,8 @@ public class MainActivity extends AppCompatActivity {
         head.addView(add, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, UI.dp(this, 42)));
         col.addView(head);
         col.addView(UI.text(this, "سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.", 12, UI.MUTED, false), UI.wrap(this, 6));
+        col.addView(proCard("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی", RankActivity.class), UI.wrap(this, 12));
+        col.addView(proCard("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند", MonitorActivity.class), UI.wrap(this, 8));
         final LinearLayout list = UI.column(this);
         col.addView(list, UI.wrap(this, 10));
         paintClients(list);
@@ -367,6 +369,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return scroller(col);
+    }
+
+    private View proCard(String t, String d, final Class<?> cls) {
+        LinearLayout row = new LinearLayout(this);
+        UI.rtl(row);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setBackground(UI.box(this, UI.CARD, 14, UI.LINE));
+        int p = UI.dp(this, 14);
+        row.setPadding(p, p, p, p);
+        LinearLayout info = UI.column(this);
+        info.addView(UI.text(this, t, 15, UI.INK, true));
+        info.addView(UI.text(this, d, 12, UI.MUTED, false), UI.wrap(this, 2));
+        row.addView(info, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        row.addView(UI.text(this, "‹", 22, UI.GREEN, true));
+        row.setOnClickListener(v -> startActivity(new Intent(this, cls)));
+        return row;
     }
 
     private void paintClients(LinearLayout list) {
