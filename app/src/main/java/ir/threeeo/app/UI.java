@@ -131,4 +131,45 @@ final class UI {
         }
         return b.toString();
     }
+
+    static int catColor(String cat) {
+        switch (cat == null ? "" : cat) {
+            case "ai": return 0xFF7C3AED;
+            case "tech": return 0xFF2563EB;
+            case "keyword": return 0xFFEA580C;
+            case "content": return 0xFFDB2777;
+            case "data": return 0xFF0891B2;
+            default: return 0xFF475569;
+        }
+    }
+
+    static int darker(int c, float f) {
+        int r = (int) (((c >> 16) & 0xFF) * f), g = (int) (((c >> 8) & 0xFF) * f), b = (int) ((c & 0xFF) * f);
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
+    static GradientDrawable gradient(Context c, int from, int to, int radiusDp) {
+        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{from, to});
+        g.setCornerRadius(dp(c, radiusDp));
+        return g;
+    }
+
+    /** a white line icon of a tool (drawable ic_<slug>) on a colored rounded tile */
+    static View iconTile(Context c, String slug, String cat, int sizeDp) {
+        android.widget.FrameLayout f = new android.widget.FrameLayout(c);
+        int col = catColor(cat);
+        f.setBackground(gradient(c, col, darker(col, 0.72f), sizeDp / 3));
+        android.widget.ImageView iv = new android.widget.ImageView(c);
+        int id = c.getResources().getIdentifier("ic_" + slug, "drawable", c.getPackageName());
+        iv.setImageResource(id != 0 ? id : R.drawable.ic_analyze);
+        int pad = dp(c, sizeDp / 4);
+        iv.setPadding(pad, pad, pad, pad);
+        f.addView(iv, new android.widget.FrameLayout.LayoutParams(dp(c, sizeDp), dp(c, sizeDp)));
+        f.setLayoutParams(new ViewGroup.LayoutParams(dp(c, sizeDp), dp(c, sizeDp)));
+        return f;
+    }
+
+    static String slugOfType(String type) {
+        return "metagen".equals(type) ? "metadesc" : (type == null || type.isEmpty() ? "analyze" : type);
+    }
 }

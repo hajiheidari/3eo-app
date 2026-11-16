@@ -20,7 +20,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** The native shell of the app: Home (quick analysis + tools), Reports, Account. Heavy tools open as signed-in web pages. */
+import java.util.ArrayList;
+import java.util.List;
+
+/** The native shell of the app: Home (quick analysis + tools), Reports, Account. All tools run natively. */
 public class MainActivity extends AppCompatActivity {
     private FrameLayout frame;
     private LinearLayout[] tabs = new LinearLayout[3];
@@ -146,94 +149,153 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ---------- Home
+    private String filterCat = "";
+    private String query = "";
+    private LinearLayout grid;
+
     private View homeView() {
         LinearLayout col = UI.column(this);
         LinearLayout hero = UI.column(this);
-        hero.setBackground(UI.box(this, UI.GREEN, 20, 0));
-        int hp = UI.dp(this, 18);
+        hero.setBackground(UI.gradient(this, 0xFF059669, 0xFF064E3B, 26));
+        int hp = UI.dp(this, 20);
         hero.setPadding(hp, hp, hp, hp);
-        hero.addView(UI.text(this, "تحلیل سریع سایت", 19, 0xFFFFFFFF, true));
-        hero.addView(UI.text(this, "آدرس سایت را بدهید؛ در چند ثانیه امتحان سئو، سرعت پاسخ، امنیت و آمادگی برای هوش مصنوعی را ببینید.", 13, 0xFFD1FAE5, false), UI.wrap(this, 6));
-        urlInput = UI.input(this, "example.com");
+        hero.addView(UI.text(this, "سلام 👋", 14, 0xFFA7F3D0, true));
+        hero.addView(UI.text(this, "سئوی سایتت را در چند ثانیه بسنج", 22, 0xFFFFFFFF, true), UI.wrap(this, 4));
+        hero.addView(UI.text(this, "امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس.", 13, 0xFFD1FAE5, false), UI.wrap(this, 6));
+        LinearLayout bar = new LinearLayout(this);
+        UI.rtl(bar);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar.setBackground(UI.box(this, 0xFFFFFFFF, 16, 0));
+        bar.setPadding(UI.dp(this, 14), UI.dp(this, 4), UI.dp(this, 6), UI.dp(this, 4));
+        urlInput = new EditText(this);
+        urlInput.setHint("example.com");
+        urlInput.setHintTextColor(0xFF94A3B8);
+        urlInput.setTextColor(UI.INK);
+        urlInput.setTextSize(16);
+        urlInput.setSingleLine(true);
+        urlInput.setBackground(null);
         urlInput.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_URI);
-        urlInput.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         urlInput.setTextDirection(View.TEXT_DIRECTION_LTR);
-        hero.addView(urlInput, UI.wrap(this, 14));
-        final Button go = UI.primary(this, "تحلیل کن");
-        go.setBackground(UI.box(this, UI.INK, 12, 0));
-        hero.addView(go, UI.wrap(this, 10));
+        urlInput.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        bar.addView(urlInput, new LinearLayout.LayoutParams(0, UI.dp(this, 48), 1f));
+        final Button go = UI.primary(this, "تحلیل");
+        go.setBackground(UI.gradient(this, 0xFF059669, 0xFF047857, 12));
         go.setOnClickListener(v -> analyze(go));
+        bar.addView(go, new LinearLayout.LayoutParams(UI.dp(this, 92), UI.dp(this, 44)));
+        hero.addView(bar, UI.wrap(this, 16));
         col.addView(hero, UI.wrap(this, 0));
 
-        if (tools == null) {
-            col.addView(UI.text(this, "در حال دریافت ابزارها…", 14, UI.MUTED, false), UI.wrap(this, 20));
-        } else {
-            String[] order = {"ai", "tech", "keyword", "content", "data", "util"};
-            for (String cat : order) {
-                boolean header = false;
-                for (int i = 0; i < tools.length(); i++) {
-                    JSONObject t = tools.optJSONObject(i);
-                    if (!cat.equals(t.optString("cat"))) {
-                        continue;
-                    }
-                    if (!header) {
-                        col.addView(UI.text(this, categories != null ? categories.optString(cat, cat) : cat, 16, UI.INK, true), UI.wrap(this, 22));
-                        header = true;
-                    }
-                    col.addView(toolRow(t), UI.wrap(this, 8));
-                }
+        EditText search = UI.input(this, "جستجوی ابزار…");
+        search.setText(query);
+        search.addTextChangedListener(new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence a, int b, int c, int d) {
             }
+
+            public void onTextChanged(CharSequence a, int b, int c, int d) {
+            }
+
+            public void afterTextChanged(android.text.Editable e) {
+                query = e.toString().trim();
+                fillGrid();
+            }
+        });
+        col.addView(search, UI.wrap(this, 16));
+
+        android.widget.HorizontalScrollView hs = new android.widget.HorizontalScrollView(this);
+        hs.setHorizontalScrollBarEnabled(false);
+        LinearLayout chips = new LinearLayout(this);
+        UI.rtl(chips);
+        String[] order = {"", "ai", "tech", "keyword", "content", "data"};
+        for (final String cat : order) {
+            String name = cat.isEmpty() ? "همه" : (categories != null ? categories.optString(cat, cat) : cat);
+            final TextView ch = UI.text(this, name, 13, UI.INK, true);
+            ch.setPadding(UI.dp(this, 14), UI.dp(this, 8), UI.dp(this, 14), UI.dp(this, 8));
+            boolean on = cat.equals(filterCat);
+            ch.setBackground(UI.box(this, on ? (cat.isEmpty() ? UI.GREEN : UI.catColor(cat)) : 0xFFFFFFFF, 18, on ? 0 : UI.LINE));
+            ch.setTextColor(on ? 0xFFFFFFFF : UI.INK);
+            ch.setOnClickListener(v -> {
+                filterCat = cat;
+                show(0);
+            });
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMarginEnd(UI.dp(this, 8));
+            chips.addView(ch, lp);
         }
+        hs.addView(chips);
+        UI.rtl(hs);
+        col.addView(hs, UI.wrap(this, 12));
+
+        grid = UI.column(this);
+        col.addView(grid, UI.wrap(this, 8));
+        fillGrid();
         homeScroll = scroller(col);
         return homeScroll;
     }
 
-    private View toolRow(final JSONObject t) {
-        LinearLayout row = new LinearLayout(this);
-        UI.rtl(row);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setBackground(UI.box(this, UI.CARD, 14, UI.LINE));
-        int p = UI.dp(this, 14);
-        row.setPadding(p, p, p, p);
-        LinearLayout txt = UI.column(this);
-        txt.addView(UI.text(this, t.optString("title"), 15, UI.INK, true));
-        txt.addView(UI.text(this, t.optString("desc"), 12, UI.MUTED, false), UI.wrap(this, 3));
-        row.addView(txt, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        row.addView(UI.text(this, "‹", 22, UI.GREEN, true));
-        row.setOnClickListener(v -> openTool(t.optString("slug")));
-        return row;
-    }
-
-    private void openTool(String slug) {
-        if ("analyze".equals(slug)) {
-            if (homeScroll != null) {
-                homeScroll.smoothScrollTo(0, 0);
-            }
-            if (urlInput != null) {
-                urlInput.requestFocus();
-            }
+    private void fillGrid() {
+        if (grid == null) {
             return;
         }
-        openWeb("/tools/" + slug);
+        grid.removeAllViews();
+        if (tools == null) {
+            grid.addView(UI.text(this, "در حال دریافت ابزارها…", 14, UI.MUTED, false), UI.wrap(this, 20));
+            return;
+        }
+        List<JSONObject> list = new ArrayList<>();
+        String[] order = {"ai", "tech", "keyword", "content", "data", "util"};
+        for (String cat : order) {
+            for (int i = 0; i < tools.length(); i++) {
+                JSONObject t = tools.optJSONObject(i);
+                if (!cat.equals(t.optString("cat")) || (!filterCat.isEmpty() && !filterCat.equals(cat))) {
+                    continue;
+                }
+                if (!query.isEmpty() && !(t.optString("title") + " " + t.optString("desc")).contains(query)) {
+                    continue;
+                }
+                list.add(t);
+            }
+        }
+        if (list.isEmpty()) {
+            grid.addView(UI.text(this, "ابزاری پیدا نشد.", 14, UI.MUTED, false), UI.wrap(this, 20));
+        }
+        for (int i = 0; i < list.size(); i += 2) {
+            LinearLayout row = new LinearLayout(this);
+            UI.rtl(row);
+            for (int k = 0; k < 2; k++) {
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                lp.setMargins(UI.dp(this, k == 0 ? 0 : 5), 0, UI.dp(this, k == 0 ? 5 : 0), 0);
+                row.addView(i + k < list.size() ? tile(list.get(i + k)) : new View(this), lp);
+            }
+            grid.addView(row, UI.wrap(this, 10));
+        }
     }
 
-    /** opens a website page already signed in */
-    private void openWeb(String path) {
-        Toast.makeText(this, "در حال باز کردن…", Toast.LENGTH_SHORT).show();
-        JSONObject body = new JSONObject();
-        try {
-            body.put("to", path);
-        } catch (Exception ignored) {
+    private View tile(final JSONObject t) {
+        LinearLayout c = UI.column(this);
+        c.setBackground(UI.box(this, UI.CARD, 18, UI.LINE));
+        int p = UI.dp(this, 14);
+        c.setPadding(p, p, p, p);
+        c.addView(UI.iconTile(this, t.optString("slug"), t.optString("cat"), 46));
+        TextView title = UI.text(this, t.optString("title"), 14, UI.INK, true);
+        title.setMaxLines(2);
+        title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        c.addView(title, UI.wrap(this, 10));
+        TextView d = UI.text(this, t.optString("desc"), 11, UI.MUTED, false);
+        d.setMaxLines(2);
+        d.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        c.addView(d, UI.wrap(this, 4));
+        c.setOnClickListener(v -> openTool(t));
+        return c;
+    }
+
+    private void openTool(JSONObject t) {
+        if ("analyze".equals(t.optString("slug")) && urlInput != null && !urlInput.getText().toString().trim().isEmpty()) {
+            analyze(null);
+            return;
         }
-        Api.post(this, "/api/app/webauth", body, (j, e) -> {
-            if (j == null || e != null) {
-                Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
-                return;
-            }
-            Intent i = new Intent(this, WebActivity.class);
-            i.putExtra("url", j.optString("url"));
-            startActivity(i);
-        });
+        Intent i = new Intent(this, ToolActivity.class);
+        i.putExtra("tool", t.toString());
+        startActivity(i);
     }
 
     private void analyze(final Button go) {
@@ -242,16 +304,22 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "آدرس سایت را وارد کنید.", Toast.LENGTH_SHORT).show();
             return;
         }
-        go.setEnabled(false);
-        go.setText("در حال تحلیل… (تا ۳۰ ثانیه)");
+        if (go != null) {
+            go.setEnabled(false);
+            go.setText("…");
+        } else {
+            Toast.makeText(this, "در حال تحلیل… (تا ۳۰ ثانیه)", Toast.LENGTH_LONG).show();
+        }
         JSONObject body = new JSONObject();
         try {
             body.put("url", u);
         } catch (Exception ignored) {
         }
-        Api.post(this, "/api/app/analyze", body, (j, e) -> {
-            go.setEnabled(true);
-            go.setText("تحلیل کن");
+        Api.post(this, "/api/app/tool/analyze", body, (j, e) -> {
+            if (go != null) {
+                go.setEnabled(true);
+                go.setText("تحلیل");
+            }
             if (j == null || e != null) {
                 Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
                 return;
@@ -263,30 +331,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // ---------- Reports
+    private String toolTitle(String type) {
+        String slug = UI.slugOfType(type);
+        for (int i = 0; tools != null && i < tools.length(); i++) {
+            if (slug.equals(tools.optJSONObject(i).optString("slug"))) {
+                return tools.optJSONObject(i).optString("title");
+            }
+        }
+        return "گزارش";
+    }
+
     private View reportsView() {
         LinearLayout col = UI.column(this);
-        col.addView(UI.text(this, "گزارش‌های من", 19, UI.INK, true));
+        col.addView(UI.text(this, "گزارش‌های من", 20, UI.INK, true));
         JSONArray rs = me == null ? null : me.optJSONArray("reports");
-        boolean any = false;
         for (int i = 0; rs != null && i < rs.length(); i++) {
             final JSONObject r = rs.optJSONObject(i);
-            if (!"analyze".equals(r.optString("type"))) {
-                continue;
-            }
-            any = true;
             LinearLayout row = new LinearLayout(this);
             UI.rtl(row);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setBackground(UI.box(this, UI.CARD, 14, UI.LINE));
-            int p = UI.dp(this, 14);
+            row.setBackground(UI.box(this, UI.CARD, 16, UI.LINE));
+            int p = UI.dp(this, 12);
             row.setPadding(p, p, p, p);
+            row.addView(UI.iconTile(this, UI.slugOfType(r.optString("type")), ReportActivity.catOf(r.optString("type")), 42));
             LinearLayout txt = UI.column(this);
-            txt.addView(UI.text(this, r.optString("host"), 15, UI.INK, true));
-            String when = r.optString("created_at");
-            txt.addView(UI.text(this, when.length() >= 10 ? UI.fa(when.substring(0, 10)) : when, 12, UI.MUTED, false), UI.wrap(this, 3));
-            row.addView(txt, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-            int sc = r.optInt("score");
-            row.addView(UI.text(this, UI.fa(String.valueOf(sc)), 20, UI.scoreColor(sc), true));
+            txt.addView(UI.text(this, toolTitle(r.optString("type")), 14, UI.INK, true));
+            TextView host = UI.text(this, r.optString("host"), 12, UI.MUTED, false);
+            host.setTextDirection(View.TEXT_DIRECTION_LTR);
+            host.setSingleLine(true);
+            txt.addView(host, UI.wrap(this, 2));
+            LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            tl.setMarginStart(UI.dp(this, 12));
+            row.addView(txt, tl);
+            if (!r.isNull("score") && r.optInt("score", -1) >= 0 && ("analyze".equals(r.optString("type")) || "ai".equals(r.optString("type")) || "speed".equals(r.optString("type")))) {
+                int sc = r.optInt("score");
+                row.addView(UI.text(this, UI.fa(String.valueOf(sc)), 20, UI.scoreColor(sc), true));
+            }
             row.setOnClickListener(v -> {
                 Intent open = new Intent(this, ReportActivity.class);
                 open.putExtra("token", r.optString("token"));
@@ -294,8 +374,8 @@ public class MainActivity extends AppCompatActivity {
             });
             col.addView(row, UI.wrap(this, 10));
         }
-        if (!any) {
-            col.addView(UI.text(this, me == null ? "در حال دریافت…" : "هنوز گزارشی ندارید. از صفحه‌ی خانه یک سایت را تحلیل کنید.", 14, UI.MUTED, false), UI.wrap(this, 12));
+        if (rs == null || rs.length() == 0) {
+            col.addView(UI.text(this, me == null ? "در حال دریافت…" : "هنوز گزارشی ندارید. یک ابزار را اجرا کنید.", 14, UI.MUTED, false), UI.wrap(this, 12));
         }
         return scroller(col);
     }
@@ -311,9 +391,6 @@ public class MainActivity extends AppCompatActivity {
         card.addView(UI.text(this, me == null ? "…" : UI.fa(String.valueOf(me.optInt("credits"))), 30, UI.GREEN, true), UI.wrap(this, 2));
         col.addView(card, UI.wrap(this, 12));
 
-        Button panel = UI.primary(this, "پنل کامل در وب");
-        panel.setOnClickListener(v -> openWeb("/dashboard"));
-        col.addView(panel, UI.wrap(this, 16));
         Button privacy = UI.ghost(this, "حریم خصوصی و قوانین", UI.GREEN);
         privacy.setOnClickListener(v -> {
             Intent i = new Intent(this, WebActivity.class);
