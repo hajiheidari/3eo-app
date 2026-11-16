@@ -13,6 +13,7 @@ struct MainTabs: View {
             HomeView(tools: tools).opacity(tab == 0 ? 1 : 0).allowsHitTesting(tab == 0)
             ReportsView(me: me, tools: tools).opacity(tab == 1 ? 1 : 0).allowsHitTesting(tab == 1)
             AccountView(me: me).opacity(tab == 2 ? 1 : 0).allowsHitTesting(tab == 2)
+            ClientsView().opacity(tab == 3 ? 1 : 0).allowsHitTesting(tab == 3)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) { bar }
         .task { await load() }
@@ -22,6 +23,7 @@ struct MainTabs: View {
     private var bar: some View {
         HStack(alignment: .center, spacing: 0) {
             barItem("گزارش‌ها", "doc.text.fill", 1)
+            barItem("مشتریان", "person.2.fill", 3)
             Button { tab = 0 } label: {
                 Image("Logo").resizable().scaledToFit().frame(height: 40)
                     .padding(.horizontal, 18).padding(.vertical, 6)

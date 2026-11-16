@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".LoginActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ReportActivity" android:exported="false" />
+        <activity android:name=".ClientActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ToolActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
 
         <activity

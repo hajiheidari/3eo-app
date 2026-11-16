@@ -203,3 +203,51 @@ enum API {
         return u
     }
 }
+
+// MARK: clients
+struct ClientRow: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let host: String
+    let note: String
+    let score: Int?
+    let prev: Int?
+    let last: String?
+    let reports: Int
+    let auto: Int
+    let paused: Int
+}
+
+struct ClientsResponse: Codable {
+    let clients: [ClientRow]
+    let cost: Int
+    let credits: Int
+}
+
+struct ScheduleRow: Codable, Identifiable {
+    let tool: String
+    let title: String
+    let every: String
+    let status: String
+    let next_run: String?
+    let error: String?
+    var id: String { tool }
+}
+
+struct ClientReport: Codable, Identifiable {
+    let token: String
+    let type: String
+    let score: Int?
+    let created_at: String
+    var id: String { token }
+}
+
+struct ClientDetail: Codable {
+    let client: ClientRow
+    let reports: [ClientReport]
+    let schedules: [ScheduleRow]
+    let every_options: [[String]]
+    let cost: Int
+}
+
+struct NewClient: Codable { let id: Int }

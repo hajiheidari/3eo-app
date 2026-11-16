@@ -26,7 +26,7 @@ import java.util.List;
 /** The native shell of the app: Home (quick analysis + tools), Reports, Account. All tools run natively. */
 public class MainActivity extends AppCompatActivity {
     private FrameLayout frame;
-    private LinearLayout[] tabs = new LinearLayout[3];
+    private LinearLayout[] tabs = new LinearLayout[4];
     private int current = 0;
     private JSONObject me;
     private JSONArray tools;
@@ -54,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bar = new LinearLayout(this);
         UI.rtl(bar);
         bar.setBackgroundColor(UI.CARD);
-        String[] names = {"خانه", "گزارش‌ها", "حساب من"};
-        String[] icons = {"", "▤", "☺"};
-        int[] posOrder = {1, 0, 2};
-        for (int pi = 0; pi < 3; pi++) {
+        String[] names = {"خانه", "گزارش‌ها", "حساب من", "مشتریان"};
+        String[] icons = {"", "▤", "☺", "♚"};
+        int[] posOrder = {1, 3, 0, 2};
+        for (int pi = 0; pi < 4; pi++) {
             final int idx = posOrder[pi];
             LinearLayout t = UI.column(this);
             t.setGravity(Gravity.CENTER);
@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (frame != null) {
             loadMe();
+            if (current == 3) {
+                show(3);
+            }
         }
     }
 
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void show(int i) {
         current = i;
-        for (int k = 0; k < 3; k++) {
+        for (int k = 0; k < 4; k++) {
             int col = k == i ? UI.GREEN : UI.MUTED;
             if (k == 0) {
                 tabs[0].setAlpha(k == i ? 1f : 0.75f);
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         frame.removeAllViews();
-        frame.addView(i == 0 ? homeView() : (i == 1 ? reportsView() : accountView()));
+        frame.addView(i == 0 ? homeView() : (i == 1 ? reportsView() : (i == 3 ? clientsView() : accountView())));
     }
 
     private ScrollView scroller(LinearLayout inner) {
@@ -335,6 +338,103 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("json", j.toString());
             startActivity(i);
         });
+    }
+
+    // ---------- Clients
+    private JSONObject clientsData;
+
+    private View clientsView() {
+        LinearLayout col = UI.column(this);
+        LinearLayout head = new LinearLayout(this);
+        UI.rtl(head);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        head.addView(UI.text(this, "مشتریان من", 20, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        Button add = UI.primary(this, "＋ افزودن سایت");
+        add.setMinHeight(UI.dp(this, 40));
+        add.setOnClickListener(v -> addClientDialog());
+        head.addView(add, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, UI.dp(this, 42)));
+        col.addView(head);
+        col.addView(UI.text(this, "سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.", 12, UI.MUTED, false), UI.wrap(this, 6));
+        final LinearLayout list = UI.column(this);
+        col.addView(list, UI.wrap(this, 10));
+        paintClients(list);
+        Api.get(this, "/api/app/clients", (j, e) -> {
+            if (j != null && e == null) {
+                clientsData = j;
+                if (current == 3) {
+                    paintClients(list);
+                }
+            }
+        });
+        return scroller(col);
+    }
+
+    private void paintClients(LinearLayout list) {
+        list.removeAllViews();
+        JSONArray cs = clientsData == null ? null : clientsData.optJSONArray("clients");
+        if (cs == null) {
+            list.addView(UI.text(this, "در حال دریافت…", 14, UI.MUTED, false));
+            return;
+        }
+        if (cs.length() == 0) {
+            list.addView(UI.text(this, "هنوز مشتری‌ای ندارید. با «افزودن سایت» شروع کنید.", 14, UI.MUTED, false));
+        }
+        for (int i = 0; i < cs.length(); i++) {
+            final JSONObject c = cs.optJSONObject(i);
+            LinearLayout row = new LinearLayout(this);
+            UI.rtl(row);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setBackground(UI.box(this, UI.CARD, 16, UI.LINE));
+            int p = UI.dp(this, 14);
+            row.setPadding(p, p, p, p);
+            LinearLayout txt = UI.column(this);
+            txt.addView(UI.text(this, c.optString("name"), 15, UI.INK, true));
+            TextView host = UI.text(this, c.optString("host"), 12, UI.MUTED, false);
+            host.setTextDirection(View.TEXT_DIRECTION_LTR);
+            txt.addView(host, UI.wrap(this, 2));
+            if (c.optInt("auto") > 0) {
+                txt.addView(UI.text(this, "بررسی خودکار: " + UI.fa(String.valueOf(c.optInt("auto"))) + " فعال", 11, UI.GREEN, true), UI.wrap(this, 4));
+            }
+            row.addView(txt, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+            if (!c.isNull("score")) {
+                row.addView(UI.text(this, UI.fa(String.valueOf(c.optInt("score"))), 24, UI.scoreColor(c.optInt("score")), true));
+            }
+            row.setOnClickListener(v -> {
+                Intent i2 = new Intent(this, ClientActivity.class);
+                i2.putExtra("id", c.optInt("id"));
+                startActivity(i2);
+            });
+            list.addView(row, UI.wrap(this, 10));
+        }
+    }
+
+    private void addClientDialog() {
+        LinearLayout box = UI.column(this);
+        int p = UI.dp(this, 16);
+        box.setPadding(p, p, p, 0);
+        final EditText site = UI.input(this, "آدرس سایت، مثلاً example.ir");
+        site.setTextDirection(View.TEXT_DIRECTION_LTR);
+        final EditText name = UI.input(this, "نام مشتری (اختیاری)");
+        box.addView(site);
+        box.addView(name, UI.wrap(this, 10));
+        new AlertDialog.Builder(this).setTitle("افزودن سایت مشتری").setView(box).setNegativeButton("انصراف", null)
+                .setPositiveButton("افزودن", (d, w) -> {
+                    JSONObject body = new JSONObject();
+                    try {
+                        body.put("site", site.getText().toString());
+                        body.put("name", name.getText().toString());
+                    } catch (Exception ignored) {
+                    }
+                    Api.post(this, "/api/app/clients", body, (j, e) -> {
+                        if (j == null || e != null) {
+                            Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        Intent i2 = new Intent(this, ClientActivity.class);
+                        i2.putExtra("id", j.optInt("id"));
+                        startActivity(i2);
+                    });
+                }).show();
     }
 
     // ---------- Reports
