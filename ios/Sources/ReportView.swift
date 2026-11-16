@@ -113,6 +113,7 @@ struct ReportView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
+        .environment(\.layoutDirection, .rightToLeft)
         .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش \(report.title) \(report.host)\n\(report.share ?? "")"]) }
     }
 }
@@ -131,6 +132,7 @@ struct ReportLoader: View {
                 ProgressView("در حال دریافت گزارش…")
             }
         }
+        .environment(\.layoutDirection, .rightToLeft)
         .task {
             do { report = try await API.call("GET", "/api/app/report/" + token, as: Presented.self) }
             catch { self.error = error.localizedDescription }

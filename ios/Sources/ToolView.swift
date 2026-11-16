@@ -58,6 +58,7 @@ struct ToolView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
+        .environment(\.layoutDirection, .rightToLeft)
         .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش \(result?.title ?? "") \(result?.host ?? "")\n\(result?.share ?? "")"]) }
         .onAppear(perform: seed)
     }

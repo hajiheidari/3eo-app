@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         for (int k = 0; k < 3; k++) {
             int col = k == i ? UI.GREEN : UI.MUTED;
             if (k == 0) {
-                tabs[0].setBackground(k == i ? UI.box(this, UI.GREEN_SOFT, 16, 0) : null);
+                tabs[0].setAlpha(k == i ? 1f : 0.75f);
             } else {
                 ((TextView) tabs[k].getChildAt(0)).setTextColor(col);
                 ((TextView) tabs[k].getChildAt(1)).setTextColor(col);

@@ -25,8 +25,6 @@ struct MainTabs: View {
             Button { tab = 0 } label: {
                 Image("Logo").resizable().scaledToFit().frame(height: 40)
                     .padding(.horizontal, 18).padding(.vertical, 6)
-                    .background(tab == 0 ? Theme.greenSoft : Color.clear)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
                     .frame(maxWidth: .infinity)
             }
             barItem("حساب من", "person.fill", 2)
