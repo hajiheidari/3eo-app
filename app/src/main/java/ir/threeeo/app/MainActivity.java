@@ -45,22 +45,6 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout root = UI.column(this);
         root.setBackgroundColor(UI.BG);
 
-        LinearLayout top = new LinearLayout(this);
-        UI.rtl(top);
-        top.setBackgroundColor(UI.CARD);
-        top.setGravity(Gravity.CENTER_VERTICAL);
-        int p = UI.dp(this, 16);
-        top.setPadding(p, UI.dp(this, 8), p, UI.dp(this, 8));
-        ImageView logo = new ImageView(this);
-        logo.setImageResource(R.drawable.logo);
-        logo.setAdjustViewBounds(true);
-        logo.setOnClickListener(v -> show(0));
-        top.addView(logo, new LinearLayout.LayoutParams(UI.dp(this, 84), ViewGroup.LayoutParams.WRAP_CONTENT));
-        root.addView(top, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        View line = new View(this);
-        line.setBackgroundColor(UI.LINE);
-        root.addView(line, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-
         frame = new FrameLayout(this);
         root.addView(frame, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
@@ -71,20 +55,28 @@ public class MainActivity extends AppCompatActivity {
         UI.rtl(bar);
         bar.setBackgroundColor(UI.CARD);
         String[] names = {"خانه", "گزارش‌ها", "حساب من"};
-        String[] icons = {"⌂", "▤", "☺"};
-        for (int i = 0; i < 3; i++) {
-            final int idx = i;
+        String[] icons = {"", "▤", "☺"};
+        int[] posOrder = {1, 0, 2};
+        for (int pi = 0; pi < 3; pi++) {
+            final int idx = posOrder[pi];
             LinearLayout t = UI.column(this);
             t.setGravity(Gravity.CENTER);
-            t.setPadding(0, UI.dp(this, 8), 0, UI.dp(this, 8));
-            TextView ic = UI.text(this, icons[i], 20, UI.MUTED, false);
-            ic.setGravity(Gravity.CENTER);
-            TextView nm = UI.text(this, names[i], 12, UI.MUTED, true);
-            nm.setGravity(Gravity.CENTER);
-            t.addView(ic);
-            t.addView(nm);
+            t.setPadding(0, UI.dp(this, 6), 0, UI.dp(this, 6));
+            if (idx == 0) {
+                ImageView lg = new ImageView(this);
+                lg.setImageResource(R.drawable.logo);
+                lg.setAdjustViewBounds(true);
+                t.addView(lg, new LinearLayout.LayoutParams(UI.dp(this, 70), UI.dp(this, 40)));
+            } else {
+                TextView ic = UI.text(this, icons[idx], 20, UI.MUTED, false);
+                ic.setGravity(Gravity.CENTER);
+                TextView nm = UI.text(this, names[idx], 12, UI.MUTED, true);
+                nm.setGravity(Gravity.CENTER);
+                t.addView(ic);
+                t.addView(nm);
+            }
             t.setOnClickListener(v -> show(idx));
-            tabs[i] = t;
+            tabs[idx] = t;
             bar.addView(t, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         }
         root.addView(bar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -133,8 +125,12 @@ public class MainActivity extends AppCompatActivity {
         current = i;
         for (int k = 0; k < 3; k++) {
             int col = k == i ? UI.GREEN : UI.MUTED;
-            ((TextView) tabs[k].getChildAt(0)).setTextColor(col);
-            ((TextView) tabs[k].getChildAt(1)).setTextColor(col);
+            if (k == 0) {
+                tabs[0].setBackground(k == i ? UI.box(this, UI.GREEN_SOFT, 16, 0) : null);
+            } else {
+                ((TextView) tabs[k].getChildAt(0)).setTextColor(col);
+                ((TextView) tabs[k].getChildAt(1)).setTextColor(col);
+            }
         }
         frame.removeAllViews();
         frame.addView(i == 0 ? homeView() : (i == 1 ? reportsView() : accountView()));

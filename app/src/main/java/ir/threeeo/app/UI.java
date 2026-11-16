@@ -39,7 +39,7 @@ final class UI {
 
     static TextView text(Context c, String s, int sp, int color, boolean bold) {
         TextView t = new TextView(c);
-        t.setText(s);
+        t.setText(bidi(s));
         t.setTextSize(sp);
         t.setTextColor(color);
         t.setLineSpacing(0, 1.25f);
@@ -130,6 +130,22 @@ final class UI {
             b.append(ch >= '0' && ch <= '9' ? (char) ('۰' + (ch - '0')) : ch);
         }
         return b.toString();
+    }
+
+    private static final java.util.regex.Pattern LATIN = java.util.regex.Pattern.compile("[A-Za-z](?:[A-Za-z0-9_.\\-/:?=&%#@+~]*[A-Za-z0-9/])?");
+
+    /** isolate Latin words so mixed Persian/English text keeps a readable order */
+    static String bidi(String s) {
+        if (s == null) {
+            return "";
+        }
+        java.util.regex.Matcher m = LATIN.matcher(s);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement("\u2066" + m.group() + "\u2069"));
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static Typeface reg, bld;

@@ -7,6 +7,7 @@ struct BlocksView: View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(blocks) { b in one(b) }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder private func one(_ b: Block) -> some View {
@@ -30,7 +31,7 @@ struct BlocksView: View {
                         HStack(alignment: .top) {
                             Text(r.first ?? "").font(.vz(13, false)).foregroundColor(Theme.muted)
                             Spacer(minLength: 12)
-                            Text(Theme.fa(r.count > 1 ? r[1] : "")).font(.vz(14, true)).foregroundColor(Theme.ink)
+                            Text(Theme.bidi(Theme.fa(r.count > 1 ? r[1] : ""))).font(.vz(14, true)).foregroundColor(Theme.ink)
                                 .multilineTextAlignment(.trailing)
                         }
                     }
@@ -38,14 +39,14 @@ struct BlocksView: View {
             }
         case "list":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink).frame(maxWidth: .infinity, alignment: .leading) }
                 ForEach(b.items) { it in
                     Card {
                         HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(it.title).font(.vz(14, true)).foregroundColor(Theme.ink)
+                                Text(Theme.bidi(it.title)).font(.vz(14, true)).foregroundColor(Theme.ink)
                                     .environment(\.layoutDirection, it.ltr ? .leftToRight : .rightToLeft)
-                                if !it.sub.isEmpty { Text(it.sub).font(.vz(12, false)).foregroundColor(Theme.muted) }
+                                if !it.sub.isEmpty { Text(Theme.bidi(it.sub)).font(.vz(12, false)).foregroundColor(Theme.muted) }
                             }
                             Spacer(minLength: 8)
                             if !it.tag.isEmpty {
@@ -59,10 +60,10 @@ struct BlocksView: View {
             }
         case "chips":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink).frame(maxWidth: .infinity, alignment: .leading) }
                 Card { FlowLayout(spacing: 6) {
                     ForEach(b.items) { it in
-                        Text(it.title).font(.vz(13, false)).foregroundColor(Theme.greenDark)
+                        Text(Theme.bidi(it.title)).font(.vz(13, false)).foregroundColor(Theme.greenDark)
                             .padding(.horizontal, 10).padding(.vertical, 5)
                             .background(Theme.greenSoft).clipShape(Capsule())
                     }
@@ -72,7 +73,7 @@ struct BlocksView: View {
             CopyCard(title: b.title, text: b.text, ltr: b.ltr)
         case "bars":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink).frame(maxWidth: .infinity, alignment: .leading) }
                 Card {
                     VStack(spacing: 10) {
                         ForEach(b.items) { it in
@@ -97,9 +98,9 @@ struct BlocksView: View {
         case "checks":
             ChecksView(categories: b.categories)
         case "p":
-            Text(b.text).font(.vz(13, false)).foregroundColor(b.muted ? Theme.muted : Theme.ink)
+            Text(Theme.bidi(b.text)).font(.vz(13, false)).foregroundColor(b.muted ? Theme.muted : Theme.ink).frame(maxWidth: .infinity, alignment: .leading)
         case "h":
-            Text(b.text).font(.vz(16, true)).foregroundColor(Theme.ink)
+            Text(b.text).font(.vz(16, true)).foregroundColor(Theme.ink).frame(maxWidth: .infinity, alignment: .leading)
         default:
             EmptyView()
         }
@@ -157,6 +158,7 @@ struct ChecksView: View {
                 ForEach(categories) { CategoryCard(cat: $0) }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

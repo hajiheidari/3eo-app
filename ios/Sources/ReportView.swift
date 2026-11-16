@@ -34,13 +34,13 @@ struct IssueCard: View {
     var body: some View {
         Card {
             VStack(alignment: .leading, spacing: 6) {
-                Text((check.status == "warn" ? "⚠  " : "✕  ") + check.title)
+                Text(Theme.bidi((check.status == "warn" ? "⚠  " : "✕  ") + check.title))
                     .font(.vz(15, true)).foregroundColor(Theme.status(check.status))
                 if !check.detail.isEmpty {
-                    Text(check.detail).font(.vz(13, false)).foregroundColor(Theme.muted)
+                    Text(Theme.bidi(check.detail)).font(.vz(13, false)).foregroundColor(Theme.muted)
                 }
                 if !check.fix.isEmpty {
-                    Text("راه‌حل: " + check.fix)
+                    Text(Theme.bidi("راه‌حل: " + check.fix))
                         .font(.vz(13, false)).foregroundColor(Theme.greenDark)
                         .padding(10).frame(maxWidth: .infinity, alignment: .leading)
                         .background(Theme.greenSoft).clipShape(RoundedRectangle(cornerRadius: 10))
@@ -67,10 +67,10 @@ struct CategoryCard: View {
                 if open {
                     ForEach(cat.checks) { c in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text((c.status == "pass" ? "✓  " : (c.status == "warn" ? "⚠  " : "✕  ")) + c.title)
+                            Text(Theme.bidi((c.status == "pass" ? "✓  " : (c.status == "warn" ? "⚠  " : "✕  ")) + c.title))
                                 .font(.vz(14, false)).foregroundColor(Theme.status(c.status))
                             if !c.detail.isEmpty {
-                                Text(c.detail).font(.vz(12, false)).foregroundColor(Theme.muted)
+                                Text(Theme.bidi(c.detail)).font(.vz(12, false)).foregroundColor(Theme.muted)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -109,7 +109,7 @@ struct ReportView: View {
                     }
                     BlocksView(blocks: report.blocks)
                 }
-                .padding(16)
+                .padding(16).frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .background(Theme.bg.ignoresSafeArea())

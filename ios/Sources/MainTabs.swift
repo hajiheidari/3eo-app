@@ -9,23 +9,41 @@ struct MainTabs: View {
     @State private var tools: ToolsResponse?
 
     var body: some View {
-        TabView(selection: $tab) {
-            HomeView(tools: tools).tabItem { Label("خانه", systemImage: "house.fill") }.tag(0)
-            ReportsView(me: me, tools: tools).tabItem { Label("گزارش‌ها", systemImage: "doc.text.fill") }.tag(1)
-            AccountView(me: me).tabItem { Label("حساب من", systemImage: "person.fill") }.tag(2)
+        ZStack {
+            HomeView(tools: tools).opacity(tab == 0 ? 1 : 0).allowsHitTesting(tab == 0)
+            ReportsView(me: me, tools: tools).opacity(tab == 1 ? 1 : 0).allowsHitTesting(tab == 1)
+            AccountView(me: me).opacity(tab == 2 ? 1 : 0).allowsHitTesting(tab == 2)
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            HStack {
-                Button { tab = 0 } label: {
-                    Image("Logo").resizable().scaledToFit().frame(height: 34)
-                }
-                Spacer()
-            }
-            .padding(.horizontal, 16).padding(.vertical, 6)
-            .background(Color.white.shadow(color: .black.opacity(0.06), radius: 3, y: 1))
-        }
+        .safeAreaInset(edge: .bottom, spacing: 0) { bar }
         .task { await load() }
         .onChange(of: tab) { _ in Task { await loadMe() } }
+    }
+
+    private var bar: some View {
+        HStack(alignment: .center, spacing: 0) {
+            barItem("گزارش‌ها", "doc.text.fill", 1)
+            Button { tab = 0 } label: {
+                Image("Logo").resizable().scaledToFit().frame(height: 40)
+                    .padding(.horizontal, 18).padding(.vertical, 6)
+                    .background(tab == 0 ? Theme.greenSoft : Color.clear)
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .frame(maxWidth: .infinity)
+            }
+            barItem("حساب من", "person.fill", 2)
+        }
+        .padding(.top, 6).padding(.bottom, 4)
+        .background(Color.white.shadow(color: .black.opacity(0.08), radius: 4, y: -1).ignoresSafeArea(edges: .bottom))
+    }
+
+    private func barItem(_ title: String, _ icon: String, _ idx: Int) -> some View {
+        Button { tab = idx } label: {
+            VStack(spacing: 2) {
+                Image(systemName: icon).font(.system(size: 20))
+                Text(title).font(.vz(11, true))
+            }
+            .foregroundColor(tab == idx ? Theme.green : Theme.muted)
+            .frame(maxWidth: .infinity)
+        }
     }
 
     private func load() async {

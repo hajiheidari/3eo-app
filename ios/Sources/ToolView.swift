@@ -52,7 +52,7 @@ struct ToolView: View {
                             BlocksView(blocks: r.blocks)
                         }
                     }
-                    .padding(16)
+                    .padding(16).frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .onChange(of: result?.id) { _ in withAnimation { proxy.scrollTo("result", anchor: .top) } }
             }
