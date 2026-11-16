@@ -7,7 +7,16 @@ import WebKit
 final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, WKDownloadDelegate {
 
     private let home = URL(string: "https://3eo.ir/")!
-    private var lastURL = URL(string: "https://3eo.ir/")!
+    private var startURL: URL
+    private var lastURL: URL
+
+    init(startURL: URL = URL(string: "https://3eo.ir/")!) {
+        self.startURL = startURL
+        self.lastURL = startURL
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
     private var web: WKWebView!
     private let refresh = UIRefreshControl()
     private var downloadDestination: URL?
@@ -45,7 +54,7 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
         refresh.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
         web.scrollView.refreshControl = refresh
 
-        web.load(URLRequest(url: home))
+        web.load(URLRequest(url: startURL))
     }
 
     // MARK: - actions
