@@ -106,6 +106,13 @@ struct RankView: View {
     @State private var histId = 0
     @State private var note: String?
 
+    private func summaryLine(_ a: Double, _ s: RankSummary) -> String {
+        var t = "میانگین رتبه " + Theme.fa(String(a))
+        t += " · " + Theme.fa(String(s.top3)) + " کلمه در ۳ رتبه‌ی اول"
+        t += " · " + Theme.fa(String(s.top10)) + " کلمه در صفحه‌ی اول"
+        return t
+    }
+
     private func cost(_ n: Int) -> String { (d?.free ?? false) ? "رایگان" : Theme.fa(String(n)) + " اعتبار" }
 
     var body: some View {
@@ -153,7 +160,7 @@ struct RankView: View {
                         if d.tracks.isEmpty {
                             Text("هنوز کلمه‌ای را پایش نمی‌کنید.").font(.vz(13, false)).foregroundColor(Theme.muted)
                         } else if let a = d.summary.avg {
-                            Text("میانگین رتبه " + Theme.fa(String(a)) + " · " + Theme.fa(String(d.summary.top3)) + " کلمه در ۳ رتبه‌ی اول · " + Theme.fa(String(d.summary.top10)) + " کلمه در صفحه‌ی اول")
+                            Text(summaryLine(a, d.summary))
                                 .font(.vz(12, false)).foregroundColor(Theme.muted)
                         }
                         ForEach(d.tracks) { t in
@@ -162,7 +169,7 @@ struct RankView: View {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 3) {
                                             Text(Theme.bidi(t.keyword)).font(.vz(14, true)).foregroundColor(Theme.ink)
-                                            Text(Theme.bidi(t.domain) + " · " + (t.every == "daily" ? "روزانه" : "هفتگی") + (t.active ? "" : " · منقضی"))
+                                            Text(sub(t))
                                                 .font(.vz(11, false)).foregroundColor(Theme.muted)
                                         }
                                         Spacer()
@@ -209,11 +216,18 @@ struct RankView: View {
         }
     }
 
+    private func sub(_ t: RankTrack) -> String {
+        var x = Theme.bidi(t.domain)
+        x += t.every == "daily" ? " · روزانه" : " · هفتگی"
+        if !t.active { x += " · منقضی" }
+        return x
+    }
+
     private func load() async {
         if let r = try? await API.call("GET", "/api/app/rank", as: RankResponse.self) { d = r }
     }
 
-    private func body() -> [String: Any] { ["domain": domain, "keywords": kws] }
+    private func payload() -> [String: Any] { ["domain": domain, "keywords": kws] }
 
     private func valid() -> Bool {
         if domain.trimmingCharacters(in: .whitespaces).isEmpty || kws.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -228,7 +242,7 @@ struct RankView: View {
         Task {
             defer { busy = false }
             do {
-                let s = try await API.call("POST", "/api/app/rank/check", body: body(), as: RankJobStart.self)
+                let s = try await API.call("POST", "/api/app/rank/check", body: payload(), as: RankJobStart.self)
                 for _ in 0..<40 {
                     try? await Task.sleep(nanoseconds: 3_000_000_000)
                     if let j = try? await API.call("GET", "/api/app/rank/job/\(s.job)", as: RankJob.self) {
@@ -243,7 +257,7 @@ struct RankView: View {
 
     private func track(_ every: String) {
         guard valid() else { return }
-        var b = body(); b["every"] = every
+        var b = payload(); b["every"] = every
         Task {
             do {
                 _ = try await API.call("POST", "/api/app/rank/track", body: b, as: Empty.self)
@@ -285,7 +299,7 @@ struct MonitorView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if let d = d {
-                        Text("هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد و پیشنهاد می‌دهد یا نه. هر اجرا " + (d.free ? "رایگان" : Theme.fa(String(d.cost)) + " اعتبار") + " · اعتبار شما: " + Theme.fa(String(d.credits)))
+                        Text(intro(d))
                             .font(.vz(12, false)).foregroundColor(Theme.muted)
                         if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                         ForEach(d.monitors) { m in
@@ -296,13 +310,13 @@ struct MonitorView: View {
                                         Spacer()
                                         Text(m.status == "paused" ? "متوقف" : "فعال").font(.vz(12, true)).foregroundColor(m.status == "paused" ? Theme.amber : Theme.green)
                                     }
-                                    Text(Theme.bidi(m.topic) + (m.domain.isEmpty ? "" : " · " + Theme.bidi(m.domain))).font(.vz(12, false)).foregroundColor(Theme.muted)
+                                    Text(topicLine(m)).font(.vz(12, false)).foregroundColor(Theme.muted)
                                     if let last = m.runs.first {
                                         HStack(spacing: 10) {
                                             Text(Theme.fa(String(last.score))).font(.vz(30, true)).foregroundColor(Theme.score(last.score))
                                             Text(last.known ? "هوش مصنوعی برند را می‌شناسد" : "هوش مصنوعی برند را نمی‌شناسد").font(.vz(13, true)).foregroundColor(Theme.ink)
                                         }
-                                        Text("روند اجراها: " + m.runs.reversed().map { Theme.fa(String($0.score)) }.joined(separator: " ← "))
+                                        Text(trend(m))
                                             .font(.vz(12, false)).foregroundColor(Theme.muted)
                                     } else {
                                         Text("اولین اجرا تا چند دقیقه‌ی دیگر انجام می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
@@ -342,6 +356,22 @@ struct MonitorView: View {
             Button("انصراف", role: .cancel) {}
             Button("حذف", role: .destructive) { if let i = delId { act(i, "delete") } }
         } message: { Text("پایش و تاریخچه‌اش حذف می‌شود.") }
+    }
+
+    private func intro(_ d: MonResponse) -> String {
+        let c: String = d.free ? "رایگان" : Theme.fa(String(d.cost)) + " اعتبار"
+        return "هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد یا نه. هر اجرا " + c + " · اعتبار شما: " + Theme.fa(String(d.credits))
+    }
+
+    private func topicLine(_ m: Mon) -> String {
+        var x = Theme.bidi(m.topic)
+        if !m.domain.isEmpty { x += " · " + Theme.bidi(m.domain) }
+        return x
+    }
+
+    private func trend(_ m: Mon) -> String {
+        let parts: [String] = m.runs.reversed().map { Theme.fa(String($0.score)) }
+        return "روند اجراها: " + parts.joined(separator: " ← ")
     }
 
     private func load() async {
