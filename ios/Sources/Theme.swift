@@ -69,7 +69,7 @@ struct PrimaryButton: View {
         Button(action: action) {
             HStack {
                 if loading { ProgressView().tint(.white) }
-                Text(title).font(.system(size: 16, weight: .bold))
+                Text(title).font(.vz(16, true))
             }
             .frame(maxWidth: .infinity, minHeight: 48)
             .foregroundColor(.white)
@@ -103,7 +103,7 @@ struct WebSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("بستن") { dismiss() }.font(.system(size: 16, weight: .bold))
+                Button("بستن") { dismiss() }.font(.vz(16, true))
                 Spacer()
             }
             .padding(14)
@@ -127,5 +127,12 @@ struct IconTile: View {
             .frame(width: size, height: size)
             .background(LinearGradient(colors: [c, c.opacity(0.72)], startPoint: .topLeading, endPoint: .bottomTrailing))
             .clipShape(RoundedRectangle(cornerRadius: size / 3))
+    }
+}
+
+extension Font {
+    /// Vazirmatn (bundled) for Persian text
+    static func vz(_ size: CGFloat, _ bold: Bool) -> Font {
+        .custom(bold ? "Vazirmatn-Bold" : "Vazirmatn-Regular", size: size)
     }
 }

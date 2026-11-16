@@ -9,8 +9,8 @@ struct ScoreGauge: View {
                 .stroke(Theme.score(score), style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
-                Text(Theme.fa(String(score))).font(.system(size: 40, weight: .bold)).foregroundColor(Theme.ink)
-                Text("از ۱۰۰").font(.system(size: 13)).foregroundColor(Theme.muted)
+                Text(Theme.fa(String(score))).font(.vz(40, true)).foregroundColor(Theme.ink)
+                Text("از ۱۰۰").font(.vz(13, false)).foregroundColor(Theme.muted)
             }
         }
         .frame(width: 170, height: 170)
@@ -23,7 +23,7 @@ struct Pill: View {
     let color: Color
     var body: some View {
         Text("\(label): \(Theme.fa(String(n)))")
-            .font(.system(size: 13, weight: .bold)).foregroundColor(color)
+            .font(.vz(13, true)).foregroundColor(color)
             .padding(.horizontal, 12).padding(.vertical, 5)
             .overlay(Capsule().stroke(color, lineWidth: 1))
     }
@@ -35,13 +35,13 @@ struct IssueCard: View {
         Card {
             VStack(alignment: .leading, spacing: 6) {
                 Text((check.status == "warn" ? "⚠  " : "✕  ") + check.title)
-                    .font(.system(size: 15, weight: .bold)).foregroundColor(Theme.status(check.status))
+                    .font(.vz(15, true)).foregroundColor(Theme.status(check.status))
                 if !check.detail.isEmpty {
-                    Text(check.detail).font(.system(size: 13)).foregroundColor(Theme.muted)
+                    Text(check.detail).font(.vz(13, false)).foregroundColor(Theme.muted)
                 }
                 if !check.fix.isEmpty {
                     Text("راه‌حل: " + check.fix)
-                        .font(.system(size: 13)).foregroundColor(Theme.greenDark)
+                        .font(.vz(13, false)).foregroundColor(Theme.greenDark)
                         .padding(10).frame(maxWidth: .infinity, alignment: .leading)
                         .background(Theme.greenSoft).clipShape(RoundedRectangle(cornerRadius: 10))
                 }
@@ -58,19 +58,19 @@ struct CategoryCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Button { withAnimation { open.toggle() } } label: {
                     HStack {
-                        Text(cat.title).font(.system(size: 15, weight: .bold)).foregroundColor(Theme.ink)
+                        Text(cat.title).font(.vz(15, true)).foregroundColor(Theme.ink)
                         Spacer()
                         Text(Theme.fa(String(cat.score)) + "٪  " + (open ? "▴" : "▾"))
-                            .font(.system(size: 15, weight: .bold)).foregroundColor(Theme.score(cat.score))
+                            .font(.vz(15, true)).foregroundColor(Theme.score(cat.score))
                     }
                 }
                 if open {
                     ForEach(cat.checks) { c in
                         VStack(alignment: .leading, spacing: 2) {
                             Text((c.status == "pass" ? "✓  " : (c.status == "warn" ? "⚠  " : "✕  ")) + c.title)
-                                .font(.system(size: 14)).foregroundColor(Theme.status(c.status))
+                                .font(.vz(14, false)).foregroundColor(Theme.status(c.status))
                             if !c.detail.isEmpty {
-                                Text(c.detail).font(.system(size: 12)).foregroundColor(Theme.muted)
+                                Text(c.detail).font(.vz(12, false)).foregroundColor(Theme.muted)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,19 +91,19 @@ struct ReportView: View {
             HStack {
                 Button("‹  بازگشت") { dismiss() }
                 Spacer()
-                Text(report.title).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink)
+                Text(report.title).font(.vz(16, true)).foregroundColor(Theme.ink)
                 Spacer()
                 Button("اشتراک") { showShare = true }.opacity((report.share ?? "").isEmpty ? 0 : 1)
             }
-            .font(.system(size: 15, weight: .bold))
+            .font(.vz(15, true))
             .padding(14).background(Color.white)
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 12) {
                         IconTile(slug: Theme.slugOf(report.type ?? ""), cat: Theme.catOf(report.type ?? ""), size: 44)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(report.title).font(.system(size: 17, weight: .bold)).foregroundColor(Theme.ink)
-                            Text(report.host).font(.system(size: 13)).foregroundColor(Theme.muted)
+                            Text(report.title).font(.vz(17, true)).foregroundColor(Theme.ink)
+                            Text(report.host).font(.vz(13, false)).foregroundColor(Theme.muted)
                                 .environment(\.layoutDirection, .leftToRight)
                         }
                     }

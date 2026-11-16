@@ -15,7 +15,7 @@ struct BlocksView: View {
             Card {
                 VStack(spacing: 6) {
                     ScoreGauge(score: b.score)
-                    Text(b.label).font(.system(size: 13, weight: .bold)).foregroundColor(Theme.muted)
+                    Text(b.label).font(.vz(13, true)).foregroundColor(Theme.muted)
                 }.frame(maxWidth: .infinity)
             }
         case "counts":
@@ -28,9 +28,9 @@ struct BlocksView: View {
                     ForEach(Array(b.rows.enumerated()), id: \.offset) { i, r in
                         if i > 0 { Divider() }
                         HStack(alignment: .top) {
-                            Text(r.first ?? "").font(.system(size: 13)).foregroundColor(Theme.muted)
+                            Text(r.first ?? "").font(.vz(13, false)).foregroundColor(Theme.muted)
                             Spacer(minLength: 12)
-                            Text(Theme.fa(r.count > 1 ? r[1] : "")).font(.system(size: 14, weight: .bold)).foregroundColor(Theme.ink)
+                            Text(Theme.fa(r.count > 1 ? r[1] : "")).font(.vz(14, true)).foregroundColor(Theme.ink)
                                 .multilineTextAlignment(.trailing)
                         }
                     }
@@ -38,18 +38,18 @@ struct BlocksView: View {
             }
         case "list":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
                 ForEach(b.items) { it in
                     Card {
                         HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(it.title).font(.system(size: 14, weight: .bold)).foregroundColor(Theme.ink)
+                                Text(it.title).font(.vz(14, true)).foregroundColor(Theme.ink)
                                     .environment(\.layoutDirection, it.ltr ? .leftToRight : .rightToLeft)
-                                if !it.sub.isEmpty { Text(it.sub).font(.system(size: 12)).foregroundColor(Theme.muted) }
+                                if !it.sub.isEmpty { Text(it.sub).font(.vz(12, false)).foregroundColor(Theme.muted) }
                             }
                             Spacer(minLength: 8)
                             if !it.tag.isEmpty {
-                                Text(Theme.fa(it.tag)).font(.system(size: 12, weight: .bold)).foregroundColor(Theme.tone(it.tone))
+                                Text(Theme.fa(it.tag)).font(.vz(12, true)).foregroundColor(Theme.tone(it.tone))
                                     .padding(.horizontal, 8).padding(.vertical, 3)
                                     .background(Theme.tone(it.tone).opacity(0.12)).clipShape(Capsule())
                             }
@@ -59,10 +59,10 @@ struct BlocksView: View {
             }
         case "chips":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
                 Card { FlowLayout(spacing: 6) {
                     ForEach(b.items) { it in
-                        Text(it.title).font(.system(size: 13)).foregroundColor(Theme.greenDark)
+                        Text(it.title).font(.vz(13, false)).foregroundColor(Theme.greenDark)
                             .padding(.horizontal, 10).padding(.vertical, 5)
                             .background(Theme.greenSoft).clipShape(Capsule())
                     }
@@ -72,15 +72,15 @@ struct BlocksView: View {
             CopyCard(title: b.title, text: b.text, ltr: b.ltr)
         case "bars":
             VStack(alignment: .leading, spacing: 8) {
-                if !b.title.isEmpty { Text(b.title).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink) }
+                if !b.title.isEmpty { Text(b.title).font(.vz(16, true)).foregroundColor(Theme.ink) }
                 Card {
                     VStack(spacing: 10) {
                         ForEach(b.items) { it in
                             VStack(spacing: 4) {
                                 HStack {
-                                    Text(it.label).font(.system(size: 13)).foregroundColor(Theme.ink)
+                                    Text(it.label).font(.vz(13, false)).foregroundColor(Theme.ink)
                                     Spacer()
-                                    Text(Theme.fa(it.text)).font(.system(size: 13, weight: .bold)).foregroundColor(Theme.muted)
+                                    Text(Theme.fa(it.text)).font(.vz(13, true)).foregroundColor(Theme.muted)
                                 }
                                 GeometryReader { g in
                                     ZStack(alignment: .leading) {
@@ -97,9 +97,9 @@ struct BlocksView: View {
         case "checks":
             ChecksView(categories: b.categories)
         case "p":
-            Text(b.text).font(.system(size: 13)).foregroundColor(b.muted ? Theme.muted : Theme.ink)
+            Text(b.text).font(.vz(13, false)).foregroundColor(b.muted ? Theme.muted : Theme.ink)
         case "h":
-            Text(b.text).font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink)
+            Text(b.text).font(.vz(16, true)).foregroundColor(Theme.ink)
         default:
             EmptyView()
         }
@@ -107,8 +107,8 @@ struct BlocksView: View {
 
     private func count(_ n: Int, _ label: String, _ c: Color) -> some View {
         VStack(spacing: 2) {
-            Text(Theme.fa(String(n))).font(.system(size: 22, weight: .bold)).foregroundColor(c)
-            Text(label).font(.system(size: 12)).foregroundColor(Theme.muted)
+            Text(Theme.fa(String(n))).font(.vz(22, true)).foregroundColor(c)
+            Text(label).font(.vz(12, false)).foregroundColor(Theme.muted)
         }
         .frame(maxWidth: .infinity).padding(.vertical, 10)
         .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 14))
@@ -124,8 +124,8 @@ struct CopyCard: View {
     var body: some View {
         Card {
             VStack(alignment: .leading, spacing: 8) {
-                Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(Theme.ink)
-                Text(text).font(.system(size: 13)).foregroundColor(Theme.ink).textSelection(.enabled)
+                Text(title).font(.vz(14, true)).foregroundColor(Theme.ink)
+                Text(text).font(.vz(13, false)).foregroundColor(Theme.ink).textSelection(.enabled)
                     .environment(\.layoutDirection, ltr ? .leftToRight : .rightToLeft)
                     .frame(maxWidth: .infinity, alignment: .leading).padding(10)
                     .background(Color(red: 248 / 255, green: 250 / 255, blue: 252 / 255))
@@ -134,7 +134,7 @@ struct CopyCard: View {
                     UIPasteboard.general.string = text
                     copied = true
                 } label: {
-                    Text(copied ? "کپی شد ✓" : "کپی").font(.system(size: 14, weight: .bold)).foregroundColor(Theme.green)
+                    Text(copied ? "کپی شد ✓" : "کپی").font(.vz(14, true)).foregroundColor(Theme.green)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
                 }
@@ -149,11 +149,11 @@ struct ChecksView: View {
         let issues = categories.flatMap { $0.checks }.filter { $0.status != "pass" }.sorted { $0.gain > $1.gain }
         VStack(alignment: .leading, spacing: 8) {
             if !issues.isEmpty {
-                Text("مهم‌ترین کارها برای بهتر شدن").font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink)
+                Text("مهم‌ترین کارها برای بهتر شدن").font(.vz(16, true)).foregroundColor(Theme.ink)
                 ForEach(Array(issues.prefix(8))) { IssueCard(check: $0) }
             }
             if !categories.isEmpty {
-                Text("همه‌ی بخش‌ها").font(.system(size: 16, weight: .bold)).foregroundColor(Theme.ink).padding(.top, 10)
+                Text("همه‌ی بخش‌ها").font(.vz(16, true)).foregroundColor(Theme.ink).padding(.top, 10)
                 ForEach(categories) { CategoryCard(cat: $0) }
             }
         }

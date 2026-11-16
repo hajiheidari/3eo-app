@@ -66,6 +66,14 @@ public class ToolActivity extends ScreenActivity {
         hero.addView(row);
         hero.addView(UI.text(this, tool.optString("desc"), 13, 0xE6FFFFFF, false), UI.wrap(this, 10));
         content.addView(hero);
+        String costLabel = tool.optString("cost");
+        if (!costLabel.isEmpty()) {
+            boolean paid = tool.optBoolean("paid");
+            TextView cl = UI.text(this, (paid ? "هزینه: " : "هزینه: ") + costLabel, 13, paid ? UI.AMBER : UI.GREEN, true);
+            cl.setBackground(UI.box(this, paid ? 0x1AD97706 : 0x1A047857, 12, 0));
+            cl.setPadding(UI.dp(this, 12), UI.dp(this, 8), UI.dp(this, 12), UI.dp(this, 8));
+            content.addView(cl, UI.wrap(this, 10));
+        }
 
         LinearLayout form = UI.card(this);
         JSONArray fields = tool.optJSONArray("fields");

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView logo = new ImageView(this);
         logo.setImageResource(R.drawable.logo);
         logo.setAdjustViewBounds(true);
+        logo.setOnClickListener(v -> show(0));
         top.addView(logo, new LinearLayout.LayoutParams(UI.dp(this, 84), ViewGroup.LayoutParams.WRAP_CONTENT));
         root.addView(top, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         View line = new View(this);
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         bar.setPadding(UI.dp(this, 14), UI.dp(this, 4), UI.dp(this, 6), UI.dp(this, 4));
         urlInput = new EditText(this);
         urlInput.setHint("example.com");
+        urlInput.setTypeface(UI.face(this, false));
         urlInput.setHintTextColor(0xFF94A3B8);
         urlInput.setTextColor(UI.INK);
         urlInput.setTextSize(16);
@@ -201,15 +203,21 @@ public class MainActivity extends AppCompatActivity {
         });
         col.addView(search, UI.wrap(this, 16));
 
-        android.widget.HorizontalScrollView hs = new android.widget.HorizontalScrollView(this);
-        hs.setHorizontalScrollBarEnabled(false);
-        LinearLayout chips = new LinearLayout(this);
-        UI.rtl(chips);
+        LinearLayout chips = UI.column(this);
         String[] order = {"", "ai", "tech", "keyword", "content", "data"};
-        for (final String cat : order) {
+        LinearLayout crow = null;
+        for (int ci = 0; ci < order.length; ci++) {
+            final String cat = order[ci];
+            if (ci % 3 == 0) {
+                crow = new LinearLayout(this);
+                UI.rtl(crow);
+                chips.addView(crow, UI.wrap(this, ci == 0 ? 0 : 8));
+            }
             String name = cat.isEmpty() ? "همه" : (categories != null ? categories.optString(cat, cat) : cat);
             final TextView ch = UI.text(this, name, 13, UI.INK, true);
-            ch.setPadding(UI.dp(this, 14), UI.dp(this, 8), UI.dp(this, 14), UI.dp(this, 8));
+            ch.setGravity(Gravity.CENTER);
+            ch.setSingleLine(true);
+            ch.setPadding(UI.dp(this, 6), UI.dp(this, 9), UI.dp(this, 6), UI.dp(this, 9));
             boolean on = cat.equals(filterCat);
             ch.setBackground(UI.box(this, on ? (cat.isEmpty() ? UI.GREEN : UI.catColor(cat)) : 0xFFFFFFFF, 18, on ? 0 : UI.LINE));
             ch.setTextColor(on ? 0xFFFFFFFF : UI.INK);
@@ -217,13 +225,11 @@ public class MainActivity extends AppCompatActivity {
                 filterCat = cat;
                 show(0);
             });
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.setMarginEnd(UI.dp(this, 8));
-            chips.addView(ch, lp);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            lp.setMargins(UI.dp(this, 4), 0, UI.dp(this, 4), 0);
+            crow.addView(ch, lp);
         }
-        hs.addView(chips);
-        UI.rtl(hs);
-        col.addView(hs, UI.wrap(this, 12));
+        col.addView(chips, UI.wrap(this, 12));
 
         grid = UI.column(this);
         col.addView(grid, UI.wrap(this, 8));
@@ -284,6 +290,11 @@ public class MainActivity extends AppCompatActivity {
         d.setMaxLines(2);
         d.setEllipsize(android.text.TextUtils.TruncateAt.END);
         c.addView(d, UI.wrap(this, 4));
+        boolean paid = t.optBoolean("paid");
+        TextView cost = UI.text(this, paid ? "سهمیه‌ی روزانه + اعتبار" : "رایگان", 11, paid ? UI.AMBER : UI.GREEN, true);
+        cost.setBackground(UI.box(this, paid ? 0x1AD97706 : 0x1A047857, 10, 0));
+        cost.setPadding(UI.dp(this, 8), UI.dp(this, 3), UI.dp(this, 8), UI.dp(this, 3));
+        c.addView(cost, UI.wrap(this, 8));
         c.setOnClickListener(v -> openTool(t));
         return c;
     }

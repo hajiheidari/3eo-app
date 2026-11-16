@@ -44,9 +44,7 @@ final class UI {
         t.setTextColor(color);
         t.setLineSpacing(0, 1.25f);
         t.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-        if (bold) {
-            t.setTypeface(Typeface.DEFAULT_BOLD);
-        }
+        t.setTypeface(face(c, bold));
         return t;
     }
 
@@ -81,7 +79,7 @@ final class UI {
         b.setTextSize(15);
         b.setAllCaps(false);
         b.setTextColor(0xFFFFFFFF);
-        b.setTypeface(Typeface.DEFAULT_BOLD);
+        b.setTypeface(face(c, true));
         b.setBackground(box(c, GREEN, 12, 0));
         b.setStateListAnimator(null);
         b.setMinHeight(dp(c, 48));
@@ -91,6 +89,7 @@ final class UI {
     static Button ghost(Context c, String s, int color) {
         Button b = new Button(c);
         b.setText(s);
+        b.setTypeface(face(c, true));
         b.setTextSize(14);
         b.setAllCaps(false);
         b.setTextColor(color);
@@ -103,6 +102,7 @@ final class UI {
     static EditText input(Context c, String hint) {
         EditText e = new EditText(c);
         e.setHint(hint);
+        e.setTypeface(face(c, false));
         e.setTextSize(16);
         e.setSingleLine(true);
         e.setTextColor(INK);
@@ -130,6 +130,20 @@ final class UI {
             b.append(ch >= '0' && ch <= '9' ? (char) ('۰' + (ch - '0')) : ch);
         }
         return b.toString();
+    }
+
+    private static Typeface reg, bld;
+
+    static Typeface face(Context c, boolean bold) {
+        try {
+            if (reg == null) {
+                reg = androidx.core.content.res.ResourcesCompat.getFont(c, R.font.vazirmatn_regular);
+                bld = androidx.core.content.res.ResourcesCompat.getFont(c, R.font.vazirmatn_bold);
+            }
+            return bold ? bld : reg;
+        } catch (Exception e) {
+            return bold ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT;
+        }
     }
 
     static int catColor(String cat) {

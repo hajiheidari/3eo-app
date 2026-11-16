@@ -18,31 +18,37 @@ struct ToolView: View {
                 Spacer()
                 Button("اشتراک") { showShare = true }.opacity((result?.share ?? "").isEmpty ? 0 : 1)
             }
-            .font(.system(size: 15, weight: .bold))
+            .font(.vz(15, true))
             .padding(14).background(Color.white)
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 14) {
                         hero
+                        if let c = tool.cost, !c.isEmpty {
+                            let paid = tool.paid ?? false
+                            Text("هزینه: " + c).font(.vz(13, true)).foregroundColor(paid ? Theme.amber : Theme.green)
+                                .padding(.horizontal, 12).padding(.vertical, 8).frame(maxWidth: .infinity, alignment: .leading)
+                                .background((paid ? Theme.amber : Theme.green).opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
                         Card {
                             VStack(alignment: .leading, spacing: 14) {
                                 ForEach(tool.fields) { f in field(f) }
                             }
                         }
                         if let e = error {
-                            Text(e).font(.system(size: 13, weight: .bold)).foregroundColor(Theme.red)
+                            Text(e).font(.vz(13, true)).foregroundColor(Theme.red)
                         }
                         Button(action: run) {
                             HStack {
                                 if loading { ProgressView().tint(.white) }
-                                Text(loading ? "در حال انجام… (تا ۴۵ ثانیه)" : "اجرا").font(.system(size: 16, weight: .bold))
+                                Text(loading ? "در حال انجام… (تا ۴۵ ثانیه)" : "اجرا").font(.vz(16, true))
                             }
                             .frame(maxWidth: .infinity, minHeight: 50).foregroundColor(.white)
                             .background(LinearGradient(colors: [Theme.cat(tool.cat), Theme.cat(tool.cat).opacity(0.75)], startPoint: .leading, endPoint: .trailing))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }.disabled(loading)
                         if let r = result {
-                            Text("نتیجه").font(.system(size: 18, weight: .bold)).foregroundColor(Theme.ink).id("result")
+                            Text("نتیجه").font(.vz(18, true)).foregroundColor(Theme.ink).id("result")
                             BlocksView(blocks: r.blocks)
                         }
                     }
@@ -63,8 +69,8 @@ struct ToolView: View {
                 .foregroundColor(.white).padding(11).frame(width: 52, height: 52)
                 .background(Color.white.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 14))
             VStack(alignment: .leading, spacing: 6) {
-                Text(tool.title).font(.system(size: 17, weight: .bold)).foregroundColor(.white)
-                Text(tool.desc).font(.system(size: 13)).foregroundColor(.white.opacity(0.9))
+                Text(tool.title).font(.vz(17, true)).foregroundColor(.white)
+                Text(tool.desc).font(.vz(13, false)).foregroundColor(.white.opacity(0.9))
             }
             Spacer(minLength: 0)
         }
@@ -75,7 +81,7 @@ struct ToolView: View {
 
     @ViewBuilder private func field(_ f: ToolField) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(f.label).font(.system(size: 13, weight: .bold)).foregroundColor(Theme.muted)
+            Text(f.label).font(.vz(13, true)).foregroundColor(Theme.muted)
             switch f.type {
             case "select":
                 Picker(f.label, selection: Binding(get: { values[f.key] ?? "" }, set: { values[f.key] = $0 })) {
@@ -96,7 +102,7 @@ struct ToolView: View {
                             if on { s.remove(v) } else { s.insert(v) }
                             picked[f.key] = s
                         } label: {
-                            Text(o.count > 1 ? o[1] : "").font(.system(size: 13)).foregroundColor(on ? .white : Theme.ink)
+                            Text(o.count > 1 ? o[1] : "").font(.vz(13, false)).foregroundColor(on ? .white : Theme.ink)
                                 .padding(.horizontal, 12).padding(.vertical, 7)
                                 .background(on ? Theme.green : Color(red: 241 / 255, green: 245 / 255, blue: 249 / 255))
                                 .clipShape(Capsule())

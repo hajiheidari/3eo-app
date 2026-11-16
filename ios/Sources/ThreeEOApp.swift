@@ -16,6 +16,7 @@ struct ThreeEOApp: App {
             .environmentObject(session)
             .environment(\.layoutDirection, .rightToLeft)
             .tint(Theme.green)
+            .font(.vz(15, false))
         }
     }
 }

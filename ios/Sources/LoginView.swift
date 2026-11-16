@@ -13,12 +13,12 @@ struct LoginView: View {
             VStack(spacing: 0) {
                 Image("Logo").resizable().scaledToFit().frame(width: 190).padding(.top, 56)
                 Text("ابزارهای سئو، همیشه همراه شما")
-                    .font(.system(size: 15)).foregroundColor(Theme.muted).padding(.top, 6)
+                    .font(.vz(15, false)).foregroundColor(Theme.muted).padding(.top, 6)
                 Card {
                     VStack(alignment: .leading, spacing: 12) {
                         if step == 0 { mobileStep } else { codeStep }
                         if let e = error {
-                            Text(e).font(.system(size: 13)).foregroundColor(Theme.red)
+                            Text(e).font(.vz(13, false)).foregroundColor(Theme.red)
                         }
                     }
                 }
@@ -31,9 +31,9 @@ struct LoginView: View {
 
     private var mobileStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("ورود یا ثبت‌نام").font(.system(size: 18, weight: .bold)).foregroundColor(Theme.ink)
+            Text("ورود یا ثبت‌نام").font(.vz(18, true)).foregroundColor(Theme.ink)
             Text("شماره موبایل خود را وارد کنید تا کد تأیید برایتان پیامک شود.")
-                .font(.system(size: 14)).foregroundColor(Theme.muted)
+                .font(.vz(14, false)).foregroundColor(Theme.muted)
             TextField("مثلاً ۰۹۱۲۳۴۵۶۷۸۹", text: $mobile)
                 .keyboardType(.phonePad)
                 .padding(14)
@@ -42,26 +42,26 @@ struct LoginView: View {
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
             PrimaryButton(title: "دریافت کد تأیید", loading: loading) { sendCode() }
             Text("با ورود، قوانین و حریم خصوصی 3eo.ir را می‌پذیرید.")
-                .font(.system(size: 12)).foregroundColor(Theme.muted)
+                .font(.vz(12, false)).foregroundColor(Theme.muted)
         }
     }
 
     private var codeStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("کد تأیید").font(.system(size: 18, weight: .bold)).foregroundColor(Theme.ink)
+            Text("کد تأیید").font(.vz(18, true)).foregroundColor(Theme.ink)
             Text("کد ۶ رقمی ارسال‌شده به \(Theme.fa(mobile)) را وارد کنید.")
-                .font(.system(size: 14)).foregroundColor(Theme.muted)
+                .font(.vz(14, false)).foregroundColor(Theme.muted)
             TextField("کد ۶ رقمی", text: $code)
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.center)
-                .font(.system(size: 22))
+                .font(.vz(22, false))
                 .padding(14)
                 .background(Color(white: 0.97))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
             PrimaryButton(title: "ورود", loading: loading) { verify() }
             Button("ویرایش شماره") { step = 0; error = nil }
-                .font(.system(size: 14, weight: .bold)).frame(maxWidth: .infinity)
+                .font(.vz(14, true)).frame(maxWidth: .infinity)
         }
     }
 

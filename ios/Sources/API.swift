@@ -41,6 +41,8 @@ struct Tool: Codable, Identifiable {
     let desc: String
     let cat: String
     let heavy: Bool?
+    let cost: String?
+    let paid: Bool?
     let fields: [ToolField]
     var id: String { slug }
 }

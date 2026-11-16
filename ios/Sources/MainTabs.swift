@@ -14,6 +14,16 @@ struct MainTabs: View {
             ReportsView(me: me, tools: tools).tabItem { Label("گزارش‌ها", systemImage: "doc.text.fill") }.tag(1)
             AccountView(me: me).tabItem { Label("حساب من", systemImage: "person.fill") }.tag(2)
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            HStack {
+                Button { tab = 0 } label: {
+                    Image("Logo").resizable().scaledToFit().frame(height: 34)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16).padding(.vertical, 6)
+            .background(Color.white.shadow(color: .black.opacity(0.06), radius: 3, y: 1))
+        }
         .task { await load() }
         .onChange(of: tab) { _ in Task { await loadMe() } }
     }
@@ -51,23 +61,23 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("سلام 👋").font(.system(size: 14, weight: .bold)).foregroundColor(Color(red: 167 / 255, green: 243 / 255, blue: 208 / 255))
-                    Text("سئوی سایتت را در چند ثانیه بسنج").font(.system(size: 22, weight: .heavy)).foregroundColor(.white)
+                    Text("سلام 👋").font(.vz(14, true)).foregroundColor(Color(red: 167 / 255, green: 243 / 255, blue: 208 / 255))
+                    Text("سئوی سایتت را در چند ثانیه بسنج").font(.vz(22, true)).foregroundColor(.white)
                     Text("امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس.")
-                        .font(.system(size: 13)).foregroundColor(Theme.greenSoft)
+                        .font(.vz(13, false)).foregroundColor(Theme.greenSoft)
                     HStack(spacing: 6) {
                         TextField("example.com", text: $url)
                             .keyboardType(.URL).textInputAutocapitalization(.never).disableAutocorrection(true)
                             .environment(\.layoutDirection, .leftToRight)
                             .padding(.horizontal, 14).frame(height: 50)
                         Button(action: analyze) {
-                            Group { if loading { ProgressView().tint(.white) } else { Text("تحلیل").font(.system(size: 15, weight: .bold)) } }
+                            Group { if loading { ProgressView().tint(.white) } else { Text("تحلیل").font(.vz(15, true)) } }
                                 .foregroundColor(.white).frame(width: 90, height: 44)
                                 .background(Theme.green).clipShape(RoundedRectangle(cornerRadius: 12))
                         }.disabled(loading)
                     }
                     .padding(.horizontal, 6).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 16)).padding(.top, 8)
-                    if let e = error { Text(e).font(.system(size: 13, weight: .bold)).foregroundColor(.white) }
+                    if let e = error { Text(e).font(.vz(13, true)).foregroundColor(.white) }
                 }
                 .padding(20).frame(maxWidth: .infinity, alignment: .leading)
                 .background(LinearGradient(colors: [Color(red: 5 / 255, green: 150 / 255, blue: 105 / 255), Color(red: 6 / 255, green: 78 / 255, blue: 59 / 255)], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -77,18 +87,16 @@ struct HomeView: View {
                     .padding(14).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(order, id: \.self) { c in
-                            let on = c == cat
-                            Button { cat = c } label: {
-                                Text(c.isEmpty ? "همه" : (tools?.categories[c] ?? c)).font(.system(size: 13, weight: .bold))
-                                    .foregroundColor(on ? .white : Theme.ink)
-                                    .padding(.horizontal, 14).padding(.vertical, 8)
-                                    .background(on ? (c.isEmpty ? Theme.green : Theme.cat(c)) : Color.white)
-                                    .clipShape(Capsule())
-                                    .overlay(Capsule().stroke(on ? Color.clear : Theme.line, lineWidth: 1))
-                            }
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                    ForEach(order, id: \.self) { c in
+                        let on = c == cat
+                        Button { cat = c } label: {
+                            Text(c.isEmpty ? "همه" : (tools?.categories[c] ?? c)).font(.vz(13, true))
+                                .foregroundColor(on ? .white : Theme.ink).lineLimit(1).minimumScaleFactor(0.8)
+                                .frame(maxWidth: .infinity).padding(.vertical, 9)
+                                .background(on ? (c.isEmpty ? Theme.green : Theme.cat(c)) : Color.white)
+                                .clipShape(Capsule())
+                                .overlay(Capsule().stroke(on ? Color.clear : Theme.line, lineWidth: 1))
                         }
                     }
                 }
@@ -96,20 +104,25 @@ struct HomeView: View {
                 if tools == nil {
                     ProgressView("در حال دریافت ابزارها…").frame(maxWidth: .infinity).padding(.top, 20)
                 } else if filtered.isEmpty {
-                    Text("ابزاری پیدا نشد.").font(.system(size: 14)).foregroundColor(Theme.muted)
+                    Text("ابزاری پیدا نشد.").font(.vz(14, false)).foregroundColor(Theme.muted)
                 } else {
                     LazyVGrid(columns: cols, spacing: 10) {
                         ForEach(filtered) { t in
                             Button { open(t) } label: {
                                 VStack(alignment: .leading, spacing: 8) {
                                     IconTile(slug: t.slug, cat: t.cat, size: 46)
-                                    Text(t.title).font(.system(size: 14, weight: .bold)).foregroundColor(Theme.ink).lineLimit(2)
+                                    Text(t.title).font(.vz(14, true)).foregroundColor(Theme.ink).lineLimit(2)
                                         .multilineTextAlignment(.leading)
-                                    Text(t.desc).font(.system(size: 11)).foregroundColor(Theme.muted).lineLimit(2)
+                                    Text(t.desc).font(.vz(11, false)).foregroundColor(Theme.muted).lineLimit(2)
                                         .multilineTextAlignment(.leading)
                                     Spacer(minLength: 0)
+                                    let paid = t.paid ?? false
+                                    Text(paid ? "سهمیه‌ی روزانه + اعتبار" : "رایگان").font(.vz(11, true))
+                                        .foregroundColor(paid ? Theme.amber : Theme.green)
+                                        .padding(.horizontal, 8).padding(.vertical, 3)
+                                        .background((paid ? Theme.amber : Theme.green).opacity(0.12)).clipShape(Capsule())
                                 }
-                                .padding(14).frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
+                                .padding(14).frame(maxWidth: .infinity, minHeight: 165, alignment: .topLeading)
                                 .background(Color.white).clipShape(RoundedRectangle(cornerRadius: 18))
                                 .overlay(RoundedRectangle(cornerRadius: 18).stroke(Theme.line, lineWidth: 1))
                             }
@@ -154,11 +167,11 @@ struct ReportsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("گزارش‌های من").font(.system(size: 20, weight: .bold)).foregroundColor(Theme.ink)
+                Text("گزارش‌های من").font(.vz(20, true)).foregroundColor(Theme.ink)
                 let rows = me?.reports ?? []
                 if rows.isEmpty {
                     Text(me == nil ? "در حال دریافت…" : "هنوز گزارشی ندارید. یک ابزار را اجرا کنید.")
-                        .font(.system(size: 14)).foregroundColor(Theme.muted)
+                        .font(.vz(14, false)).foregroundColor(Theme.muted)
                 }
                 ForEach(rows) { r in
                     Button { selected = ReportToken(id: r.token) } label: {
@@ -166,13 +179,13 @@ struct ReportsView: View {
                             HStack(spacing: 12) {
                                 IconTile(slug: Theme.slugOf(r.type), cat: Theme.catOf(r.type), size: 42)
                                 VStack(alignment: .leading, spacing: 3) {
-                                    Text(title(r.type)).font(.system(size: 14, weight: .bold)).foregroundColor(Theme.ink)
-                                    Text(r.host).font(.system(size: 12)).foregroundColor(Theme.muted).lineLimit(1)
+                                    Text(title(r.type)).font(.vz(14, true)).foregroundColor(Theme.ink)
+                                    Text(r.host).font(.vz(12, false)).foregroundColor(Theme.muted).lineLimit(1)
                                         .environment(\.layoutDirection, .leftToRight)
                                 }
                                 Spacer()
                                 if let sc = r.score, ["analyze", "ai", "speed"].contains(r.type) {
-                                    Text(Theme.fa(String(sc))).font(.system(size: 20, weight: .bold)).foregroundColor(Theme.score(sc))
+                                    Text(Theme.fa(String(sc))).font(.vz(20, true)).foregroundColor(Theme.score(sc))
                                 }
                             }
                         }
@@ -198,19 +211,19 @@ struct AccountView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("حساب من").font(.system(size: 19, weight: .bold)).foregroundColor(Theme.ink)
+                Text("حساب من").font(.vz(19, true)).foregroundColor(Theme.ink)
                 Card {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("شماره‌ی موبایل").font(.system(size: 12)).foregroundColor(Theme.muted)
-                        Text(me.map { Theme.fa($0.mobile) } ?? "…").font(.system(size: 17, weight: .bold)).foregroundColor(Theme.ink)
-                        Text("اعتبار شما").font(.system(size: 12)).foregroundColor(Theme.muted).padding(.top, 10)
-                        Text(me.map { Theme.fa(String($0.credits)) } ?? "…").font(.system(size: 30, weight: .bold)).foregroundColor(Theme.green)
+                        Text("شماره‌ی موبایل").font(.vz(12, false)).foregroundColor(Theme.muted)
+                        Text(me.map { Theme.fa($0.mobile) } ?? "…").font(.vz(17, true)).foregroundColor(Theme.ink)
+                        Text("اعتبار شما").font(.vz(12, false)).foregroundColor(Theme.muted).padding(.top, 10)
+                        Text(me.map { Theme.fa(String($0.credits)) } ?? "…").font(.vz(30, true)).foregroundColor(Theme.green)
                     }
                 }
                 outline("حریم خصوصی و قوانین", Theme.green) { if let u = URL(string: "https://3eo.ir/privacy") { web = WebItem(url: u) } }
                 outline("خروج از حساب", Theme.ink) { session.logout() }
                 outline("حذف حساب کاربری", Theme.red) { confirmDelete = true }
-                if let e = error { Text(e).font(.system(size: 13)).foregroundColor(Theme.red) }
+                if let e = error { Text(e).font(.vz(13, false)).foregroundColor(Theme.red) }
             }
             .padding(16)
         }
@@ -227,7 +240,7 @@ struct AccountView: View {
 
     private func outline(_ title: String, _ color: Color, _ action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title).font(.system(size: 15, weight: .bold)).foregroundColor(color)
+            Text(title).font(.vz(15, true)).foregroundColor(color)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(color, lineWidth: 1))
         }
