@@ -288,9 +288,9 @@ public class MainActivity extends AppCompatActivity {
             int sc = r.optInt("score");
             row.addView(UI.text(this, UI.fa(String.valueOf(sc)), 20, UI.scoreColor(sc), true));
             row.setOnClickListener(v -> {
-                Intent i = new Intent(this, ReportActivity.class);
-                i.putExtra("token", r.optString("token"));
-                startActivity(i);
+                Intent open = new Intent(this, ReportActivity.class);
+                open.putExtra("token", r.optString("token"));
+                startActivity(open);
             });
             col.addView(row, UI.wrap(this, 10));
         }
