@@ -1,0 +1,15 @@
+{
+  "copyright": "2026 3EO",
+  "primaryCategory": "PRODUCTIVITY",
+  "secondaryCategory": "BUSINESS",
+  "reviewNotes": "SEO by 3EO is a native client for the SEO tools of 3eo.ir. Sign-in uses a mobile number and a one-time SMS code; a demo account for review is provided in the sign-in fields above (the SMS step is bypassed for that account). After signing in: the Home tab runs the tools (enter any website, e.g. example.com, and tap Analyze), Reports lists past results, the Pro tab holds client management, keyword rank tracking, AI brand monitoring and content generation, and Blog shows tutorial articles from our blog. The app is available in English and Persian; the language is chosen automatically from the device region and can be switched on the sign-in screen or in My account. There are no in-app purchases and no ads. The account can be deleted in My account > Delete account.",
+  "locales": {
+    "en-US": {
+      "name": "SEO by 3EO",
+      "subtitle": "SEO & AI-visibility tools",
+      "promotionalText": "Check any website's SEO, speed, security and AI visibility in seconds. Track rankings, write content and report to clients.",
+      "keywords": "seo,website audit,rank tracker,keyword,site speed,robots.txt,backlink,meta tags,core web vitals,ai seo",
+      "description": "SEO by 3EO puts a full set of SEO tools in your pocket. Enter a website address and get a score, a prioritized list of problems and clear fixes, all inside the app.\n\nWHAT YOU CAN DO\n• Full SEO analysis: 30+ checks on titles, headings, images, links, indexing and structured data.\n• Speed & Core Web Vitals: mobile and desktop performance with improvement tips.\n• AI visibility: see whether ChatGPT and other AI tools know your brand, and whether AI bots can read your site.\n• Technical checks: robots.txt, sitemap, HTTP headers, HTTPS and redirects.\n• Keyword tools: clustering and real Google search suggestions.\n• Content tools: topic ideas, meta descriptions and titles, outlines and full articles.\n• Rank tracking: follow your keyword positions on Google with daily or weekly tracking.\n• SEO pro mode: manage client sites, schedule automatic checks and send branded monthly reports.\n• Blog: read our SEO tutorials right inside the app.\n\nFree to download. Sign in with your mobile number and a one-time SMS code. No ads.\n\nThe app is available in English and Persian (Farsi); you can switch language anytime from My account.\n\nPrivacy policy: https://3eo.ir/privacy"
+    }
+  }
+}
