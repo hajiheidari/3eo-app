@@ -136,9 +136,16 @@ public class ClientActivity extends ScreenActivity {
             rr.addView(UI.iconTile(this, UI.slugOfType(type), ReportActivity.catOf(type), 38));
             LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
             tl.setMarginStart(UI.dp(this, 10));
-            rr.addView(UI.text(this, UI.fa(r.optString("created_at").substring(0, Math.min(10, r.optString("created_at").length()))), 13, UI.INK, true), tl);
+            LinearLayout tx = UI.column(this);
+            tx.addView(UI.text(this, reportTitle(type), 14, UI.INK, true));
+            tx.addView(UI.text(this, UI.fa(r.optString("created_at").substring(0, Math.min(10, r.optString("created_at").length()))), 11, UI.MUTED, false));
+            rr.addView(tx, tl);
             if (!r.isNull("score")) {
-                rr.addView(UI.text(this, UI.fa(String.valueOf(r.optInt("score"))), 18, UI.scoreColor(r.optInt("score")), true));
+                LinearLayout sc2 = UI.column(this);
+                sc2.setGravity(Gravity.CENTER_HORIZONTAL);
+                sc2.addView(UI.text(this, UI.fa(String.valueOf(r.optInt("score"))), 18, UI.scoreColor(r.optInt("score")), true));
+                sc2.addView(UI.text(this, "امتیاز", 10, UI.MUTED, false));
+                rr.addView(sc2);
             }
             rr.setOnClickListener(v -> {
                 Intent i2 = new Intent(this, ReportActivity.class);
@@ -167,6 +174,19 @@ public class ClientActivity extends ScreenActivity {
                     }
                 })).show());
         content.addView(del, UI.wrap(this, 10));
+    }
+
+    private static String reportTitle(String t) {
+        switch (t) {
+            case "analyze":
+                return "تحلیل کامل سئو";
+            case "speed":
+                return "سرعت سایت";
+            case "ai":
+                return "دیده‌شدن در هوش مصنوعی";
+            default:
+                return "گزارش";
+        }
     }
 
     private View scheduleCard(final JSONObject s, JSONArray opts) {

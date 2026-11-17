@@ -26,6 +26,7 @@
         <activity android:name=".ContentActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ContentJobActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".BrandActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".BlogPostActivity" android:exported="false" />
         <activity android:name=".RankActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".MonitorActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ClientActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />

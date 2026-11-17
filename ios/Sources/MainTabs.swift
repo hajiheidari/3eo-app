@@ -14,6 +14,7 @@ struct MainTabs: View {
             ReportsView(me: me, tools: tools).opacity(tab == 1 ? 1 : 0).allowsHitTesting(tab == 1)
             AccountView(me: me).opacity(tab == 2 ? 1 : 0).allowsHitTesting(tab == 2)
             ClientsView().opacity(tab == 3 ? 1 : 0).allowsHitTesting(tab == 3)
+            BlogView().opacity(tab == 4 ? 1 : 0).allowsHitTesting(tab == 4)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) { bar }
         .task { await load() }
@@ -29,6 +30,7 @@ struct MainTabs: View {
                     .padding(.horizontal, 18).padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
             }
+            barItem("وبلاگ", "square.and.pencil", 4)
             barItem("حساب من", "person.fill", 2)
         }
         .padding(.top, 6).padding(.bottom, 4)

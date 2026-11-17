@@ -161,6 +161,15 @@ struct ClientDetailView: View {
         } message: { Text("مشتری و بررسی‌های خودکارش حذف می‌شود. گزارش‌ها می‌مانند.") }
     }
 
+    private func reportTitle(_ t: String) -> String {
+        switch t {
+        case "analyze": return "تحلیل کامل سئو"
+        case "speed": return "سرعت سایت"
+        case "ai": return "دیده‌شدن در هوش مصنوعی"
+        default: return "گزارش"
+        }
+    }
+
     @ViewBuilder private func content(_ d: ClientDetail) -> some View {
         let c = d.client
         VStack(alignment: .leading, spacing: 6) {
@@ -231,9 +240,17 @@ struct ClientDetailView: View {
                 Card {
                     HStack(spacing: 10) {
                         IconTile(slug: Theme.slugOf(r.type), cat: Theme.catOf(r.type), size: 38)
-                        Text(Theme.fa(String(r.created_at.prefix(10)))).font(.vz(13, true)).foregroundColor(Theme.ink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(reportTitle(r.type)).font(.vz(14, true)).foregroundColor(Theme.ink)
+                            Text(Theme.fa(String(r.created_at.prefix(10)))).font(.vz(11, false)).foregroundColor(Theme.muted)
+                        }
                         Spacer()
-                        if let s = r.score { Text(Theme.fa(String(s))).font(.vz(18, true)).foregroundColor(Theme.score(s)) }
+                        if let s = r.score {
+                            VStack(spacing: 0) {
+                                Text(Theme.fa(String(s))).font(.vz(18, true)).foregroundColor(Theme.score(s))
+                                Text("امتیاز").font(.vz(10, false)).foregroundColor(Theme.muted)
+                            }
+                        }
                     }
                 }
             }.buttonStyle(.plain)

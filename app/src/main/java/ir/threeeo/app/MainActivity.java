@@ -26,7 +26,7 @@ import java.util.List;
 /** The native shell of the app: Home (quick analysis + tools), Reports, Account. All tools run natively. */
 public class MainActivity extends AppCompatActivity {
     private FrameLayout frame;
-    private LinearLayout[] tabs = new LinearLayout[4];
+    private LinearLayout[] tabs = new LinearLayout[5];
     private int current = 0;
     private JSONObject me;
     private JSONArray tools;
@@ -54,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bar = new LinearLayout(this);
         UI.rtl(bar);
         bar.setBackgroundColor(UI.CARD);
-        String[] names = {"خانه", "گزارش‌ها", "حساب من", "مشتریان"};
-        String[] icons = {"", "▤", "☺", "♚"};
-        int[] posOrder = {1, 3, 0, 2};
-        for (int pi = 0; pi < 4; pi++) {
+        String[] names = {"خانه", "گزارش‌ها", "حساب من", "مشتریان", "وبلاگ"};
+        String[] icons = {"", "▤", "☺", "♚", "✎"};
+        int[] posOrder = {1, 3, 0, 4, 2};
+        for (int pi = 0; pi < 5; pi++) {
             final int idx = posOrder[pi];
             LinearLayout t = UI.column(this);
             t.setGravity(Gravity.CENTER);
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void show(int i) {
         current = i;
-        for (int k = 0; k < 4; k++) {
+        for (int k = 0; k < 5; k++) {
             int col = k == i ? UI.GREEN : UI.MUTED;
             if (k == 0) {
                 tabs[0].setAlpha(k == i ? 1f : 0.75f);
@@ -136,7 +136,96 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         frame.removeAllViews();
-        frame.addView(i == 0 ? homeView() : (i == 1 ? reportsView() : (i == 3 ? clientsView() : accountView())));
+        frame.addView(i == 0 ? homeView() : (i == 1 ? reportsView() : (i == 3 ? clientsView() : (i == 4 ? blogView() : accountView()))));
+    }
+
+    // ---------- Blog
+    private JSONArray blogPosts;
+    private int blogPage = 1;
+    private boolean blogMore = true, blogBusy = false;
+    private String blogErr;
+
+    private View blogView() {
+        LinearLayout col = UI.column(this);
+        col.addView(UI.text(this, "وبلاگ سئو", 20, UI.INK, true));
+        col.addView(UI.text(this, "آخرین مقاله‌های آموزشی ما؛ همه‌ی متن‌ها همین‌جا داخل اپ خوانده می‌شود.", 12, UI.MUTED, false), UI.wrap(this, 4));
+        final LinearLayout list = UI.column(this);
+        col.addView(list, UI.wrap(this, 10));
+        paintBlog(list);
+        if (blogPosts == null) {
+            loadBlog(list);
+        }
+        return scroller(col);
+    }
+
+    private void loadBlog(final LinearLayout list) {
+        if (blogBusy) {
+            return;
+        }
+        blogBusy = true;
+        Blog.posts(blogPage, (arr, err) -> {
+            blogBusy = false;
+            if (arr == null) {
+                if (blogPosts != null) {
+                    blogMore = false;
+                } else {
+                    blogErr = err;
+                }
+            } else {
+                if (blogPosts == null) {
+                    blogPosts = new JSONArray();
+                }
+                for (int i = 0; i < arr.length(); i++) {
+                    blogPosts.put(arr.opt(i));
+                }
+                blogErr = null;
+                blogMore = arr.length() >= 12;
+                blogPage++;
+            }
+            if (current == 4) {
+                paintBlog(list);
+            }
+        });
+    }
+
+    private void paintBlog(final LinearLayout list) {
+        list.removeAllViews();
+        if (blogPosts == null) {
+            list.addView(UI.text(this, blogErr == null ? "در حال دریافت…" : blogErr, 14, blogErr == null ? UI.MUTED : UI.RED, false));
+            return;
+        }
+        for (int i = 0; i < blogPosts.length(); i++) {
+            final JSONObject p = blogPosts.optJSONObject(i);
+            LinearLayout card = UI.column(this);
+            card.setBackground(UI.box(this, UI.CARD, 14, UI.LINE));
+            int pd = UI.dp(this, 12);
+            card.setPadding(pd, pd, pd, pd);
+            String th = Blog.thumb(p);
+            if (!th.isEmpty()) {
+                android.widget.ImageView iv = new android.widget.ImageView(this);
+                iv.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+                iv.setBackground(UI.box(this, UI.GREEN_SOFT, 10, UI.LINE));
+                card.addView(iv, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 150), 0));
+                Blog.image(iv, th);
+            }
+            card.addView(UI.text(this, UI.bidi(Blog.text(p.optJSONObject("title").optString("rendered"))), 16, UI.INK, true), UI.wrap(this, 8));
+            String ex = Blog.text(p.optJSONObject("excerpt") == null ? "" : p.optJSONObject("excerpt").optString("rendered"));
+            if (!ex.isEmpty()) {
+                card.addView(UI.text(this, UI.bidi(ex.length() > 140 ? ex.substring(0, 140) + "…" : ex), 12, UI.MUTED, false), UI.wrap(this, 4));
+            }
+            String d = p.optString("date");
+            card.addView(UI.text(this, UI.fa(d.length() >= 10 ? d.substring(0, 10) : d), 11, UI.GREEN, true), UI.wrap(this, 6));
+            card.setOnClickListener(v -> {
+                Blog.current = p;
+                startActivity(new Intent(this, BlogPostActivity.class));
+            });
+            list.addView(card, UI.wrap(this, 12));
+        }
+        if (blogMore) {
+            Button more = UI.ghost(this, "مقاله‌های بیشتر", UI.GREEN);
+            more.setOnClickListener(v -> loadBlog(list));
+            list.addView(more, UI.wrap(this, 6));
+        }
     }
 
     private ScrollView scroller(LinearLayout inner) {
