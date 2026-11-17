@@ -56,6 +56,11 @@ jobs:
             xcrun simctl launch "$ID" com.espadna.seo -demo -screen $S
             sleep 7
             xcrun simctl io "$ID" screenshot "shots/$S.png"
+            if [ "$S" = rank ] || [ "$S" = monitor ]; then
+              xcrun simctl spawn "$ID" log show --last 2m --style compact --predicate 'process == "ThreeEO"' | tail -60 > "shots/log-$S.txt" || true
+              ls ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i threeeo > "shots/crash-$S.txt" || true
+              for f in ~/Library/Logs/DiagnosticReports/ThreeEO*.ips; do head -c 6000 "$f" > "shots/crashdump-$S.txt"; done 2>/dev/null || true
+            fi
           done
           file shots/*.png
 
