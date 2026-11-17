@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bar = new LinearLayout(this);
         UI.rtl(bar);
         bar.setBackgroundColor(UI.CARD);
-        String[] names = {"خانه", "گزارش‌ها", "حساب من", "حرفه‌ای", "وبلاگ"};
+        String[] names = {L.t("خانه"), L.t("گزارش‌ها"), L.t("حساب من"), L.t("حرفه‌ای"), L.t("وبلاگ")};
         String[] icons = {"", "▤", "☺", "♚", "✎"};
         int[] posOrder = {1, 3, 0, 4, 2};
         for (int pi = 0; pi < 5; pi++) {
@@ -147,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
     private View blogView() {
         LinearLayout col = UI.column(this);
-        col.addView(UI.text(this, "وبلاگ سئو", 20, UI.INK, true));
-        col.addView(UI.text(this, "آخرین مقاله‌های آموزشی ما؛ همه‌ی متن‌ها همین‌جا داخل اپ خوانده می‌شود.", 12, UI.MUTED, false), UI.wrap(this, 4));
+        col.addView(UI.text(this, L.t("وبلاگ سئو"), 20, UI.INK, true));
+        col.addView(UI.text(this, L.t("آخرین مقاله‌های آموزشی ما؛ همه‌ی متن‌ها همین‌جا داخل اپ خوانده می‌شود."), 12, UI.MUTED, false), UI.wrap(this, 4));
         final LinearLayout list = UI.column(this);
         col.addView(list, UI.wrap(this, 10));
         paintBlog(list);
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     private void paintBlog(final LinearLayout list) {
         list.removeAllViews();
         if (blogPosts == null) {
-            list.addView(UI.text(this, blogErr == null ? "در حال دریافت…" : blogErr, 14, blogErr == null ? UI.MUTED : UI.RED, false));
+            list.addView(UI.text(this, blogErr == null ? L.t("در حال دریافت…") : blogErr, 14, blogErr == null ? UI.MUTED : UI.RED, false));
             return;
         }
         for (int i = 0; i < blogPosts.length(); i++) {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             list.addView(card, UI.wrap(this, 12));
         }
         if (blogMore) {
-            Button more = UI.ghost(this, "مقاله‌های بیشتر", UI.GREEN);
+            Button more = UI.ghost(this, L.t("مقاله‌های بیشتر"), UI.GREEN);
             more.setOnClickListener(v -> loadBlog(list));
             list.addView(more, UI.wrap(this, 6));
         }
@@ -248,9 +248,9 @@ public class MainActivity extends AppCompatActivity {
         hero.setBackground(UI.gradient(this, 0xFF059669, 0xFF064E3B, 26));
         int hp = UI.dp(this, 20);
         hero.setPadding(hp, hp, hp, hp);
-        hero.addView(UI.text(this, "سلام 👋", 14, 0xFFA7F3D0, true));
-        hero.addView(UI.text(this, "سئوی سایتت را در چند ثانیه بسنج", 22, 0xFFFFFFFF, true), UI.wrap(this, 4));
-        hero.addView(UI.text(this, "امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس.", 13, 0xFFD1FAE5, false), UI.wrap(this, 6));
+        hero.addView(UI.text(this, L.t("سلام 👋"), 14, 0xFFA7F3D0, true));
+        hero.addView(UI.text(this, L.t("سئوی سایتت را در چند ثانیه بسنج"), 22, 0xFFFFFFFF, true), UI.wrap(this, 4));
+        hero.addView(UI.text(this, L.t("امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس."), 13, 0xFFD1FAE5, false), UI.wrap(this, 6));
         LinearLayout bar = new LinearLayout(this);
         UI.rtl(bar);
         bar.setGravity(Gravity.CENTER_VERTICAL);
@@ -268,14 +268,14 @@ public class MainActivity extends AppCompatActivity {
         urlInput.setTextDirection(View.TEXT_DIRECTION_LTR);
         urlInput.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         bar.addView(urlInput, new LinearLayout.LayoutParams(0, UI.dp(this, 48), 1f));
-        final Button go = UI.primary(this, "تحلیل");
+        final Button go = UI.primary(this, L.t("تحلیل"));
         go.setBackground(UI.gradient(this, 0xFF059669, 0xFF047857, 12));
         go.setOnClickListener(v -> analyze(go));
         bar.addView(go, new LinearLayout.LayoutParams(UI.dp(this, 92), UI.dp(this, 44)));
         hero.addView(bar, UI.wrap(this, 16));
         col.addView(hero, UI.wrap(this, 0));
 
-        EditText search = UI.input(this, "جستجوی ابزار…");
+        EditText search = UI.input(this, L.t("جستجوی ابزار…"));
         search.setText(query);
         search.addTextChangedListener(new android.text.TextWatcher() {
             public void beforeTextChanged(CharSequence a, int b, int c, int d) {
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                 UI.rtl(crow);
                 chips.addView(crow, UI.wrap(this, ci == 0 ? 0 : 8));
             }
-            String name = cat.isEmpty() ? "همه" : (categories != null ? categories.optString(cat, cat) : cat);
+            String name = cat.isEmpty() ? L.t("همه") : (categories != null ? categories.optString(cat, cat) : cat);
             final TextView ch = UI.text(this, name, 13, UI.INK, true);
             ch.setGravity(Gravity.CENTER);
             ch.setSingleLine(true);
@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         }
         grid.removeAllViews();
         if (tools == null) {
-            grid.addView(UI.text(this, "در حال دریافت ابزارها…", 14, UI.MUTED, false), UI.wrap(this, 20));
+            grid.addView(UI.text(this, L.t("در حال دریافت ابزارها…"), 14, UI.MUTED, false), UI.wrap(this, 20));
             return;
         }
         List<JSONObject> list = new ArrayList<>();
@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (list.isEmpty()) {
-            grid.addView(UI.text(this, "ابزاری پیدا نشد.", 14, UI.MUTED, false), UI.wrap(this, 20));
+            grid.addView(UI.text(this, L.t("ابزاری پیدا نشد."), 14, UI.MUTED, false), UI.wrap(this, 20));
         }
         for (int i = 0; i < list.size(); i += 2) {
             LinearLayout row = new LinearLayout(this);
@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
         d.setEllipsize(android.text.TextUtils.TruncateAt.END);
         c.addView(d, UI.wrap(this, 4));
         boolean paid = t.optBoolean("paid");
-        TextView cost = UI.text(this, paid ? "سهمیه‌ی روزانه + اعتبار" : "رایگان", 11, paid ? UI.AMBER : UI.GREEN, true);
+        TextView cost = UI.text(this, paid ? L.t("سهمیه‌ی روزانه + اعتبار") : L.t("رایگان"), 11, paid ? UI.AMBER : UI.GREEN, true);
         cost.setBackground(UI.box(this, paid ? 0x1AD97706 : 0x1A047857, 10, 0));
         cost.setPadding(UI.dp(this, 8), UI.dp(this, 3), UI.dp(this, 8), UI.dp(this, 3));
         c.addView(cost, UI.wrap(this, 8));
@@ -400,14 +400,14 @@ public class MainActivity extends AppCompatActivity {
     private void analyze(final Button go) {
         String u = urlInput.getText().toString().trim();
         if (u.length() < 4) {
-            Toast.makeText(this, "آدرس سایت را وارد کنید.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, L.t("آدرس سایت را وارد کنید."), Toast.LENGTH_SHORT).show();
             return;
         }
         if (go != null) {
             go.setEnabled(false);
             go.setText("…");
         } else {
-            Toast.makeText(this, "در حال تحلیل… (تا ۳۰ ثانیه)", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, L.t("در حال تحلیل… (تا ۳۰ ثانیه)"), Toast.LENGTH_LONG).show();
         }
         JSONObject body = new JSONObject();
         try {
@@ -417,10 +417,10 @@ public class MainActivity extends AppCompatActivity {
         Api.post(this, "/api/app/tool/analyze", body, (j, e) -> {
             if (go != null) {
                 go.setEnabled(true);
-                go.setText("تحلیل");
+                go.setText(L.t("تحلیل"));
             }
             if (j == null || e != null) {
-                Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, e == null ? L.t("خطایی رخ داد.") : e, Toast.LENGTH_LONG).show();
                 return;
             }
             Intent i = new Intent(this, ReportActivity.class);
@@ -457,17 +457,17 @@ public class MainActivity extends AppCompatActivity {
 
     private View clientsView() {
         LinearLayout col = UI.column(this);
-        col.addView(UI.text(this, "ابزارهای حرفه‌ای", 20, UI.INK, true));
-        col.addView(UI.text(this, "تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان.", 12, UI.MUTED, false), UI.wrap(this, 4));
-        col.addView(proCard("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی", ContentActivity.class), UI.wrap(this, 12));
-        col.addView(proCard("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی", RankActivity.class), UI.wrap(this, 8));
-        col.addView(proCard("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند", MonitorActivity.class), UI.wrap(this, 8));
-        col.addView(proCard("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان", BrandActivity.class), UI.wrap(this, 8));
+        col.addView(UI.text(this, L.t("ابزارهای حرفه‌ای"), 20, UI.INK, true));
+        col.addView(UI.text(this, L.t("تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان."), 12, UI.MUTED, false), UI.wrap(this, 4));
+        col.addView(proCard(L.t("تولید محتوا با هوش مصنوعی"), L.t("موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی"), ContentActivity.class), UI.wrap(this, 12));
+        col.addView(proCard(L.t("رتبه‌ی کلمات کلیدی"), L.t("جایگاه سایت در گوگل و پایش روزانه/هفتگی"), RankActivity.class), UI.wrap(this, 8));
+        col.addView(proCard(L.t("پایش برند در هوش مصنوعی"), L.t("ببینید ChatGPT و مشابه برند شما را می‌شناسند"), MonitorActivity.class), UI.wrap(this, 8));
+        col.addView(proCard(L.t("سربرگ برند و کلید API"), L.t("نام و مشخصات شما روی گزارش مشتریان"), BrandActivity.class), UI.wrap(this, 8));
         if (!seoer()) {
             LinearLayout box = UI.card(this);
-            box.addView(UI.text(this, "سئوکار هستید یا برای چند سایت کار می‌کنید؟", 15, UI.INK, true));
-            box.addView(UI.text(this, "با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید.", 12, UI.MUTED, false), UI.wrap(this, 4));
-            Button on = UI.primary(this, "فعال‌سازی حالت سئوکار");
+            box.addView(UI.text(this, L.t("سئوکار هستید یا برای چند سایت کار می‌کنید؟"), 15, UI.INK, true));
+            box.addView(UI.text(this, L.t("با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید."), 12, UI.MUTED, false), UI.wrap(this, 4));
+            Button on = UI.primary(this, L.t("فعال‌سازی حالت سئوکار"));
             on.setOnClickListener(v -> setMode("seoer"));
             box.addView(on, UI.wrap(this, 10));
             col.addView(box, UI.wrap(this, 18));
@@ -476,13 +476,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout head = new LinearLayout(this);
         UI.rtl(head);
         head.setGravity(Gravity.CENTER_VERTICAL);
-        head.addView(UI.text(this, "مشتریان من", 18, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        Button add = UI.primary(this, "＋ افزودن سایت");
+        head.addView(UI.text(this, L.t("مشتریان من"), 18, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        Button add = UI.primary(this, L.t("＋ افزودن سایت"));
         add.setMinHeight(UI.dp(this, 40));
         add.setOnClickListener(v -> addClientDialog());
         head.addView(add, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, UI.dp(this, 42)));
         col.addView(head, UI.wrap(this, 22));
-        col.addView(UI.text(this, "سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.", 12, UI.MUTED, false), UI.wrap(this, 6));
+        col.addView(UI.text(this, L.t("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید."), 12, UI.MUTED, false), UI.wrap(this, 6));
         final LinearLayout list = UI.column(this);
         col.addView(list, UI.wrap(this, 10));
         paintClients(list);
@@ -494,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        Button off = UI.ghost(this, "خروج از حالت سئوکار", UI.MUTED);
+        Button off = UI.ghost(this, L.t("خروج از حالت سئوکار"), UI.MUTED);
         off.setOnClickListener(v -> setMode("owner"));
         col.addView(off, UI.wrap(this, 20));
         return scroller(col);
@@ -520,11 +520,11 @@ public class MainActivity extends AppCompatActivity {
         list.removeAllViews();
         JSONArray cs = clientsData == null ? null : clientsData.optJSONArray("clients");
         if (cs == null) {
-            list.addView(UI.text(this, "در حال دریافت…", 14, UI.MUTED, false));
+            list.addView(UI.text(this, L.t("در حال دریافت…"), 14, UI.MUTED, false));
             return;
         }
         if (cs.length() == 0) {
-            list.addView(UI.text(this, "هنوز مشتری‌ای ندارید. با «افزودن سایت» شروع کنید.", 14, UI.MUTED, false));
+            list.addView(UI.text(this, L.t("هنوز مشتری‌ای ندارید. با «افزودن سایت» شروع کنید."), 14, UI.MUTED, false));
         }
         for (int i = 0; i < cs.length(); i++) {
             final JSONObject c = cs.optJSONObject(i);
@@ -540,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
             host.setTextDirection(View.TEXT_DIRECTION_LTR);
             txt.addView(host, UI.wrap(this, 2));
             if (c.optInt("auto") > 0) {
-                txt.addView(UI.text(this, "بررسی خودکار: " + UI.fa(String.valueOf(c.optInt("auto"))) + " فعال", 11, UI.GREEN, true), UI.wrap(this, 4));
+                txt.addView(UI.text(this, L.t("بررسی خودکار: ") + UI.fa(String.valueOf(c.optInt("auto"))) + L.t(" فعال"), 11, UI.GREEN, true), UI.wrap(this, 4));
             }
             row.addView(txt, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
             if (!c.isNull("score")) {
@@ -559,13 +559,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout box = UI.column(this);
         int p = UI.dp(this, 16);
         box.setPadding(p, p, p, 0);
-        final EditText site = UI.input(this, "آدرس سایت، مثلاً example.ir");
+        final EditText site = UI.input(this, L.t("آدرس سایت، مثلاً example.ir"));
         site.setTextDirection(View.TEXT_DIRECTION_LTR);
-        final EditText name = UI.input(this, "نام مشتری (اختیاری)");
+        final EditText name = UI.input(this, L.t("نام مشتری (اختیاری)"));
         box.addView(site);
         box.addView(name, UI.wrap(this, 10));
-        new AlertDialog.Builder(this).setTitle("افزودن سایت مشتری").setView(box).setNegativeButton("انصراف", null)
-                .setPositiveButton("افزودن", (d, w) -> {
+        new AlertDialog.Builder(this).setTitle(L.t("افزودن سایت مشتری")).setView(box).setNegativeButton(L.t("انصراف"), null)
+                .setPositiveButton(L.t("افزودن"), (d, w) -> {
                     JSONObject body = new JSONObject();
                     try {
                         body.put("site", site.getText().toString());
@@ -574,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Api.post(this, "/api/app/clients", body, (j, e) -> {
                         if (j == null || e != null) {
-                            Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, e == null ? L.t("خطایی رخ داد.") : e, Toast.LENGTH_LONG).show();
                             return;
                         }
                         Intent i2 = new Intent(this, ClientActivity.class);
@@ -592,12 +592,12 @@ public class MainActivity extends AppCompatActivity {
                 return tools.optJSONObject(i).optString("title");
             }
         }
-        return "گزارش";
+        return L.t("گزارش");
     }
 
     private View reportsView() {
         LinearLayout col = UI.column(this);
-        col.addView(UI.text(this, "گزارش‌های من", 20, UI.INK, true));
+        col.addView(UI.text(this, L.t("گزارش‌های من"), 20, UI.INK, true));
         JSONArray rs = me == null ? null : me.optJSONArray("reports");
         for (int i = 0; rs != null && i < rs.length(); i++) {
             final JSONObject r = rs.optJSONObject(i);
@@ -629,7 +629,7 @@ public class MainActivity extends AppCompatActivity {
             col.addView(row, UI.wrap(this, 10));
         }
         if (rs == null || rs.length() == 0) {
-            col.addView(UI.text(this, me == null ? "در حال دریافت…" : "هنوز گزارشی ندارید. یک ابزار را اجرا کنید.", 14, UI.MUTED, false), UI.wrap(this, 12));
+            col.addView(UI.text(this, me == null ? L.t("در حال دریافت…") : L.t("هنوز گزارشی ندارید. یک ابزار را اجرا کنید."), 14, UI.MUTED, false), UI.wrap(this, 12));
         }
         return scroller(col);
     }
@@ -637,46 +637,48 @@ public class MainActivity extends AppCompatActivity {
     // ---------- Account
     private View accountView() {
         LinearLayout col = UI.column(this);
-        col.addView(UI.text(this, "حساب من", 19, UI.INK, true));
+        col.addView(UI.text(this, L.t("حساب من"), 19, UI.INK, true));
         LinearLayout card = UI.card(this);
-        card.addView(UI.text(this, "شماره‌ی موبایل", 12, UI.MUTED, false));
+        card.addView(UI.text(this, L.t("شماره‌ی موبایل"), 12, UI.MUTED, false));
         card.addView(UI.text(this, me == null ? "…" : UI.fa(me.optString("mobile")), 17, UI.INK, true), UI.wrap(this, 2));
-        card.addView(UI.text(this, "اعتبار شما", 12, UI.MUTED, false), UI.wrap(this, 14));
+        card.addView(UI.text(this, L.t("اعتبار شما"), 12, UI.MUTED, false), UI.wrap(this, 14));
         card.addView(UI.text(this, me == null ? "…" : UI.fa(String.valueOf(me.optInt("credits"))), 30, UI.GREEN, true), UI.wrap(this, 2));
         col.addView(card, UI.wrap(this, 12));
 
-        Button privacy = UI.ghost(this, "حریم خصوصی و قوانین", UI.GREEN);
+        Button privacy = UI.ghost(this, L.t("حریم خصوصی و قوانین"), UI.GREEN);
         privacy.setOnClickListener(v -> {
             Intent i = new Intent(this, WebActivity.class);
             i.putExtra("url", "https://3eo.ir/privacy");
             startActivity(i);
         });
         col.addView(privacy, UI.wrap(this, 10));
-        Button out = UI.ghost(this, "خروج از حساب", UI.INK);
+        card.addView(UI.text(this, L.fa() ? "زبان" : "Language", 12, UI.MUTED, false), UI.wrap(this, 14));
+        card.addView(UI.langSwitch(this), UI.wrap(this, 4));
+        Button out = UI.ghost(this, L.t("خروج از حساب"), UI.INK);
         out.setOnClickListener(v -> {
             Api.logout(this);
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
         col.addView(out, UI.wrap(this, 10));
-        Button del = UI.ghost(this, "حذف حساب کاربری", UI.RED);
+        Button del = UI.ghost(this, L.t("حذف حساب کاربری"), UI.RED);
         del.setOnClickListener(v -> confirmDelete());
         col.addView(del, UI.wrap(this, 10));
         return scroller(col);
     }
 
     private void confirmDelete() {
-        final EditText in = UI.input(this, "حذف");
+        final EditText in = UI.input(this, L.t("حذف"));
         LinearLayout box = UI.column(this);
         int p = UI.dp(this, 20);
         box.setPadding(p, UI.dp(this, 8), p, 0);
         box.addView(in);
         new AlertDialog.Builder(this)
-                .setTitle("حذف حساب کاربری")
-                .setMessage("همه‌ی اطلاعات و گزارش‌های حساب شما برای همیشه پاک می‌شود و برگشت‌پذیر نیست. برای تأیید، کلمه‌ی «حذف» را بنویسید.")
+                .setTitle(L.t("حذف حساب کاربری"))
+                .setMessage(L.t("همه‌ی اطلاعات و گزارش‌های حساب شما برای همیشه پاک می‌شود و برگشت‌پذیر نیست. برای تأیید، کلمه‌ی «حذف» را بنویسید."))
                 .setView(box)
-                .setNegativeButton("انصراف", null)
-                .setPositiveButton("حذف حساب", (d, w) -> {
+                .setNegativeButton(L.t("انصراف"), null)
+                .setPositiveButton(L.t("حذف حساب"), (d, w) -> {
                     JSONObject body = new JSONObject();
                     try {
                         body.put("confirm", in.getText().toString().trim());
@@ -688,7 +690,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         Api.logout(this);
-                        Toast.makeText(this, "حساب شما حذف شد.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, L.t("حساب شما حذف شد."), Toast.LENGTH_LONG).show();
                         startActivity(new Intent(this, LoginActivity.class));
                         finish();
                     });

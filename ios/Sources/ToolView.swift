@@ -14,9 +14,9 @@ struct ToolView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }
+                Button(L.t("‹  بازگشت")) { dismiss() }
                 Spacer()
-                Button("اشتراک") { showShare = true }.opacity((result?.share ?? "").isEmpty ? 0 : 1)
+                Button(L.t("اشتراک")) { showShare = true }.opacity((result?.share ?? "").isEmpty ? 0 : 1)
             }
             .font(.vz(15, true))
             .padding(14).background(Color.white)
@@ -26,7 +26,7 @@ struct ToolView: View {
                         hero
                         if let c = tool.cost, !c.isEmpty {
                             let paid = tool.paid ?? false
-                            Text("هزینه: " + c).font(.vz(13, true)).foregroundColor(paid ? Theme.amber : Theme.green)
+                            Text(L.t("هزینه: ") + c).font(.vz(13, true)).foregroundColor(paid ? Theme.amber : Theme.green)
                                 .padding(.horizontal, 12).padding(.vertical, 8).frame(maxWidth: .infinity, alignment: .leading)
                                 .background((paid ? Theme.amber : Theme.green).opacity(0.12)).clipShape(RoundedRectangle(cornerRadius: 12))
                         }
@@ -41,14 +41,14 @@ struct ToolView: View {
                         Button(action: run) {
                             HStack {
                                 if loading { ProgressView().tint(.white) }
-                                Text(loading ? "در حال انجام… (تا ۴۵ ثانیه)" : "اجرا").font(.vz(16, true))
+                                Text(loading ? L.t("در حال انجام… (تا ۴۵ ثانیه)") : L.t("اجرا")).font(.vz(16, true))
                             }
                             .frame(maxWidth: .infinity, minHeight: 50).foregroundColor(.white)
                             .background(LinearGradient(colors: [Theme.cat(tool.cat), Theme.cat(tool.cat).opacity(0.75)], startPoint: .leading, endPoint: .trailing))
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                         }.disabled(loading)
                         if let r = result {
-                            Text("نتیجه").font(.vz(18, true)).foregroundColor(Theme.ink).id("result")
+                            Text(L.t("نتیجه")).font(.vz(18, true)).foregroundColor(Theme.ink).id("result")
                             BlocksView(blocks: r.blocks)
                         }
                     }
@@ -58,8 +58,8 @@ struct ToolView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
-        .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش \(result?.title ?? "") \(result?.host ?? "")\n\(result?.share ?? "")"]) }
+        .environment(\.layoutDirection, Theme.dir)
+        .sheet(isPresented: $showShare) { ShareSheet(items: ["\(L.isFa ? "گزارش" : "Report") \(result?.title ?? "") \(result?.host ?? "")\n\(result?.share ?? "")"]) }
         .onAppear(perform: seed)
     }
 

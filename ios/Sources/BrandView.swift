@@ -51,42 +51,42 @@ struct BrandView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }.font(.vz(15, true))
+                Button(L.t("‹  بازگشت")) { dismiss() }.font(.vz(15, true))
                 Spacer()
-                Text("سربرگ برند و API").font(.vz(16, true)).foregroundColor(Theme.ink)
+                Text(L.t("سربرگ برند و API")).font(.vz(16, true)).foregroundColor(Theme.ink)
                 Spacer()
                 Text("").frame(width: 60)
             }.padding(14).background(Color.white)
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("گزارش‌هایی که برای مشتریان می‌سازید با نام و مشخصات شما نمایش داده می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                    Text(L.t("گزارش‌هایی که برای مشتریان می‌سازید با نام و مشخصات شما نمایش داده می‌شود.")).font(.vz(12, false)).foregroundColor(Theme.muted)
                     Card {
                         VStack(alignment: .leading, spacing: 8) {
-                            bField(TextField("نام برند یا شرکت شما", text: $name))
-                            bField(TextField("رنگ برند (مثل #047857)", text: $color).textInputAutocapitalization(.never).disableAutocorrection(true).environment(\.layoutDirection, .leftToRight))
-                            bField(TextField("وب‌سایت", text: $site).textInputAutocapitalization(.never).disableAutocorrection(true).environment(\.layoutDirection, .leftToRight))
-                            bField(TextField("تلفن", text: $phone).keyboardType(.phonePad).environment(\.layoutDirection, .leftToRight))
-                            bField(TextField("ایمیل", text: $email).textInputAutocapitalization(.never).keyboardType(.emailAddress).environment(\.layoutDirection, .leftToRight))
-                            bField(TextField("نشانی", text: $address))
+                            bField(TextField(L.t("نام برند یا شرکت شما"), text: $name))
+                            bField(TextField(L.t("رنگ برند (مثل #047857)"), text: $color).textInputAutocapitalization(.never).disableAutocorrection(true).environment(\.layoutDirection, .leftToRight))
+                            bField(TextField(L.t("وب‌سایت"), text: $site).textInputAutocapitalization(.never).disableAutocorrection(true).environment(\.layoutDirection, .leftToRight))
+                            bField(TextField(L.t("تلفن"), text: $phone).keyboardType(.phonePad).environment(\.layoutDirection, .leftToRight))
+                            bField(TextField(L.t("ایمیل"), text: $email).textInputAutocapitalization(.never).keyboardType(.emailAddress).environment(\.layoutDirection, .leftToRight))
+                            bField(TextField(L.t("نشانی"), text: $address))
                             if let m = msg { Text(m).font(.vz(13, true)).foregroundColor(bad ? Theme.red : Theme.green) }
-                            Button { save() } label: { bButton("ذخیره‌ی سربرگ", true) }
+                            Button { save() } label: { bButton(L.t("ذخیره‌ی سربرگ"), true) }
                         }
                     }
-                    Text("لوگو را فعلاً می‌توانید از 3eo.ir/dashboard/brand بارگذاری کنید.").font(.vz(11, false)).foregroundColor(Theme.muted)
-                    Text("کلید API").font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 10)
-                    Text("برای اتصال ابزارهای خودتان به سرویس. کلید فقط یک بار کامل نشان داده می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                    Text(L.t("لوگو را فعلاً می‌توانید از 3eo.ir/dashboard/brand بارگذاری کنید.")).font(.vz(11, false)).foregroundColor(Theme.muted)
+                    Text(L.t("کلید API")).font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 10)
+                    Text(L.t("برای اتصال ابزارهای خودتان به سرویس. کلید فقط یک بار کامل نشان داده می‌شود.")).font(.vz(12, false)).foregroundColor(Theme.muted)
                     if let k = keys {
                         ForEach(k.keys) { x in
                             Card {
                                 HStack {
-                                    Text(Theme.bidi(x.label.isEmpty ? "کلید" : x.label) + "  …" + x.hint).font(.vz(13, true)).foregroundColor(Theme.ink)
+                                    Text(Theme.bidi(x.label.isEmpty ? L.t("کلید") : x.label) + "  …" + x.hint).font(.vz(13, true)).foregroundColor(Theme.ink)
                                     Spacer()
-                                    Button { revokeId = x.id } label: { Text("ابطال").font(.vz(13, true)).foregroundColor(Theme.red) }
+                                    Button { revokeId = x.id } label: { Text(L.t("ابطال")).font(.vz(13, true)).foregroundColor(Theme.red) }
                                 }
                             }
                         }
                         if k.keys.count < k.max {
-                            Button { makeKey() } label: { bButton("＋ ساخت کلید جدید", false) }
+                            Button { makeKey() } label: { bButton(L.t("＋ ساخت کلید جدید"), false) }
                         }
                     }
                 }
@@ -94,18 +94,18 @@ struct BrandView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task { await load() }
-        .alert("کلید شما (فقط همین حالا کامل دیده می‌شود)", isPresented: Binding(get: { newKey != nil }, set: { if !$0 { newKey = nil } })) {
-            Button("کپی") { UIPasteboard.general.string = newKey; newKey = nil }
-            Button("بستن", role: .cancel) { newKey = nil }
+        .alert(L.t("کلید شما (فقط همین حالا کامل دیده می‌شود)"), isPresented: Binding(get: { newKey != nil }, set: { if !$0 { newKey = nil } })) {
+            Button(L.t("کپی")) { UIPasteboard.general.string = newKey; newKey = nil }
+            Button(L.t("بستن"), role: .cancel) { newKey = nil }
         } message: { Text(newKey ?? "") }
-        .alert("ابطال کلید", isPresented: Binding(get: { revokeId != nil }, set: { if !$0 { revokeId = nil } })) {
-            Button("انصراف", role: .cancel) {}
-            Button("ابطال", role: .destructive) {
+        .alert(L.t("ابطال کلید"), isPresented: Binding(get: { revokeId != nil }, set: { if !$0 { revokeId = nil } })) {
+            Button(L.t("انصراف"), role: .cancel) {}
+            Button(L.t("ابطال"), role: .destructive) {
                 if let i = revokeId { Task { _ = try? await API.call("POST", "/api/app/keys/\(i)/revoke", body: [:], as: Empty.self); await loadKeys() } }
             }
-        } message: { Text("برنامه‌هایی که از این کلید استفاده می‌کنند از کار می‌افتند.") }
+        } message: { Text(L.t("برنامه‌هایی که از این کلید استفاده می‌کنند از کار می‌افتند.")) }
     }
 
     private func load() async {
@@ -124,7 +124,7 @@ struct BrandView: View {
     private func save() {
         let b: [String: Any] = ["name": name, "color": color, "site": site, "phone": phone, "email": email, "address": address]
         Task {
-            do { _ = try await API.call("POST", "/api/app/brand", body: b, as: Empty.self); bad = false; msg = "ذخیره شد ✓" }
+            do { _ = try await API.call("POST", "/api/app/brand", body: b, as: Empty.self); bad = false; msg = L.t("ذخیره شد ✓") }
             catch { bad = true; msg = error.localizedDescription }
         }
     }
@@ -148,23 +148,23 @@ struct MonthlySheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("گزارش ماهانه برای مشتری").font(.vz(17, true)).foregroundColor(Theme.ink)
+            Text(L.t("گزارش ماهانه برای مشتری")).font(.vz(17, true)).foregroundColor(Theme.ink)
             if let i = info {
                 if !i.brand {
-                    Text("اول از «سربرگ برند و کلید API» نام برند خود را ثبت کنید.").font(.vz(13, true)).foregroundColor(Theme.red)
+                    Text(L.t("اول از «سربرگ برند و کلید API» نام برند خود را ثبت کنید.")).font(.vz(13, true)).foregroundColor(Theme.red)
                 } else {
                     Picker("", selection: $days) {
                         ForEach(Array((i.periods ?? []).enumerated()), id: \.offset) { _, p in Text(p.count > 1 ? (p[1].s ?? "") : "").tag(p.first?.n ?? 30) }
                     }.pickerStyle(.segmented)
-                    bField(TextField("یادداشت برای مشتری (اختیاری)", text: $note, axis: .vertical).lineLimit(2...5))
-                    Text("هزینه: " + Theme.fa(String(i.cost)) + " اعتبار").font(.vz(12, false)).foregroundColor(Theme.muted)
-                    Button { make() } label: { bButton("ساخت و ارسال", true) }
+                    bField(TextField(L.t("یادداشت برای مشتری (اختیاری)"), text: $note, axis: .vertical).lineLimit(2...5))
+                    Text(L.t("هزینه: ") + Theme.fa(String(i.cost)) + L.t(" اعتبار")).font(.vz(12, false)).foregroundColor(Theme.muted)
+                    Button { make() } label: { bButton(L.t("ساخت و ارسال"), true) }
                 }
             } else { ProgressView().frame(maxWidth: .infinity) }
             if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
             Spacer()
         }
-        .padding(20).environment(\.layoutDirection, .rightToLeft)
+        .padding(20).environment(\.layoutDirection, Theme.dir)
         .task { info = try? await API.call("GET", "/api/app/client/\(clientId)/monthly", as: MonthlyInfo.self) }
         .sheet(isPresented: Binding(get: { share != nil }, set: { if !$0 { share = nil; dismiss() } })) { ShareSheet(items: share ?? []) }
     }
@@ -175,7 +175,7 @@ struct MonthlySheet: View {
             do {
                 let r = try await API.call("POST", "/api/app/client/\(clientId)/monthly", body: b, as: MonthlyMade.self)
                 error = nil
-                share = ["گزارش سئو\n" + r.url + "\n\nPDF:\n" + r.pdf]
+                share = [L.t("گزارش سئو\n") + r.url + "\n\nPDF:\n" + r.pdf]
             } catch { self.error = error.localizedDescription }
         }
     }

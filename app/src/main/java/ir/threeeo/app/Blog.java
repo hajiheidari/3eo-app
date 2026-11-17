@@ -66,7 +66,7 @@ final class Blog {
                     out = new JSONArray(new String(fetch(u), "UTF-8"));
                     break;
                 } catch (Exception e) {
-                    err = "دریافت مقاله‌ها ممکن نشد. اتصال اینترنت را بررسی کنید.";
+                    err = L.t("دریافت مقاله‌ها ممکن نشد. اتصال اینترنت را بررسی کنید.");
                 }
             }
             final JSONArray fo = out;

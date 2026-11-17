@@ -159,15 +159,15 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
                  initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "باشه", style: .default) { _ in completionHandler() })
+        alert.addAction(UIAlertAction(title: L.t("باشه"), style: .default) { _ in completionHandler() })
         present(alert, animated: true)
     }
 
     func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
                  initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "تأیید", style: .default) { _ in completionHandler(true) })
-        alert.addAction(UIAlertAction(title: "انصراف", style: .cancel) { _ in completionHandler(false) })
+        alert.addAction(UIAlertAction(title: L.t("تأیید"), style: .default) { _ in completionHandler(true) })
+        alert.addAction(UIAlertAction(title: L.t("انصراف"), style: .cancel) { _ in completionHandler(false) })
         present(alert, animated: true)
     }
 
@@ -204,8 +204,8 @@ final class WebViewController: UIViewController, WKNavigationDelegate, WKUIDeleg
     }
 
     func download(_ download: WKDownload, didFailWithError error: Error, resumeData: Data?) {
-        let alert = UIAlertController(title: nil, message: "دانلود انجام نشد", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "باشه", style: .default))
+        let alert = UIAlertController(title: nil, message: L.t("دانلود انجام نشد"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L.t("باشه"), style: .default))
         present(alert, animated: true)
     }
 }

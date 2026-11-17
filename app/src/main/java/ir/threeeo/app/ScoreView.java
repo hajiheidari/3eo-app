@@ -45,6 +45,6 @@ final class ScoreView extends View {
         c.drawArc(r, 0, 360, false, track);
         c.drawArc(r, -90, 360f * score / 100f, false, arc);
         c.drawText(UI.fa(String.valueOf(score)), getWidth() / 2f, getHeight() / 2f + 10 * d, num);
-        c.drawText("از ۱۰۰", getWidth() / 2f, getHeight() / 2f + 34 * d, sub);
+        c.drawText(L.t("از ۱۰۰"), getWidth() / 2f, getHeight() / 2f + 34 * d, sub);
     }
 }

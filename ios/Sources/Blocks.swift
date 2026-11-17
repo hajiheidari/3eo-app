@@ -21,7 +21,7 @@ struct BlocksView: View {
             }
         case "counts":
             HStack(spacing: 8) {
-                count(b.pass, "موفق", Theme.green); count(b.warn, "هشدار", Theme.amber); count(b.fail, "خطا", Theme.red)
+                count(b.pass, L.t("موفق"), Theme.green); count(b.warn, L.t("هشدار"), Theme.amber); count(b.fail, L.t("خطا"), Theme.red)
             }
         case "kv":
             Card {
@@ -45,7 +45,7 @@ struct BlocksView: View {
                         HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(Theme.bidi(it.title)).font(.vz(14, true)).foregroundColor(Theme.ink)
-                                    .environment(\.layoutDirection, it.ltr ? .leftToRight : .rightToLeft)
+                                    .environment(\.layoutDirection, it.ltr ? .leftToRight : Theme.dir)
                                 if !it.sub.isEmpty { Text(Theme.bidi(it.sub)).font(.vz(12, false)).foregroundColor(Theme.muted) }
                             }
                             Spacer(minLength: 8)
@@ -127,7 +127,7 @@ struct CopyCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title).font(.vz(14, true)).foregroundColor(Theme.ink)
                 Text(text).font(.vz(13, false)).foregroundColor(Theme.ink).textSelection(.enabled)
-                    .environment(\.layoutDirection, ltr ? .leftToRight : .rightToLeft)
+                    .environment(\.layoutDirection, ltr ? .leftToRight : Theme.dir)
                     .frame(maxWidth: .infinity, alignment: .leading).padding(10)
                     .background(Color(red: 248 / 255, green: 250 / 255, blue: 252 / 255))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -135,7 +135,7 @@ struct CopyCard: View {
                     UIPasteboard.general.string = text
                     copied = true
                 } label: {
-                    Text(copied ? "کپی شد ✓" : "کپی").font(.vz(14, true)).foregroundColor(Theme.green)
+                    Text(copied ? L.t("کپی شد ✓") : L.t("کپی")).font(.vz(14, true)).foregroundColor(Theme.green)
                         .frame(maxWidth: .infinity, minHeight: 40)
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
                 }
@@ -150,11 +150,11 @@ struct ChecksView: View {
         let issues = categories.flatMap { $0.checks }.filter { $0.status != "pass" }.sorted { $0.gain > $1.gain }
         VStack(alignment: .leading, spacing: 8) {
             if !issues.isEmpty {
-                Text("مهم‌ترین کارها برای بهتر شدن").font(.vz(16, true)).foregroundColor(Theme.ink)
+                Text(L.t("مهم‌ترین کارها برای بهتر شدن")).font(.vz(16, true)).foregroundColor(Theme.ink)
                 ForEach(Array(issues.prefix(8))) { IssueCard(check: $0) }
             }
             if !categories.isEmpty {
-                Text("همه‌ی بخش‌ها").font(.vz(16, true)).foregroundColor(Theme.ink).padding(.top, 10)
+                Text(L.t("همه‌ی بخش‌ها")).font(.vz(16, true)).foregroundColor(Theme.ink).padding(.top, 10)
                 ForEach(categories) { CategoryCard(cat: $0) }
             }
         }

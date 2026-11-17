@@ -163,9 +163,9 @@ public class WebActivity extends AppCompatActivity {
                 req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name);
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 dm.enqueue(req);
-                Toast.makeText(this, "دانلود شروع شد", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, L.t("دانلود شروع شد"), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                Toast.makeText(this, "دانلود انجام نشد", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, L.t("دانلود انجام نشد"), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -203,7 +203,7 @@ public class WebActivity extends AppCompatActivity {
             // phone, mail, WhatsApp, Telegram and every other site open in the matching app or the browser
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "برنامه‌ی مناسبی برای باز کردن این لینک پیدا نشد", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, L.t("برنامه‌ی مناسبی برای باز کردن این لینک پیدا نشد"), Toast.LENGTH_SHORT).show();
         }
         return true;
     }
@@ -251,7 +251,7 @@ public class WebActivity extends AppCompatActivity {
                 if (online()) {
                     web.loadUrl(lastUrl);
                 } else {
-                    Toast.makeText(WebActivity.this, "هنوز به اینترنت وصل نیستید", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WebActivity.this, L.t("هنوز به اینترنت وصل نیستید"), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -262,7 +262,7 @@ public class WebActivity extends AppCompatActivity {
                 Intent send = new Intent(Intent.ACTION_SEND);
                 send.setType("text/plain");
                 send.putExtra(Intent.EXTRA_TEXT, (text == null ? "" : text) + (url == null || url.isEmpty() ? "" : "\n" + url));
-                startActivity(Intent.createChooser(send, "اشتراک‌گذاری"));
+                startActivity(Intent.createChooser(send, L.t("اشتراک‌گذاری")));
             });
         }
     }

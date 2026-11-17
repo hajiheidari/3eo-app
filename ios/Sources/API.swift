@@ -149,6 +149,12 @@ struct Empty: Codable {}
 @MainActor
 final class Session: ObservableObject {
     static let shared = Session()
+    @Published var lang: String = L.lang
+
+    func setLang(_ c: String) {
+        L.lang = c
+        lang = L.lang
+    }
     @Published var token: String? = UserDefaults.standard.string(forKey: "token")
 
     func set(_ t: String?) {
@@ -167,11 +173,12 @@ enum API {
 
     static func call<T: Decodable>(_ method: String, _ path: String, body: [String: Any]? = nil, as type: T.Type) async throws -> T {
         if Demo.on { return try Demo.respond(path, as: type) }
-        guard let url = URL(string: base + path) else { throw APIError(message: "آدرس نامعتبر است.") }
+        guard let url = URL(string: base + path) else { throw APIError(message: L.t("آدرس نامعتبر است.")) }
         var req = URLRequest(url: url)
         req.httpMethod = method
         req.timeoutInterval = 75
         req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue(L.lang, forHTTPHeaderField: "X-Lang")
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1"
         req.setValue("3eoApp/\(version) (iOS)", forHTTPHeaderField: "User-Agent")
         if let t = UserDefaults.standard.string(forKey: "token") {
@@ -185,27 +192,27 @@ enum API {
         do {
             (data, _) = try await URLSession.shared.data(for: req)
         } catch {
-            throw APIError(message: "اتصال به اینترنت برقرار نشد. دوباره امتحان کنید.")
+            throw APIError(message: L.t("اتصال به اینترنت برقرار نشد. دوباره امتحان کنید."))
         }
         guard let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw APIError(message: "پاسخ نامعتبر از سرور. دوباره امتحان کنید.")
+            throw APIError(message: L.t("پاسخ نامعتبر از سرور. دوباره امتحان کنید."))
         }
         if (obj["ok"] as? Bool) != true {
             if (obj["code"] as? String) == "auth" {
                 await Session.shared.logout()
             }
-            throw APIError(message: (obj["error"] as? String) ?? "خطایی رخ داد.")
+            throw APIError(message: (obj["error"] as? String) ?? L.t("خطایی رخ داد."))
         }
         do {
             return try JSONDecoder().decode(T.self, from: data)
         } catch {
-            throw APIError(message: "پاسخ سرور قابل خواندن نبود.")
+            throw APIError(message: L.t("پاسخ سرور قابل خواندن نبود."))
         }
     }
 
     static func webURL(_ path: String) async throws -> URL {
         let r = try await call("POST", "/api/app/webauth", body: ["to": path], as: WebAuthResponse.self)
-        guard let u = URL(string: r.url) else { throw APIError(message: "آدرس نامعتبر است.") }
+        guard let u = URL(string: r.url) else { throw APIError(message: L.t("آدرس نامعتبر است.")) }
         return u
     }
 }

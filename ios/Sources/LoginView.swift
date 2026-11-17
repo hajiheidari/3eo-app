@@ -12,7 +12,7 @@ struct LoginView: View {
         ScrollView {
             VStack(spacing: 0) {
                 Image("Logo").resizable().scaledToFit().frame(width: 190).padding(.top, 56)
-                Text("ابزارهای سئو، همیشه همراه شما")
+                Text(L.t("ابزارهای سئو، همیشه همراه شما"))
                     .font(.vz(15, false)).foregroundColor(Theme.muted).padding(.top, 6)
                 Card {
                     VStack(alignment: .leading, spacing: 12) {
@@ -23,6 +23,7 @@ struct LoginView: View {
                     }
                 }
                 .padding(.top, 28)
+                LangButton().padding(.top, 16)
             }
             .padding(24)
         }
@@ -31,27 +32,27 @@ struct LoginView: View {
 
     private var mobileStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("ورود یا ثبت‌نام").font(.vz(18, true)).foregroundColor(Theme.ink)
-            Text("شماره موبایل خود را وارد کنید تا کد تأیید برایتان پیامک شود.")
+            Text(L.t("ورود یا ثبت‌نام")).font(.vz(18, true)).foregroundColor(Theme.ink)
+            Text(L.t("شماره موبایل خود را وارد کنید تا کد تأیید برایتان پیامک شود."))
                 .font(.vz(14, false)).foregroundColor(Theme.muted)
-            TextField("مثلاً ۰۹۱۲۳۴۵۶۷۸۹", text: $mobile)
+            TextField(L.t("مثلاً ۰۹۱۲۳۴۵۶۷۸۹"), text: $mobile)
                 .keyboardType(.phonePad)
                 .padding(14)
                 .background(Color(white: 0.97))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
-            PrimaryButton(title: "دریافت کد تأیید", loading: loading) { sendCode() }
-            Text("با ورود، قوانین و حریم خصوصی 3eo.ir را می‌پذیرید.")
+            PrimaryButton(title: L.t("دریافت کد تأیید"), loading: loading) { sendCode() }
+            Text(L.t("با ورود، قوانین و حریم خصوصی 3eo.ir را می‌پذیرید."))
                 .font(.vz(12, false)).foregroundColor(Theme.muted)
         }
     }
 
     private var codeStep: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("کد تأیید").font(.vz(18, true)).foregroundColor(Theme.ink)
-            Text("کد ۶ رقمی ارسال‌شده به \(Theme.fa(mobile)) را وارد کنید.")
+            Text(L.t("کد تأیید")).font(.vz(18, true)).foregroundColor(Theme.ink)
+            Text(L.isFa ? "کد ۶ رقمی ارسال‌شده به \(Theme.fa(mobile)) را وارد کنید." : "6-digit code sent to \(mobile) — enter it below.")
                 .font(.vz(14, false)).foregroundColor(Theme.muted)
-            TextField("کد ۶ رقمی", text: $code)
+            TextField(L.t("کد ۶ رقمی"), text: $code)
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.center)
                 .font(.vz(22, false))
@@ -59,15 +60,15 @@ struct LoginView: View {
                 .background(Color(white: 0.97))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
-            PrimaryButton(title: "ورود", loading: loading) { verify() }
-            Button("ویرایش شماره") { step = 0; error = nil }
+            PrimaryButton(title: L.t("ورود"), loading: loading) { verify() }
+            Button(L.t("ویرایش شماره")) { step = 0; error = nil }
                 .font(.vz(14, true)).frame(maxWidth: .infinity)
         }
     }
 
     private func sendCode() {
         let m = mobile.trimmingCharacters(in: .whitespaces)
-        guard m.count >= 10 else { error = "شماره موبایل را کامل وارد کنید."; return }
+        guard m.count >= 10 else { error = L.t("شماره موبایل را کامل وارد کنید."); return }
         loading = true; error = nil
         Task {
             do {
@@ -80,7 +81,7 @@ struct LoginView: View {
 
     private func verify() {
         let c = code.trimmingCharacters(in: .whitespaces)
-        guard c.count >= 6 else { error = "کد ۶ رقمی را کامل وارد کنید."; return }
+        guard c.count >= 6 else { error = L.t("کد ۶ رقمی را کامل وارد کنید."); return }
         loading = true; error = nil
         Task {
             do {

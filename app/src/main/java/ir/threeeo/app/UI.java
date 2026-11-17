@@ -34,7 +34,7 @@ final class UI {
     }
 
     static void rtl(View v) {
-        v.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        v.setLayoutDirection(L.fa() ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
     }
 
     static TextView text(Context c, String s, int sp, int color, boolean bold) {
@@ -125,6 +125,9 @@ final class UI {
 
     /** western digits to Persian digits */
     static String fa(String s) {
+        if (!L.fa()) {
+            return s;
+        }
         StringBuilder b = new StringBuilder();
         for (char ch : s.toCharArray()) {
             b.append(ch >= '0' && ch <= '9' ? (char) ('۰' + (ch - '0')) : ch);
@@ -138,6 +141,9 @@ final class UI {
     static String bidi(String s) {
         if (s == null) {
             return "";
+        }
+        if (!L.fa()) {
+            return L.digits(s);
         }
         java.util.regex.Matcher m = LATIN.matcher(s);
         StringBuffer sb = new StringBuffer();
@@ -201,5 +207,15 @@ final class UI {
 
     static String slugOfType(String type) {
         return "metagen".equals(type) ? "metadesc" : (type == null || type.isEmpty() ? "analyze" : type);
+    }
+
+    /** language switch button: shows the other language, applies it and rebuilds the screen */
+    static Button langSwitch(final android.app.Activity a) {
+        Button b = ghost(a, L.fa() ? "English" : "فارسی", INK);
+        b.setOnClickListener(v -> {
+            L.set(a, L.fa() ? "en" : "fa");
+            a.recreate();
+        });
+        return b;
     }
 }

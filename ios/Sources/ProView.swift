@@ -71,7 +71,7 @@ private struct ProBar: View {
     let dismiss: () -> Void
     var body: some View {
         HStack {
-            Button("‹  بازگشت") { dismiss() }.font(.vz(15, true))
+            Button(L.t("‹  بازگشت")) { dismiss() }.font(.vz(15, true))
             Spacer()
             Text(title).font(.vz(16, true)).foregroundColor(Theme.ink)
             Spacer()
@@ -98,7 +98,7 @@ struct RankView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var d: RankResponse?
     @State private var domain = Demo.on ? "karno-shop.ir" : ""
-    @State private var kws = Demo.on ? "خرید کفش ورزشی\nکفش پیاده‌روی زنانه" : ""
+    @State private var kws = Demo.on ? L.t("خرید کفش ورزشی\nکفش پیاده‌روی زنانه") : ""
     @State private var error: String?
     @State private var job: RankJob?
     @State private var busy = false
@@ -107,31 +107,31 @@ struct RankView: View {
     @State private var note: String?
 
     private func summaryLine(_ a: Double, _ s: RankSummary) -> String {
-        var t = "میانگین رتبه " + Theme.fa(String(a))
-        t += " · " + Theme.fa(String(s.top3)) + " کلمه در ۳ رتبه‌ی اول"
-        t += " · " + Theme.fa(String(s.top10)) + " کلمه در صفحه‌ی اول"
+        var t = L.t("میانگین رتبه ") + Theme.fa(String(a))
+        t += " · " + Theme.fa(String(s.top3)) + L.t(" کلمه در ۳ رتبه‌ی اول")
+        t += " · " + Theme.fa(String(s.top10)) + L.t(" کلمه در صفحه‌ی اول")
         return t
     }
 
-    private func cost(_ n: Int) -> String { (d?.free ?? false) ? "رایگان" : Theme.fa(String(n)) + " اعتبار" }
+    private func cost(_ n: Int) -> String { (d?.free ?? false) ? L.t("رایگان") : Theme.fa(String(n)) + L.t(" اعتبار") }
 
     var body: some View {
         VStack(spacing: 0) {
-            ProBar(title: "رتبه‌ی کلمات کلیدی") { dismiss() }
+            ProBar(title: L.t("رتبه‌ی کلمات کلیدی")) { dismiss() }
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if let d = d {
-                        Text("جایگاه سایت شما در نتایج گوگل ایران برای هر کلمه (تا ۵۰ نتیجه‌ی اول). اعتبار شما: " + Theme.fa(String(d.credits)))
+                        Text(L.t("جایگاه سایت شما در نتایج گوگل ایران برای هر کلمه (تا ۵۰ نتیجه‌ی اول). اعتبار شما: ") + Theme.fa(String(d.credits)))
                             .font(.vz(12, false)).foregroundColor(Theme.muted)
                         Card {
                             VStack(alignment: .leading, spacing: 10) {
-                                fieldStyle(TextField("آدرس سایت (مثل example.ir)", text: $domain)
+                                fieldStyle(TextField(L.t("آدرس سایت (مثل example.ir)"), text: $domain)
                                     .textInputAutocapitalization(.never).disableAutocorrection(true).environment(\.layoutDirection, .leftToRight))
                                 fieldStyle(TextEditor(text: $kws).frame(height: 90).scrollContentBackground(.hidden))
-                                Text("کلمات کلیدی را در خط‌های جدا بنویسید (تا " + Theme.fa(String(d.max)) + " کلمه)").font(.vz(11, false)).foregroundColor(Theme.muted)
-                                Button { check() } label: { solidButton("بررسی یک‌باره · هر کلمه " + cost(d.cost.check), true) }.disabled(busy)
-                                Button { track("weekly") } label: { solidButton("پایش هفتگی · هر کلمه " + cost(d.cost.weekly), false) }
-                                Button { track("daily") } label: { solidButton("پایش روزانه · هر کلمه " + cost(d.cost.daily), false) }
+                                Text(L.t("کلمات کلیدی را در خط‌های جدا بنویسید (تا ") + Theme.fa(String(d.max)) + L.t(" کلمه)")).font(.vz(11, false)).foregroundColor(Theme.muted)
+                                Button { check() } label: { solidButton(L.t("بررسی یک‌باره · هر کلمه ") + cost(d.cost.check), true) }.disabled(busy)
+                                Button { track("weekly") } label: { solidButton(L.t("پایش هفتگی · هر کلمه ") + cost(d.cost.weekly), false) }
+                                Button { track("daily") } label: { solidButton(L.t("پایش روزانه · هر کلمه ") + cost(d.cost.daily), false) }
                             }
                         }
                         if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
@@ -144,21 +144,21 @@ struct RankView: View {
                                             Text(Theme.bidi(r.kw)).font(.vz(14, true)).foregroundColor(Theme.ink)
                                             Spacer()
                                             if r.state == "done" {
-                                                if let p = r.pos { Text("رتبه " + Theme.fa(String(p))).font(.vz(14, true)).foregroundColor(p <= 3 ? Theme.green : (p <= 10 ? Theme.amber : Theme.ink)) }
-                                                else { Text("خارج از ۵۰").font(.vz(14, true)).foregroundColor(Theme.red) }
+                                                if let p = r.pos { Text(L.t("رتبه ") + Theme.fa(String(p))).font(.vz(14, true)).foregroundColor(p <= 3 ? Theme.green : (p <= 10 ? Theme.amber : Theme.ink)) }
+                                                else { Text(L.t("خارج از ۵۰")).font(.vz(14, true)).foregroundColor(Theme.red) }
                                             } else if r.state == "error" {
-                                                Text("خطا (برگشت اعتبار)").font(.vz(13, true)).foregroundColor(Theme.red)
+                                                Text(L.t("خطا (برگشت اعتبار)")).font(.vz(13, true)).foregroundColor(Theme.red)
                                             } else {
-                                                Text("در حال بررسی…").font(.vz(13, false)).foregroundColor(Theme.muted)
+                                                Text(L.t("در حال بررسی…")).font(.vz(13, false)).foregroundColor(Theme.muted)
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        Text("کلمات تحت پایش").font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 10)
+                        Text(L.t("کلمات تحت پایش")).font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 10)
                         if d.tracks.isEmpty {
-                            Text("هنوز کلمه‌ای را پایش نمی‌کنید.").font(.vz(13, false)).foregroundColor(Theme.muted)
+                            Text(L.t("هنوز کلمه‌ای را پایش نمی‌کنید.")).font(.vz(13, false)).foregroundColor(Theme.muted)
                         } else if let a = d.summary.avg {
                             Text(summaryLine(a, d.summary))
                                 .font(.vz(12, false)).foregroundColor(Theme.muted)
@@ -174,9 +174,9 @@ struct RankView: View {
                                         }
                                         Spacer()
                                         VStack(spacing: 2) {
-                                            if t.pending { Text("در انتظار").font(.vz(13, false)).foregroundColor(Theme.muted) }
+                                            if t.pending { Text(L.t("در انتظار")).font(.vz(13, false)).foregroundColor(Theme.muted) }
                                             else if let n = t.now { Text(Theme.fa(String(n))).font(.vz(20, true)).foregroundColor(n <= 3 ? Theme.green : (n <= 10 ? Theme.amber : Theme.ink)) }
-                                            else { Text("خارج از ۵۰").font(.vz(13, true)).foregroundColor(Theme.red) }
+                                            else { Text(L.t("خارج از ۵۰")).font(.vz(13, true)).foregroundColor(Theme.red) }
                                             if let dl = t.delta, dl != 0 {
                                                 Text((dl > 0 ? "▲ " : "▼ ") + Theme.fa(String(abs(dl)))).font(.vz(11, true)).foregroundColor(dl > 0 ? Theme.green : Theme.red)
                                             }
@@ -193,33 +193,33 @@ struct RankView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task { await load() }
         .sheet(item: $hist) { h in
             VStack(alignment: .leading, spacing: 10) {
                 Text(Theme.bidi(h.keyword)).font(.vz(17, true)).foregroundColor(Theme.ink)
                 ScrollView {
                     VStack(alignment: .leading, spacing: 6) {
-                        if h.rows.isEmpty { Text("هنوز نتیجه‌ای ثبت نشده است.").font(.vz(13, false)).foregroundColor(Theme.muted) }
+                        if h.rows.isEmpty { Text(L.t("هنوز نتیجه‌ای ثبت نشده است.")).font(.vz(13, false)).foregroundColor(Theme.muted) }
                         ForEach(h.rows) { r in
                             HStack {
                                 Text(Theme.fa(r.day)).font(.vz(13, false)).foregroundColor(Theme.muted)
                                 Spacer()
-                                Text(r.pos.map { "رتبه " + Theme.fa(String($0)) } ?? "خارج از ۵۰").font(.vz(14, true)).foregroundColor(Theme.ink)
+                                Text(r.pos.map { L.t("رتبه ") + Theme.fa(String($0)) } ?? L.t("خارج از ۵۰")).font(.vz(14, true)).foregroundColor(Theme.ink)
                             }
                         }
                     }
                 }
-                Button { removeTrack() } label: { solidButton("حذف از پایش", false, Theme.red) }
+                Button { removeTrack() } label: { solidButton(L.t("حذف از پایش"), false, Theme.red) }
             }
-            .padding(20).environment(\.layoutDirection, .rightToLeft)
+            .padding(20).environment(\.layoutDirection, Theme.dir)
         }
     }
 
     private func sub(_ t: RankTrack) -> String {
         var x = Theme.bidi(t.domain)
-        x += t.every == "daily" ? " · روزانه" : " · هفتگی"
-        if !t.active { x += " · منقضی" }
+        x += t.every == "daily" ? L.t(" · روزانه") : L.t(" · هفتگی")
+        if !t.active { x += L.t(" · منقضی") }
         return x
     }
 
@@ -231,7 +231,7 @@ struct RankView: View {
 
     private func valid() -> Bool {
         if domain.trimmingCharacters(in: .whitespaces).isEmpty || kws.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            error = "آدرس سایت و دست‌کم یک کلمه را وارد کنید."; return false
+            error = L.t("آدرس سایت و دست‌کم یک کلمه را وارد کنید."); return false
         }
         error = nil; return true
     }
@@ -261,7 +261,7 @@ struct RankView: View {
         Task {
             do {
                 _ = try await API.call("POST", "/api/app/rank/track", body: b, as: Empty.self)
-                note = "پایش شروع شد؛ اولین نتیجه تا چند دقیقه‌ی دیگر ثبت می‌شود."
+                note = L.t("پایش شروع شد؛ اولین نتیجه تا چند دقیقه‌ی دیگر ثبت می‌شود.")
                 kws = ""
                 await load()
             } catch { self.error = error.localizedDescription }
@@ -295,7 +295,7 @@ struct MonitorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ProBar(title: "پایش برند در هوش مصنوعی") { dismiss() }
+            ProBar(title: L.t("پایش برند در هوش مصنوعی")) { dismiss() }
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if let d = d {
@@ -308,32 +308,32 @@ struct MonitorView: View {
                                     HStack {
                                         Text(Theme.bidi(m.brand)).font(.vz(16, true)).foregroundColor(Theme.ink)
                                         Spacer()
-                                        Text(m.status == "paused" ? "متوقف" : "فعال").font(.vz(12, true)).foregroundColor(m.status == "paused" ? Theme.amber : Theme.green)
+                                        Text(m.status == "paused" ? L.t("متوقف") : L.t("فعال")).font(.vz(12, true)).foregroundColor(m.status == "paused" ? Theme.amber : Theme.green)
                                     }
                                     Text(topicLine(m)).font(.vz(12, false)).foregroundColor(Theme.muted)
                                     if let last = m.runs.first {
                                         HStack(spacing: 10) {
                                             Text(Theme.fa(String(last.score))).font(.vz(30, true)).foregroundColor(Theme.score(last.score))
-                                            Text(last.known ? "هوش مصنوعی برند را می‌شناسد" : "هوش مصنوعی برند را نمی‌شناسد").font(.vz(13, true)).foregroundColor(Theme.ink)
+                                            Text(last.known ? L.t("هوش مصنوعی برند را می‌شناسد") : L.t("هوش مصنوعی برند را نمی‌شناسد")).font(.vz(13, true)).foregroundColor(Theme.ink)
                                         }
                                         Text(trend(m))
                                             .font(.vz(12, false)).foregroundColor(Theme.muted)
                                     } else {
-                                        Text("اولین اجرا تا چند دقیقه‌ی دیگر انجام می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                                        Text(L.t("اولین اجرا تا چند دقیقه‌ی دیگر انجام می‌شود.")).font(.vz(12, false)).foregroundColor(Theme.muted)
                                     }
                                     HStack {
                                         if m.status == "paused" {
-                                            Button { act(m.id, "resume") } label: { solidButton("ازسرگیری", false) }
+                                            Button { act(m.id, "resume") } label: { solidButton(L.t("ازسرگیری"), false) }
                                         }
-                                        Button { delId = m.id } label: { solidButton("حذف", false, Theme.red) }
+                                        Button { delId = m.id } label: { solidButton(L.t("حذف"), false, Theme.red) }
                                     }.padding(.top, 6)
                                 }
                             }
                         }
                         if d.monitors.count < d.max {
-                            Button { adding = true } label: { solidButton("＋ پایش جدید", true) }
+                            Button { adding = true } label: { solidButton(L.t("＋ پایش جدید"), true) }
                         } else {
-                            Text("به سقف " + Theme.fa(String(d.max)) + " پایش رسیده‌اید.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                            Text(L.t("به سقف ") + Theme.fa(String(d.max)) + L.t(" پایش رسیده‌اید.")).font(.vz(12, false)).foregroundColor(Theme.muted)
                         }
                     } else {
                         ProgressView().frame(maxWidth: .infinity).padding(.top, 30)
@@ -343,24 +343,24 @@ struct MonitorView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task { await load() }
-        .alert("پایش جدید", isPresented: $adding) {
-            TextField("نام برند", text: $brand)
-            TextField("آدرس سایت (اختیاری)", text: $domain).textInputAutocapitalization(.never).disableAutocorrection(true)
-            TextField("حوزه‌ی فعالیت (مثلاً طراحی سایت)", text: $topic)
-            Button("انصراف", role: .cancel) {}
-            Button("شروع") { create() }
+        .alert(L.t("پایش جدید"), isPresented: $adding) {
+            TextField(L.t("نام برند"), text: $brand)
+            TextField(L.t("آدرس سایت (اختیاری)"), text: $domain).textInputAutocapitalization(.never).disableAutocorrection(true)
+            TextField(L.t("حوزه‌ی فعالیت (مثلاً طراحی سایت)"), text: $topic)
+            Button(L.t("انصراف"), role: .cancel) {}
+            Button(L.t("شروع")) { create() }
         }
-        .alert("حذف پایش", isPresented: Binding(get: { delId != nil }, set: { if !$0 { delId = nil } })) {
-            Button("انصراف", role: .cancel) {}
-            Button("حذف", role: .destructive) { if let i = delId { act(i, "delete") } }
-        } message: { Text("پایش و تاریخچه‌اش حذف می‌شود.") }
+        .alert(L.t("حذف پایش"), isPresented: Binding(get: { delId != nil }, set: { if !$0 { delId = nil } })) {
+            Button(L.t("انصراف"), role: .cancel) {}
+            Button(L.t("حذف"), role: .destructive) { if let i = delId { act(i, "delete") } }
+        } message: { Text(L.t("پایش و تاریخچه‌اش حذف می‌شود.")) }
     }
 
     private func intro(_ d: MonResponse) -> String {
-        let c: String = d.free ? "رایگان" : Theme.fa(String(d.cost)) + " اعتبار"
-        return "هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد یا نه. هر اجرا " + c + " · اعتبار شما: " + Theme.fa(String(d.credits))
+        let c: String = d.free ? L.t("رایگان") : Theme.fa(String(d.cost)) + L.t(" اعتبار")
+        return L.t("هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد یا نه. هر اجرا ") + c + L.t(" · اعتبار شما: ") + Theme.fa(String(d.credits))
     }
 
     private func topicLine(_ m: Mon) -> String {
@@ -371,7 +371,7 @@ struct MonitorView: View {
 
     private func trend(_ m: Mon) -> String {
         let parts: [String] = m.runs.reversed().map { Theme.fa(String($0.score)) }
-        return "روند اجراها: " + parts.joined(separator: " ← ")
+        return L.t("روند اجراها: ") + parts.joined(separator: " ← ")
     }
 
     private func load() async {

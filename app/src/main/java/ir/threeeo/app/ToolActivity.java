@@ -69,7 +69,7 @@ public class ToolActivity extends ScreenActivity {
         String costLabel = tool.optString("cost");
         if (!costLabel.isEmpty()) {
             boolean paid = tool.optBoolean("paid");
-            TextView cl = UI.text(this, (paid ? "هزینه: " : "هزینه: ") + costLabel, 13, paid ? UI.AMBER : UI.GREEN, true);
+            TextView cl = UI.text(this, (paid ? L.t("هزینه: ") : L.t("هزینه: ")) + costLabel, 13, paid ? UI.AMBER : UI.GREEN, true);
             cl.setBackground(UI.box(this, paid ? 0x1AD97706 : 0x1A047857, 12, 0));
             cl.setPadding(UI.dp(this, 12), UI.dp(this, 8), UI.dp(this, 12), UI.dp(this, 8));
             content.addView(cl, UI.wrap(this, 10));
@@ -82,7 +82,7 @@ public class ToolActivity extends ScreenActivity {
         }
         content.addView(form, UI.wrap(this, 14));
 
-        run = UI.primary(this, "اجرا");
+        run = UI.primary(this, L.t("اجرا"));
         run.setBackground(UI.gradient(this, col, UI.darker(col, 0.75f), 12));
         run.setOnClickListener(v -> run());
         content.addView(run, UI.wrap(this, 12));
@@ -178,23 +178,23 @@ public class ToolActivity extends ScreenActivity {
         } catch (Exception ignored) {
         }
         run.setEnabled(false);
-        run.setText("در حال انجام… (تا ۴۵ ثانیه)");
+        run.setText(L.t("در حال انجام… (تا ۴۵ ثانیه)"));
         result.removeAllViews();
         Api.post(this, "/api/app/tool/" + tool.optString("slug"), body, (j, e) -> {
             run.setEnabled(true);
-            run.setText("اجرا");
+            run.setText(L.t("اجرا"));
             if (j == null || e != null) {
                 if (Api.token(this) == null) {
                     finish();
                     return;
                 }
-                Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, e == null ? L.t("خطایی رخ داد.") : e, Toast.LENGTH_LONG).show();
                 return;
             }
             if (!j.optString("share").isEmpty()) {
-                shareText = "گزارش " + j.optString("title") + " " + j.optString("host") + "\n" + j.optString("share");
+                shareText = L.t("گزارش ") + j.optString("title") + " " + j.optString("host") + "\n" + j.optString("share");
             }
-            result.addView(UI.text(this, "نتیجه", 18, UI.INK, true));
+            result.addView(UI.text(this, L.t("نتیجه"), 18, UI.INK, true));
             Blocks.render(this, result, j.optJSONArray("blocks"));
             final View r = result;
             r.post(() -> ((android.widget.ScrollView) content.getParent()).smoothScrollTo(0, r.getTop()));

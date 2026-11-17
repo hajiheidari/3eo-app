@@ -15,7 +15,7 @@ public class BlogPostActivity extends ScreenActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        titleView.setText("وبلاگ");
+        titleView.setText(L.t("وبلاگ"));
         JSONObject p = Blog.current;
         if (p == null) {
             finish();

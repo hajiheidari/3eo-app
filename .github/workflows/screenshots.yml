@@ -4,6 +4,10 @@ name: App Store screenshots (sample data)
 # and pushes the raw screenshots to the "shots" branch.
 on:
   workflow_dispatch:
+    inputs:
+      lang:
+        description: "fa or en"
+        default: "en"
 
 permissions:
   contents: write
@@ -53,7 +57,7 @@ jobs:
           mkdir -p shots
           for S in rank monitor home report pro content blog reports; do
             xcrun simctl terminate "$ID" com.espadna.seo || true
-            xcrun simctl launch "$ID" com.espadna.seo -demo -screen $S
+            xcrun simctl launch "$ID" com.espadna.seo -demo -lang ${{ inputs.lang }} -screen $S
             sleep 14
             xcrun simctl io "$ID" screenshot "shots/$S.png"
             if [ "$S" = rank ] || [ "$S" = monitor ]; then
@@ -68,8 +72,8 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
-          git checkout --orphan shots
+          git checkout --orphan shots-${{ inputs.lang }}
           git rm -rf . >/dev/null 2>&1 || true
           git add -f shots
           git commit -m "screenshots"
-          git push -f origin shots
+          git push -f origin shots-${{ inputs.lang }}

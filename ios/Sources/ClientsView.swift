@@ -20,20 +20,20 @@ struct ClientsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("ابزارهای حرفه‌ای").font(.vz(20, true)).foregroundColor(Theme.ink)
-                Text("تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان.").font(.vz(12, false)).foregroundColor(Theme.muted)
-                proRow("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی") { showContent = true }
-                proRow("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان") { showBrand = true }
-                proRow("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی") { showRank = true }
-                proRow("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند") { showMon = true }
+                Text(L.t("ابزارهای حرفه‌ای")).font(.vz(20, true)).foregroundColor(Theme.ink)
+                Text(L.t("تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان.")).font(.vz(12, false)).foregroundColor(Theme.muted)
+                proRow(L.t("تولید محتوا با هوش مصنوعی"), L.t("موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی")) { showContent = true }
+                proRow(L.t("سربرگ برند و کلید API"), L.t("نام و مشخصات شما روی گزارش مشتریان")) { showBrand = true }
+                proRow(L.t("رتبه‌ی کلمات کلیدی"), L.t("جایگاه سایت در گوگل و پایش روزانه/هفتگی")) { showRank = true }
+                proRow(L.t("پایش برند در هوش مصنوعی"), L.t("ببینید ChatGPT و مشابه برند شما را می‌شناسند")) { showMon = true }
                 if !seoer {
                     Card {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("سئوکار هستید یا برای چند سایت کار می‌کنید؟").font(.vz(15, true)).foregroundColor(Theme.ink)
-                            Text("با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید.")
+                            Text(L.t("سئوکار هستید یا برای چند سایت کار می‌کنید؟")).font(.vz(15, true)).foregroundColor(Theme.ink)
+                            Text(L.t("با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید."))
                                 .font(.vz(12, false)).foregroundColor(Theme.muted)
                             Button { setMode("seoer") } label: {
-                                Text("فعال‌سازی حالت سئوکار").font(.vz(14, true)).foregroundColor(.white)
+                                Text(L.t("فعال‌سازی حالت سئوکار")).font(.vz(14, true)).foregroundColor(.white)
                                     .frame(maxWidth: .infinity).frame(height: 46).background(Theme.green).clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                         }
@@ -41,20 +41,20 @@ struct ClientsView: View {
                 }
                 if seoer {
                 HStack {
-                    Text("مشتریان من").font(.vz(18, true)).foregroundColor(Theme.ink)
+                    Text(L.t("مشتریان من")).font(.vz(18, true)).foregroundColor(Theme.ink)
                     Spacer()
                     Button { adding = true } label: {
-                        Text("＋ افزودن سایت").font(.vz(14, true)).foregroundColor(.white)
+                        Text(L.t("＋ افزودن سایت")).font(.vz(14, true)).foregroundColor(.white)
                             .padding(.horizontal, 14).frame(height: 40)
                             .background(Theme.green).clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
-                Text("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.")
+                Text(L.t("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید."))
                     .font(.vz(12, false)).foregroundColor(Theme.muted)
                 if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                 if let d = data {
                     if d.clients.isEmpty {
-                        Text("هنوز مشتری‌ای ندارید. با «افزودن سایت» شروع کنید.").font(.vz(14, false)).foregroundColor(Theme.muted).padding(.top, 8)
+                        Text(L.t("هنوز مشتری‌ای ندارید. با «افزودن سایت» شروع کنید.")).font(.vz(14, false)).foregroundColor(Theme.muted).padding(.top, 8)
                     }
                     ForEach(d.clients) { c in
                         Button { selected = ClientRef(id: c.id) } label: {
@@ -65,7 +65,7 @@ struct ClientsView: View {
                                         Text(c.host).font(.vz(12, false)).foregroundColor(Theme.muted)
                                             .environment(\.layoutDirection, .leftToRight)
                                         if c.auto > 0 {
-                                            Text("بررسی خودکار: " + Theme.fa(String(c.auto)) + " فعال").font(.vz(11, true)).foregroundColor(Theme.green)
+                                            Text(L.t("بررسی خودکار: ") + Theme.fa(String(c.auto)) + L.t(" فعال")).font(.vz(11, true)).foregroundColor(Theme.green)
                                         }
                                     }
                                     Spacer()
@@ -80,7 +80,7 @@ struct ClientsView: View {
                     ProgressView().frame(maxWidth: .infinity).padding(.top, 20)
                 }
                 Button { setMode("owner") } label: {
-                    Text("خروج از حالت سئوکار").font(.vz(13, true)).foregroundColor(Theme.muted).frame(maxWidth: .infinity, minHeight: 40)
+                    Text(L.t("خروج از حالت سئوکار")).font(.vz(13, true)).foregroundColor(Theme.muted).frame(maxWidth: .infinity, minHeight: 40)
                 }.padding(.top, 14)
                 }
             }
@@ -88,11 +88,11 @@ struct ClientsView: View {
         }
         .background(Theme.bg.ignoresSafeArea())
         .task { await load() }
-        .alert("افزودن سایت مشتری", isPresented: $adding) {
+        .alert(L.t("افزودن سایت مشتری"), isPresented: $adding) {
             TextField("example.ir", text: $site).textInputAutocapitalization(.never).disableAutocorrection(true)
-            TextField("نام مشتری (اختیاری)", text: $name)
-            Button("انصراف", role: .cancel) { site = ""; name = "" }
-            Button("افزودن") { add() }
+            TextField(L.t("نام مشتری (اختیاری)"), text: $name)
+            Button(L.t("انصراف"), role: .cancel) { site = ""; name = "" }
+            Button(L.t("افزودن")) { add() }
         }
         .fullScreenCover(isPresented: $showBrand) { BrandView() }
         .fullScreenCover(isPresented: $showContent) { ContentHomeView() }
@@ -160,7 +160,7 @@ struct ClientDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }
+                Button(L.t("‹  بازگشت")) { dismiss() }
                 Spacer()
             }
             .font(.vz(15, true)).padding(14).background(Color.white)
@@ -172,31 +172,31 @@ struct ClientDetailView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task { await load() }
         .sheet(isPresented: $showMonthly) { MonthlySheet(clientId: id) }
         .fullScreenCover(item: $report, onDismiss: { Task { await load() } }) { ReportView(report: $0) }
         .fullScreenCover(item: $openToken) { ReportLoader(token: $0.id) }
-        .alert("ویرایش", isPresented: $editing) {
-            TextField("نام مشتری", text: $editName)
-            TextField("یادداشت", text: $editNote)
-            Button("انصراف", role: .cancel) {}
-            Button("ذخیره") { Task { _ = try? await API.call("POST", "/api/app/client/\(id)", body: ["name": editName, "note": editNote], as: Empty.self); await load() } }
+        .alert(L.t("ویرایش"), isPresented: $editing) {
+            TextField(L.t("نام مشتری"), text: $editName)
+            TextField(L.t("یادداشت"), text: $editNote)
+            Button(L.t("انصراف"), role: .cancel) {}
+            Button(L.t("ذخیره")) { Task { _ = try? await API.call("POST", "/api/app/client/\(id)", body: ["name": editName, "note": editNote], as: Empty.self); await load() } }
         }
-        .alert("حذف مشتری", isPresented: $confirmDelete) {
-            Button("انصراف", role: .cancel) {}
-            Button("حذف", role: .destructive) {
+        .alert(L.t("حذف مشتری"), isPresented: $confirmDelete) {
+            Button(L.t("انصراف"), role: .cancel) {}
+            Button(L.t("حذف"), role: .destructive) {
                 Task { _ = try? await API.call("POST", "/api/app/client/\(id)/delete", body: [:], as: Empty.self); dismiss() }
             }
-        } message: { Text("مشتری و بررسی‌های خودکارش حذف می‌شود. گزارش‌ها می‌مانند.") }
+        } message: { Text(L.t("مشتری و بررسی‌های خودکارش حذف می‌شود. گزارش‌ها می‌مانند.")) }
     }
 
     private func reportTitle(_ t: String) -> String {
         switch t {
-        case "analyze": return "تحلیل کامل سئو"
-        case "speed": return "سرعت سایت"
-        case "ai": return "دیده‌شدن در هوش مصنوعی"
-        default: return "گزارش"
+        case "analyze": return L.t("تحلیل کامل سئو")
+        case "speed": return L.t("سرعت سایت")
+        case "ai": return L.t("دیده‌شدن در هوش مصنوعی")
+        default: return L.t("گزارش")
         }
     }
 
@@ -213,7 +213,7 @@ struct ClientDetailView: View {
                         Text((delta > 0 ? "▲ " : (delta < 0 ? "▼ " : "")) + Theme.fa(String(abs(delta)))).font(.vz(14, true)).foregroundColor(Color(red: 167 / 255, green: 243 / 255, blue: 208 / 255))
                     }
                 } else {
-                    Text("هنوز تحلیلی انجام نشده").font(.vz(13, false)).foregroundColor(Theme.greenSoft)
+                    Text(L.t("هنوز تحلیلی انجام نشده")).font(.vz(13, false)).foregroundColor(Theme.greenSoft)
                 }
             }
         }
@@ -222,10 +222,10 @@ struct ClientDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: 22))
 
         if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
-        PrimaryButton(title: running ? "در حال تحلیل… (تا ۳۰ ثانیه)" : "تحلیل کامل همین حالا", loading: running) { analyze(c.host) }
+        PrimaryButton(title: running ? L.t("در حال تحلیل… (تا ۳۰ ثانیه)") : L.t("تحلیل کامل همین حالا"), loading: running) { analyze(c.host) }
 
-        Text("بررسی خودکار").font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
-        Text("هر بار اجرا " + Theme.fa(String(d.cost)) + " اعتبار از حساب شما کم می‌کند. اگر اعتبار تمام شود، بررسی خودکار متوقف می‌شود.")
+        Text(L.t("بررسی خودکار")).font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
+        Text(L.t("هر بار اجرا ") + Theme.fa(String(d.cost)) + L.t(" اعتبار از حساب شما کم می‌کند. اگر اعتبار تمام شود، بررسی خودکار متوقف می‌شود."))
             .font(.vz(12, false)).foregroundColor(Theme.muted)
         ForEach(d.schedules) { s in
             Card {
@@ -233,17 +233,17 @@ struct ClientDetailView: View {
                     HStack {
                         Text(s.title).font(.vz(14, true)).foregroundColor(Theme.ink)
                         Spacer()
-                        if s.status == "active" { Text("فعال").font(.vz(12, true)).foregroundColor(Theme.green) }
-                        if s.status == "paused" { Text("متوقف").font(.vz(12, true)).foregroundColor(Theme.amber) }
+                        if s.status == "active" { Text(L.t("فعال")).font(.vz(12, true)).foregroundColor(Theme.green) }
+                        if s.status == "paused" { Text(L.t("متوقف")).font(.vz(12, true)).foregroundColor(Theme.amber) }
                     }
                     if s.status == "paused", let er = s.error, !er.isEmpty {
                         Text(er).font(.vz(12, false)).foregroundColor(Theme.red)
                     }
                     if s.status == "active", let n = s.next_run, !n.isEmpty {
-                        Text("اجرای بعدی: " + Theme.fa(n) + " (UTC)").font(.vz(11, false)).foregroundColor(Theme.muted)
+                        Text(L.t("اجرای بعدی: ") + Theme.fa(n) + " (UTC)").font(.vz(11, false)).foregroundColor(Theme.muted)
                     }
-                    Picker("تناوب", selection: Binding(get: { choice[s.tool] ?? s.every }, set: { choice[s.tool] = $0 })) {
-                        Text("غیرفعال").tag("")
+                    Picker(L.t("تناوب"), selection: Binding(get: { choice[s.tool] ?? s.every }, set: { choice[s.tool] = $0 })) {
+                        Text(L.t("غیرفعال")).tag("")
                         ForEach(d.every_options, id: \.self) { o in Text(o.count > 1 ? o[1] : "").tag(o.first ?? "") }
                     }
                     .pickerStyle(.segmented)
@@ -255,7 +255,7 @@ struct ClientDetailView: View {
                             } catch { self.error = error.localizedDescription }
                         }
                     } label: {
-                        Text("ذخیره").font(.vz(14, true)).foregroundColor(Theme.green)
+                        Text(L.t("ذخیره")).font(.vz(14, true)).foregroundColor(Theme.green)
                             .frame(maxWidth: .infinity, minHeight: 40)
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
                     }
@@ -263,8 +263,8 @@ struct ClientDetailView: View {
             }
         }
 
-        Text("گزارش‌های این سایت").font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
-        if d.reports.isEmpty { Text("هنوز گزارشی ندارد.").font(.vz(13, false)).foregroundColor(Theme.muted) }
+        Text(L.t("گزارش‌های این سایت")).font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
+        if d.reports.isEmpty { Text(L.t("هنوز گزارشی ندارد.")).font(.vz(13, false)).foregroundColor(Theme.muted) }
         ForEach(d.reports) { r in
             Button { openToken = ReportToken(id: r.token) } label: {
                 Card {
@@ -278,7 +278,7 @@ struct ClientDetailView: View {
                         if let s = r.score {
                             VStack(spacing: 0) {
                                 Text(Theme.fa(String(s))).font(.vz(18, true)).foregroundColor(Theme.score(s))
-                                Text("امتیاز").font(.vz(10, false)).foregroundColor(Theme.muted)
+                                Text(L.t("امتیاز")).font(.vz(10, false)).foregroundColor(Theme.muted)
                             }
                         }
                     }
@@ -287,15 +287,15 @@ struct ClientDetailView: View {
         }
 
         Button { showMonthly = true } label: {
-            Text("ساخت گزارش ماهانه برای مشتری (با سربرگ شما)").font(.vz(15, true)).foregroundColor(Theme.green)
+            Text(L.t("ساخت گزارش ماهانه برای مشتری (با سربرگ شما)")).font(.vz(15, true)).foregroundColor(Theme.green)
                 .frame(maxWidth: .infinity, minHeight: 44).overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
         }.padding(.top, 14)
         Button { editName = c.name; editNote = c.note; editing = true } label: {
-            Text("ویرایش نام و یادداشت").font(.vz(15, true)).foregroundColor(Theme.green)
+            Text(L.t("ویرایش نام و یادداشت")).font(.vz(15, true)).foregroundColor(Theme.green)
                 .frame(maxWidth: .infinity, minHeight: 44).overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
         }.padding(.top, 14)
         Button { confirmDelete = true } label: {
-            Text("حذف این مشتری").font(.vz(15, true)).foregroundColor(Theme.red)
+            Text(L.t("حذف این مشتری")).font(.vz(15, true)).foregroundColor(Theme.red)
                 .frame(maxWidth: .infinity, minHeight: 44).overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.red, lineWidth: 1))
         }
     }

@@ -23,15 +23,15 @@ struct MainTabs: View {
 
     private var bar: some View {
         HStack(alignment: .center, spacing: 0) {
-            barItem("گزارش‌ها", "doc.text.fill", 1)
-            barItem("حرفه‌ای", "briefcase.fill", 3)
+            barItem(L.t("گزارش‌ها"), "doc.text.fill", 1)
+            barItem(L.t("حرفه‌ای"), "briefcase.fill", 3)
             Button { tab = 0 } label: {
                 Image("Logo").resizable().scaledToFit().frame(height: 40)
                     .padding(.horizontal, 18).padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
             }
-            barItem("وبلاگ", "square.and.pencil", 4)
-            barItem("حساب من", "person.fill", 2)
+            barItem(L.t("وبلاگ"), "square.and.pencil", 4)
+            barItem(L.t("حساب من"), "person.fill", 2)
         }
         .padding(.top, 6).padding(.bottom, 4)
         .background(Color.white.shadow(color: .black.opacity(0.08), radius: 4, y: -1).ignoresSafeArea(edges: .bottom))
@@ -81,9 +81,9 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("سلام 👋").font(.vz(14, true)).foregroundColor(Color(red: 167 / 255, green: 243 / 255, blue: 208 / 255))
-                    Text("سئوی سایتت را در چند ثانیه بسنج").font(.vz(22, true)).foregroundColor(.white)
-                    Text("امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس.")
+                    Text(L.t("سلام 👋")).font(.vz(14, true)).foregroundColor(Color(red: 167 / 255, green: 243 / 255, blue: 208 / 255))
+                    Text(L.t("سئوی سایتت را در چند ثانیه بسنج")).font(.vz(22, true)).foregroundColor(.white)
+                    Text(L.t("امتحان سئو، سرعت، امنیت و آمادگی برای هوش مصنوعی؛ همه با یک آدرس."))
                         .font(.vz(13, false)).foregroundColor(Theme.greenSoft)
                     HStack(spacing: 6) {
                         TextField("example.com", text: $url)
@@ -91,7 +91,7 @@ struct HomeView: View {
                             .environment(\.layoutDirection, .leftToRight)
                             .padding(.horizontal, 14).frame(height: 50)
                         Button(action: analyze) {
-                            Group { if loading { ProgressView().tint(.white) } else { Text("تحلیل").font(.vz(15, true)) } }
+                            Group { if loading { ProgressView().tint(.white) } else { Text(L.t("تحلیل")).font(.vz(15, true)) } }
                                 .foregroundColor(.white).frame(width: 90, height: 44)
                                 .background(Theme.green).clipShape(RoundedRectangle(cornerRadius: 12))
                         }.disabled(loading)
@@ -103,7 +103,7 @@ struct HomeView: View {
                 .background(LinearGradient(colors: [Color(red: 5 / 255, green: 150 / 255, blue: 105 / 255), Color(red: 6 / 255, green: 78 / 255, blue: 59 / 255)], startPoint: .topLeading, endPoint: .bottomTrailing))
                 .clipShape(RoundedRectangle(cornerRadius: 26))
 
-                TextField("جستجوی ابزار…", text: $query)
+                TextField(L.t("جستجوی ابزار…"), text: $query)
                     .padding(14).background(Color.white).clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.line, lineWidth: 1))
 
@@ -111,7 +111,7 @@ struct HomeView: View {
                     ForEach(order, id: \.self) { c in
                         let on = c == cat
                         Button { cat = c } label: {
-                            Text(c.isEmpty ? "همه" : (tools?.categories[c] ?? c)).font(.vz(13, true))
+                            Text(c.isEmpty ? L.t("همه") : (tools?.categories[c] ?? c)).font(.vz(13, true))
                                 .foregroundColor(on ? .white : Theme.ink).lineLimit(1).minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity).padding(.vertical, 9)
                                 .background(on ? (c.isEmpty ? Theme.green : Theme.cat(c)) : Color.white)
@@ -122,9 +122,9 @@ struct HomeView: View {
                 }
 
                 if tools == nil {
-                    ProgressView("در حال دریافت ابزارها…").frame(maxWidth: .infinity).padding(.top, 20)
+                    ProgressView(L.t("در حال دریافت ابزارها…")).frame(maxWidth: .infinity).padding(.top, 20)
                 } else if filtered.isEmpty {
-                    Text("ابزاری پیدا نشد.").font(.vz(14, false)).foregroundColor(Theme.muted)
+                    Text(L.t("ابزاری پیدا نشد.")).font(.vz(14, false)).foregroundColor(Theme.muted)
                 } else {
                     LazyVGrid(columns: cols, spacing: 10) {
                         ForEach(filtered) { t in
@@ -137,7 +137,7 @@ struct HomeView: View {
                                         .multilineTextAlignment(.leading)
                                     Spacer(minLength: 0)
                                     let paid = t.paid ?? false
-                                    Text(paid ? "سهمیه‌ی روزانه + اعتبار" : "رایگان").font(.vz(11, true))
+                                    Text(paid ? L.t("سهمیه‌ی روزانه + اعتبار") : L.t("رایگان")).font(.vz(11, true))
                                         .foregroundColor(paid ? Theme.amber : Theme.green)
                                         .padding(.horizontal, 8).padding(.vertical, 3)
                                         .background((paid ? Theme.amber : Theme.green).opacity(0.12)).clipShape(Capsule())
@@ -160,7 +160,7 @@ struct HomeView: View {
 
     private func analyze() {
         let u = url.trimmingCharacters(in: .whitespaces)
-        guard u.count >= 4 else { error = "آدرس سایت را وارد کنید."; return }
+        guard u.count >= 4 else { error = L.t("آدرس سایت را وارد کنید."); return }
         loading = true; error = nil
         Task {
             do { report = try await API.call("POST", "/api/app/tool/analyze", body: ["url": u], as: Presented.self) }
@@ -181,16 +181,16 @@ struct ReportsView: View {
     @State private var selected: ReportToken?
 
     private func title(_ type: String) -> String {
-        tools?.tools.first { $0.slug == Theme.slugOf(type) }?.title ?? "گزارش"
+        tools?.tools.first { $0.slug == Theme.slugOf(type) }?.title ?? L.t("گزارش")
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("گزارش‌های من").font(.vz(20, true)).foregroundColor(Theme.ink)
+                Text(L.t("گزارش‌های من")).font(.vz(20, true)).foregroundColor(Theme.ink)
                 let rows = me?.reports ?? []
                 if rows.isEmpty {
-                    Text(me == nil ? "در حال دریافت…" : "هنوز گزارشی ندارید. یک ابزار را اجرا کنید.")
+                    Text(me == nil ? L.t("در حال دریافت…") : L.t("هنوز گزارشی ندارید. یک ابزار را اجرا کنید."))
                         .font(.vz(14, false)).foregroundColor(Theme.muted)
                 }
                 ForEach(rows) { r in
@@ -231,30 +231,31 @@ struct AccountView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
-                Text("حساب من").font(.vz(19, true)).foregroundColor(Theme.ink)
+                Text(L.t("حساب من")).font(.vz(19, true)).foregroundColor(Theme.ink)
                 Card {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("شماره‌ی موبایل").font(.vz(12, false)).foregroundColor(Theme.muted)
+                        Text(L.t("شماره‌ی موبایل")).font(.vz(12, false)).foregroundColor(Theme.muted)
                         Text(me.map { Theme.fa($0.mobile) } ?? "…").font(.vz(17, true)).foregroundColor(Theme.ink)
-                        Text("اعتبار شما").font(.vz(12, false)).foregroundColor(Theme.muted).padding(.top, 10)
+                        Text(L.t("اعتبار شما")).font(.vz(12, false)).foregroundColor(Theme.muted).padding(.top, 10)
                         Text(me.map { Theme.fa(String($0.credits)) } ?? "…").font(.vz(30, true)).foregroundColor(Theme.green)
                     }
                 }
-                outline("حریم خصوصی و قوانین", Theme.green) { if let u = URL(string: "https://3eo.ir/privacy") { web = WebItem(url: u) } }
-                outline("خروج از حساب", Theme.ink) { session.logout() }
-                outline("حذف حساب کاربری", Theme.red) { confirmDelete = true }
+                LangButton()
+                outline(L.t("حریم خصوصی و قوانین"), Theme.green) { if let u = URL(string: "https://3eo.ir/privacy") { web = WebItem(url: u) } }
+                outline(L.t("خروج از حساب"), Theme.ink) { session.logout() }
+                outline(L.t("حذف حساب کاربری"), Theme.red) { confirmDelete = true }
                 if let e = error { Text(e).font(.vz(13, false)).foregroundColor(Theme.red) }
             }
             .padding(16)
         }
         .background(Theme.bg.ignoresSafeArea())
         .fullScreenCover(item: $web) { WebSheet(item: $0) }
-        .alert("حذف حساب کاربری", isPresented: $confirmDelete) {
-            TextField("حذف", text: $confirmText)
-            Button("انصراف", role: .cancel) { confirmText = "" }
-            Button("حذف حساب", role: .destructive) { deleteAccount() }
+        .alert(L.t("حذف حساب کاربری"), isPresented: $confirmDelete) {
+            TextField(L.t("حذف"), text: $confirmText)
+            Button(L.t("انصراف"), role: .cancel) { confirmText = "" }
+            Button(L.t("حذف حساب"), role: .destructive) { deleteAccount() }
         } message: {
-            Text("همه‌ی اطلاعات و گزارش‌های حساب شما برای همیشه پاک می‌شود و برگشت‌پذیر نیست. برای تأیید، کلمه‌ی «حذف» را بنویسید.")
+            Text(L.t("همه‌ی اطلاعات و گزارش‌های حساب شما برای همیشه پاک می‌شود و برگشت‌پذیر نیست. برای تأیید، کلمه‌ی «حذف» را بنویسید."))
         }
     }
 

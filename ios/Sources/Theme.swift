@@ -40,7 +40,10 @@ enum Theme {
     static func slugOf(_ type: String) -> String { type == "metagen" ? "metadesc" : (type.isEmpty ? "analyze" : type) }
 
     /// isolate Latin words (ClaudeBot, CDN, URLs) so mixed Persian/English text keeps a readable order
+    static var dir: LayoutDirection { L.isFa ? .rightToLeft : .leftToRight }
+
     static func bidi(_ s: String) -> String {
+        if !L.isFa { return L.digits(s) }
         guard let re = try? NSRegularExpression(pattern: "[A-Za-z](?:[A-Za-z0-9_.\\-/:?=&%#@+~]*[A-Za-z0-9/])?") else { return s }
         let ns = s as NSString
         var out = ""; var last = 0
@@ -53,6 +56,7 @@ enum Theme {
     }
 
     static func fa(_ s: String) -> String {
+        if !L.isFa { return s }
         String(s.map { c -> Character in
             if let d = c.wholeNumberValue, c.isASCII, let u = UnicodeScalar(0x06F0 + d) { return Character(u) }
             return c
@@ -116,14 +120,14 @@ struct WebSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("بستن") { dismiss() }.font(.vz(16, true))
+                Button(L.t("بستن")) { dismiss() }.font(.vz(16, true))
                 Spacer()
             }
             .padding(14)
             .background(Color.white)
             WebScreen(url: item.url)
         }
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
     }
 }
 

@@ -69,6 +69,7 @@ final class Api {
                 h.setConnectTimeout(15000);
                 h.setReadTimeout(75000);
                 h.setRequestProperty("Accept", "application/json");
+                h.setRequestProperty("X-Lang", L.code());
                 h.setRequestProperty("User-Agent", "3eoApp/1.0 (Android)");
                 if (tok != null) {
                     h.setRequestProperty("Authorization", "Bearer " + tok);
@@ -86,13 +87,13 @@ final class Api {
                 try {
                     out = new JSONObject(text);
                 } catch (Exception e) {
-                    err = "پاسخ نامعتبر از سرور. دوباره امتحان کنید.";
+                    err = L.t("پاسخ نامعتبر از سرور. دوباره امتحان کنید.");
                 }
                 if (out != null && !out.optBoolean("ok", false)) {
-                    err = out.optString("error", "خطایی رخ داد.");
+                    err = out.optString("error", L.t("خطایی رخ داد."));
                 }
             } catch (Exception e) {
-                err = "اتصال به اینترنت برقرار نشد. دوباره امتحان کنید.";
+                err = L.t("اتصال به اینترنت برقرار نشد. دوباره امتحان کنید.");
             } finally {
                 if (h != null) {
                     h.disconnect();

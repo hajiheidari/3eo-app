@@ -20,11 +20,11 @@ public class ReportActivity extends ScreenActivity {
             } catch (Exception ignored) {
             }
         }
-        content.addView(UI.text(this, "در حال دریافت گزارش…", 15, UI.MUTED, false));
+        content.addView(UI.text(this, L.t("در حال دریافت گزارش…"), 15, UI.MUTED, false));
         Api.get(this, "/api/app/report/" + getIntent().getStringExtra("token"), (j, e) -> {
             content.removeAllViews();
             if (e != null || j == null) {
-                content.addView(UI.text(this, e == null ? "گزارش پیدا نشد." : e, 15, UI.RED, false));
+                content.addView(UI.text(this, e == null ? L.t("گزارش پیدا نشد.") : e, 15, UI.RED, false));
             } else {
                 render(j);
             }
@@ -35,7 +35,7 @@ public class ReportActivity extends ScreenActivity {
         content.removeAllViews();
         titleView.setText(j.optString("title"));
         String host = j.optString("host");
-        shareText = j.optString("share").isEmpty() ? "" : "گزارش " + j.optString("title") + " " + host + "\n" + j.optString("share");
+        shareText = j.optString("share").isEmpty() ? "" : L.t("گزارش ") + j.optString("title") + " " + host + "\n" + j.optString("share");
         LinearLayout head = new LinearLayout(this);
         UI.rtl(head);
         head.setGravity(Gravity.CENTER_VERTICAL);

@@ -8,6 +8,11 @@ enum Demo {
         if let i = a.firstIndex(of: "-screen"), i + 1 < a.count { return a[i + 1] }
         return "home"
     }
+    static let lang: String? = {
+        let a = ProcessInfo.processInfo.arguments
+        if let i = a.firstIndex(of: "-lang"), i + 1 < a.count { return a[i + 1] }
+        return nil
+    }()
     static var initialTab: Int {
         switch screen { case "reports": return 1; case "account": return 2; case "pro": return 3; case "blog": return 4; default: return 0 }
     }
@@ -57,7 +62,22 @@ enum Demo {
     }
 
     static func respond<T: Decodable>(_ path: String, as type: T.Type) throws -> T {
-        let s = path.hasPrefix("/api/app/report/") ? report : json(path)
+        let s = localize(path.hasPrefix("/api/app/report/") ? report : json(path))
         return try JSONDecoder().decode(T.self, from: Data(s.utf8))
+    }
+
+    /// English screenshots: translate every string of the sample JSON
+    static func localize(_ s: String) -> String {
+        if L.isFa { return s }
+        guard let d = s.data(using: .utf8), let o = try? JSONSerialization.jsonObject(with: d),
+              let out = try? JSONSerialization.data(withJSONObject: walk(o)), let r = String(data: out, encoding: .utf8) else { return s }
+        return r
+    }
+
+    private static func walk(_ v: Any) -> Any {
+        if let s = v as? String { return DemoEn.d[s] ?? L.t(s) }
+        if let a = v as? [Any] { return a.map { walk($0) } }
+        if let d = v as? [String: Any] { return d.mapValues { walk($0) } }
+        return v
     }
 }

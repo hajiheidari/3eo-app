@@ -40,38 +40,39 @@ public class LoginActivity extends AppCompatActivity {
         logo.setImageResource(R.drawable.logo);
         logo.setAdjustViewBounds(true);
         root.addView(logo, new LinearLayout.LayoutParams(UI.dp(this, 190), ViewGroup.LayoutParams.WRAP_CONTENT));
-        TextView t = UI.text(this, "ابزارهای سئو، همیشه همراه شما", 15, UI.MUTED, false);
+        TextView t = UI.text(this, L.t("ابزارهای سئو، همیشه همراه شما"), 15, UI.MUTED, false);
         t.setGravity(Gravity.CENTER);
         root.addView(t, UI.wrap(this, 6));
 
         box = UI.card(this);
         root.addView(box, UI.wrap(this, 28));
+        root.addView(UI.langSwitch(this), UI.wrap(this, 16));
         stepMobile(null);
         setContentView(sv);
     }
 
     private void stepMobile(String error) {
         box.removeAllViews();
-        box.addView(UI.text(this, "ورود یا ثبت‌نام", 18, UI.INK, true));
-        box.addView(UI.text(this, "شماره موبایل خود را وارد کنید تا کد تأیید برایتان پیامک شود.", 14, UI.MUTED, false), UI.wrap(this, 6));
-        final EditText in = UI.input(this, "مثلاً ۰۹۱۲۳۴۵۶۷۸۹");
+        box.addView(UI.text(this, L.t("ورود یا ثبت‌نام"), 18, UI.INK, true));
+        box.addView(UI.text(this, L.t("شماره موبایل خود را وارد کنید تا کد تأیید برایتان پیامک شود."), 14, UI.MUTED, false), UI.wrap(this, 6));
+        final EditText in = UI.input(this, L.t("مثلاً ۰۹۱۲۳۴۵۶۷۸۹"));
         in.setInputType(InputType.TYPE_CLASS_PHONE);
         in.setText(mobile);
         box.addView(in, UI.wrap(this, 16));
         final TextView err = UI.text(this, error == null ? "" : error, 13, UI.RED, false);
         err.setVisibility(error == null ? View.GONE : View.VISIBLE);
         box.addView(err, UI.wrap(this, 8));
-        final Button go = UI.primary(this, "دریافت کد تأیید");
+        final Button go = UI.primary(this, L.t("دریافت کد تأیید"));
         box.addView(go, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 14));
         go.setOnClickListener(v -> {
             mobile = in.getText().toString().trim();
             if (mobile.length() < 10) {
-                err.setText("شماره موبایل را کامل وارد کنید.");
+                err.setText(L.t("شماره موبایل را کامل وارد کنید."));
                 err.setVisibility(View.VISIBLE);
                 return;
             }
             go.setEnabled(false);
-            go.setText("در حال ارسال…");
+            go.setText(L.t("در حال ارسال…"));
             JSONObject body = new JSONObject();
             try {
                 body.put("mobile", mobile);
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             Api.post(this, "/api/app/login/send", body, (j, e) -> {
                 if (e != null) {
                     go.setEnabled(true);
-                    go.setText("دریافت کد تأیید");
+                    go.setText(L.t("دریافت کد تأیید"));
                     err.setText(e);
                     err.setVisibility(View.VISIBLE);
                 } else {
@@ -88,14 +89,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         });
-        box.addView(UI.text(this, "با ورود، قوانین و حریم خصوصی 3eo.ir را می‌پذیرید.", 12, UI.MUTED, false), UI.wrap(this, 14));
+        box.addView(UI.text(this, L.t("با ورود، قوانین و حریم خصوصی 3eo.ir را می‌پذیرید."), 12, UI.MUTED, false), UI.wrap(this, 14));
     }
 
     private void stepCode(String error) {
         box.removeAllViews();
-        box.addView(UI.text(this, "کد تأیید", 18, UI.INK, true));
-        box.addView(UI.text(this, "کد ۶ رقمی ارسال‌شده به " + UI.fa(mobile) + " را وارد کنید.", 14, UI.MUTED, false), UI.wrap(this, 6));
-        final EditText in = UI.input(this, "کد ۶ رقمی");
+        box.addView(UI.text(this, L.t("کد تأیید"), 18, UI.INK, true));
+        box.addView(UI.text(this, L.t("کد ۶ رقمی ارسال‌شده به ") + UI.fa(mobile) + L.t(" را وارد کنید."), 14, UI.MUTED, false), UI.wrap(this, 6));
+        final EditText in = UI.input(this, L.t("کد ۶ رقمی"));
         in.setInputType(InputType.TYPE_CLASS_NUMBER);
         in.setGravity(Gravity.CENTER);
         in.setTextSize(22);
@@ -103,17 +104,17 @@ public class LoginActivity extends AppCompatActivity {
         final TextView err = UI.text(this, error == null ? "" : error, 13, UI.RED, false);
         err.setVisibility(error == null ? View.GONE : View.VISIBLE);
         box.addView(err, UI.wrap(this, 8));
-        final Button go = UI.primary(this, "ورود");
+        final Button go = UI.primary(this, L.t("ورود"));
         box.addView(go, UI.wrap(this, 14));
         go.setOnClickListener(v -> {
             String code = in.getText().toString().trim();
             if (code.length() < 6) {
-                err.setText("کد ۶ رقمی را کامل وارد کنید.");
+                err.setText(L.t("کد ۶ رقمی را کامل وارد کنید."));
                 err.setVisibility(View.VISIBLE);
                 return;
             }
             go.setEnabled(false);
-            go.setText("در حال ورود…");
+            go.setText(L.t("در حال ورود…"));
             JSONObject body = new JSONObject();
             try {
                 body.put("mobile", mobile);
@@ -123,8 +124,8 @@ public class LoginActivity extends AppCompatActivity {
             Api.post(this, "/api/app/login/verify", body, (j, e) -> {
                 if (e != null || j == null) {
                     go.setEnabled(true);
-                    go.setText("ورود");
-                    err.setText(e == null ? "خطایی رخ داد." : e);
+                    go.setText(L.t("ورود"));
+                    err.setText(e == null ? L.t("خطایی رخ داد.") : e);
                     err.setVisibility(View.VISIBLE);
                     return;
                 }
@@ -133,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             });
         });
-        Button back = UI.ghost(this, "ویرایش شماره", UI.GREEN);
+        Button back = UI.ghost(this, L.t("ویرایش شماره"), UI.GREEN);
         box.addView(back, UI.wrap(this, 10));
         back.setOnClickListener(v -> stepMobile(null));
         in.requestFocus();

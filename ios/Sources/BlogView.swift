@@ -20,7 +20,7 @@ enum Blog {
     static let qs = "per_page=12&_embed=wp:featuredmedia&_fields=id,date,title,excerpt,content,link,_embedded"
 
     static func posts(page: Int) async throws -> [WPPost] {
-        if Demo.on { return page == 1 ? try JSONDecoder().decode([WPPost].self, from: Data(Demo.blog.utf8)) : [] }
+        if Demo.on { return page == 1 ? try JSONDecoder().decode([WPPost].self, from: Data(Demo.localize(Demo.blog).utf8)) : [] }
         let urls = ["\(base)/wp-json/wp/v2/posts?\(qs)&page=\(page)", "\(base)/?rest_route=/wp/v2/posts&\(qs)&page=\(page)"]
         for u in urls {
             guard let url = URL(string: u) else { continue }
@@ -29,7 +29,7 @@ enum Blog {
             if let (data, resp) = try? await URLSession.shared.data(for: req), (resp as? HTTPURLResponse)?.statusCode == 200,
                let list = try? JSONDecoder().decode([WPPost].self, from: data) { return list }
         }
-        throw APIError(message: "دریافت مقاله‌ها ممکن نشد. اتصال اینترنت را بررسی کنید.")
+        throw APIError(message: L.t("دریافت مقاله‌ها ممکن نشد. اتصال اینترنت را بررسی کنید."))
     }
 
     static func plain(_ html: String) -> String {
@@ -77,8 +77,8 @@ struct BlogView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("وبلاگ سئو").font(.vz(20, true)).foregroundColor(Theme.ink)
-                Text("آخرین مقاله‌های آموزشی ما؛ همه‌ی متن‌ها همین‌جا داخل اپ خوانده می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                Text(L.t("وبلاگ سئو")).font(.vz(20, true)).foregroundColor(Theme.ink)
+                Text(L.t("آخرین مقاله‌های آموزشی ما؛ همه‌ی متن‌ها همین‌جا داخل اپ خوانده می‌شود.")).font(.vz(12, false)).foregroundColor(Theme.muted)
                 if let e = error, posts.isEmpty { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                 ForEach(posts) { p in
                     Button { opened = p } label: {
@@ -99,7 +99,7 @@ struct BlogView: View {
                 if busy { ProgressView().frame(maxWidth: .infinity) }
                 else if more && !posts.isEmpty {
                     Button { Task { await load() } } label: {
-                        Text("مقاله‌های بیشتر").font(.vz(14, true)).foregroundColor(Theme.green).frame(maxWidth: .infinity, minHeight: 44)
+                        Text(L.t("مقاله‌های بیشتر")).font(.vz(14, true)).foregroundColor(Theme.green).frame(maxWidth: .infinity, minHeight: 44)
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green.opacity(0.5)))
                     }
                 }
@@ -131,9 +131,9 @@ struct BlogPostView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }
+                Button(L.t("‹  بازگشت")) { dismiss() }
                 Spacer()
-                Button("اشتراک") { share = true }
+                Button(L.t("اشتراک")) { share = true }
             }.font(.vz(15, true)).padding(14).background(Color.white)
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
@@ -158,7 +158,7 @@ struct BlogPostView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .sheet(isPresented: $share) { ShareSheet(items: [Blog.plain(post.title.rendered) + "\n" + post.link]) }
     }
 }

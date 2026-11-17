@@ -68,40 +68,40 @@ struct ContentHomeView: View {
     @State private var error: String?
     @State private var sheet: CSheet?
 
-    private func cost(_ n: Int) -> String { (cfg?.free ?? false) ? "رایگان" : Theme.fa(String(n)) + " اعتبار" }
+    private func cost(_ n: Int) -> String { (cfg?.free ?? false) ? L.t("رایگان") : Theme.fa(String(n)) + L.t(" اعتبار") }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }.font(.vz(15, true))
+                Button(L.t("‹  بازگشت")) { dismiss() }.font(.vz(15, true))
                 Spacer()
-                Text("تولید محتوا").font(.vz(16, true)).foregroundColor(Theme.ink)
+                Text(L.t("تولید محتوا")).font(.vz(16, true)).foregroundColor(Theme.ink)
                 Spacer()
                 Text("").frame(width: 60)
             }.padding(14).background(Color.white)
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if let c = cfg {
-                        Text("از پیدا کردن موضوع تا مقاله‌ی کامل فارسی و سئوشده. اعتبار شما: " + Theme.fa(String(c.credits))).font(.vz(12, false)).foregroundColor(Theme.muted)
+                        Text(L.t("از پیدا کردن موضوع تا مقاله‌ی کامل فارسی و سئوشده. اعتبار شما: ") + Theme.fa(String(c.credits))).font(.vz(12, false)).foregroundColor(Theme.muted)
                         if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                         Card {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("۱) پیشنهاد موضوع").font(.vz(15, true)).foregroundColor(Theme.ink)
-                                cField(TextField("حوزه یا کلمه‌ی کلیدی (مثلاً سئو سایت)", text: $seed))
-                                cField(TextField("مخاطب (اختیاری)", text: $aud))
-                                Button { topics() } label: { cButton("پیشنهاد ۱۰ موضوع · " + cost(c.cost.topics), true) }
+                                Text(L.t("۱) پیشنهاد موضوع")).font(.vz(15, true)).foregroundColor(Theme.ink)
+                                cField(TextField(L.t("حوزه یا کلمه‌ی کلیدی (مثلاً سئو سایت)"), text: $seed))
+                                cField(TextField(L.t("مخاطب (اختیاری)"), text: $aud))
+                                Button { topics() } label: { cButton(L.t("پیشنهاد ۱۰ موضوع · ") + cost(c.cost.topics), true) }
                             }
                         }
                         Card {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("یا موضوع خودتان را دارید؟").font(.vz(15, true)).foregroundColor(Theme.ink)
-                                cField(TextField("موضوع مقاله", text: $topic))
-                                cField(TextField("کلمه‌ی کلیدی اصلی", text: $kw))
-                                Button { sheet = CSheet(topic: topic, keyword: kw, form: true) } label: { cButton("ساخت ساختار مقاله · " + cost(c.cost.outline), false) }
+                                Text(L.t("یا موضوع خودتان را دارید؟")).font(.vz(15, true)).foregroundColor(Theme.ink)
+                                cField(TextField(L.t("موضوع مقاله"), text: $topic))
+                                cField(TextField(L.t("کلمه‌ی کلیدی اصلی"), text: $kw))
+                                Button { sheet = CSheet(topic: topic, keyword: kw, form: true) } label: { cButton(L.t("ساخت ساختار مقاله · ") + cost(c.cost.outline), false) }
                             }
                         }
-                        Text("کارهای اخیر").font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
-                        if c.recent.isEmpty { Text("هنوز کاری ندارید.").font(.vz(13, false)).foregroundColor(Theme.muted) }
+                        Text(L.t("کارهای اخیر")).font(.vz(17, true)).foregroundColor(Theme.ink).padding(.top, 8)
+                        if c.recent.isEmpty { Text(L.t("هنوز کاری ندارید.")).font(.vz(13, false)).foregroundColor(Theme.muted) }
                         ForEach(c.recent) { r in
                             Button { sheet = CSheet(jobId: r.id) } label: {
                                 Card {
@@ -111,7 +111,7 @@ struct ContentHomeView: View {
                                             Text(r.name).font(.vz(11, false)).foregroundColor(Theme.muted)
                                         }
                                         Spacer()
-                                        Text(r.status == "done" ? "آماده" : (r.status == "failed" ? "ناموفق" : "در حال انجام…")).font(.vz(12, true))
+                                        Text(r.status == "done" ? L.t("آماده") : (r.status == "failed" ? L.t("ناموفق") : L.t("در حال انجام…"))).font(.vz(12, true))
                                             .foregroundColor(r.status == "done" ? Theme.green : (r.status == "failed" ? Theme.red : Theme.amber))
                                     }
                                 }
@@ -125,7 +125,7 @@ struct ContentHomeView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task { await load() }
         .fullScreenCover(item: $sheet, onDismiss: { Task { await load() } }) { s in ContentJobView(start: s, cfg: cfg) }
     }
@@ -167,16 +167,16 @@ struct ContentJobView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }.font(.vz(15, true))
+                Button(L.t("‹  بازگشت")) { dismiss() }.font(.vz(15, true))
                 Spacer()
             }.padding(14).background(Color.white)
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     if form { formView } else if let f = failedMsg {
-                        Text("انجام نشد؛ اعتبار برگشت داده شد.").font(.vz(15, true)).foregroundColor(Theme.red)
+                        Text(L.t("انجام نشد؛ اعتبار برگشت داده شد.")).font(.vz(15, true)).foregroundColor(Theme.red)
                         Text(f).font(.vz(12, false)).foregroundColor(Theme.muted)
                     } else if let j = job { result(j) } else {
-                        Text("در حال نوشتن… معمولاً چند دقیقه طول می‌کشد. می‌توانید بیرون بروید؛ نتیجه در «کارهای اخیر» می‌ماند.")
+                        Text(L.t("در حال نوشتن… معمولاً چند دقیقه طول می‌کشد. می‌توانید بیرون بروید؛ نتیجه در «کارهای اخیر» می‌ماند."))
                             .font(.vz(14, false)).foregroundColor(Theme.ink)
                         ProgressView().frame(maxWidth: .infinity).padding(.top, 10)
                     }
@@ -186,7 +186,7 @@ struct ContentJobView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .onAppear {
             if start.form { form = true; topic = start.topic; keyword = start.keyword; if cfg?.lengths.contains(900) == false, let l = cfg?.lengths.first { words = l } }
             else { jobId = start.jobId }
@@ -196,26 +196,26 @@ struct ContentJobView: View {
 
     private var formView: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("ساختار مقاله").font(.vz(17, true)).foregroundColor(Theme.ink)
-            cField(TextField("موضوع مقاله", text: $topic))
-            cField(TextField("کلمه‌ی کلیدی اصلی", text: $keyword))
-            cField(TextField("مخاطب (اختیاری)", text: $aud))
-            Text("لحن نوشته").font(.vz(12, false)).foregroundColor(Theme.muted)
+            Text(L.t("ساختار مقاله")).font(.vz(17, true)).foregroundColor(Theme.ink)
+            cField(TextField(L.t("موضوع مقاله"), text: $topic))
+            cField(TextField(L.t("کلمه‌ی کلیدی اصلی"), text: $keyword))
+            cField(TextField(L.t("مخاطب (اختیاری)"), text: $aud))
+            Text(L.t("لحن نوشته")).font(.vz(12, false)).foregroundColor(Theme.muted)
             Picker("", selection: $tone) {
                 ForEach(cfg?.tones ?? [], id: \.self) { t in Text(t.count > 1 ? t[1] : "").tag(t.first ?? "") }
             }.pickerStyle(.menu).tint(Theme.green)
-            Text("طول مقاله").font(.vz(12, false)).foregroundColor(Theme.muted)
+            Text(L.t("طول مقاله")).font(.vz(12, false)).foregroundColor(Theme.muted)
             Picker("", selection: $words) {
-                ForEach(cfg?.lengths ?? [900], id: \.self) { w in Text("حدود " + Theme.fa(String(w)) + " کلمه").tag(w) }
+                ForEach(cfg?.lengths ?? [900], id: \.self) { w in Text(L.t("حدود ") + Theme.fa(String(w)) + L.t(" کلمه")).tag(w) }
             }.pickerStyle(.segmented)
-            cField(TextField("نکات و واقعیت‌های معتبر شما (اختیاری)", text: $notes, axis: .vertical).lineLimit(3...6))
-            Button { makeOutline() } label: { cButton("ساخت ساختار · " + ((cfg?.free ?? false) ? "رایگان" : Theme.fa(String(cfg?.cost.outline ?? 0)) + " اعتبار"), true) }
+            cField(TextField(L.t("نکات و واقعیت‌های معتبر شما (اختیاری)"), text: $notes, axis: .vertical).lineLimit(3...6))
+            Button { makeOutline() } label: { cButton(L.t("ساخت ساختار · ") + ((cfg?.free ?? false) ? L.t("رایگان") : Theme.fa(String(cfg?.cost.outline ?? 0)) + L.t(" اعتبار")), true) }
         }
     }
 
     @ViewBuilder private func result(_ j: CJob) -> some View {
         if j.kind == "topics" {
-            Text("یکی را انتخاب کنید تا ساختار مقاله‌اش ساخته شود:").font(.vz(13, false)).foregroundColor(Theme.muted)
+            Text(L.t("یکی را انتخاب کنید تا ساختار مقاله‌اش ساخته شود:")).font(.vz(13, false)).foregroundColor(Theme.muted)
             ForEach(j.topics ?? []) { t in
                 Button { topic = t.title; keyword = t.keyword; form = true } label: {
                     Card {
@@ -228,17 +228,17 @@ struct ContentJobView: View {
                 }.buttonStyle(.plain)
             }
         } else if j.kind == "outline" {
-            Text("ساختار را می‌توانید ویرایش کنید (سرتیترها با «## » شروع می‌شوند)، بعد مقاله نوشته می‌شود.").font(.vz(12, false)).foregroundColor(Theme.muted)
+            Text(L.t("ساختار را می‌توانید ویرایش کنید (سرتیترها با «## » شروع می‌شوند)، بعد مقاله نوشته می‌شود.")).font(.vz(12, false)).foregroundColor(Theme.muted)
             cField(TextEditor(text: $outline).frame(minHeight: 260).scrollContentBackground(.hidden))
                 .onAppear { if outline.isEmpty { outline = j.outline ?? "" } }
-            Button { makeArticle() } label: { cButton("نوشتن مقاله · " + (j.free ? "رایگان" : Theme.fa(String(cfg?.cost.article ?? 0)) + " اعتبار"), true) }
+            Button { makeArticle() } label: { cButton(L.t("نوشتن مقاله · ") + (j.free ? L.t("رایگان") : Theme.fa(String(cfg?.cost.article ?? 0)) + L.t(" اعتبار")), true) }
         } else if let a = j.article {
             Text(Theme.bidi(a.title)).font(.vz(20, true)).foregroundColor(Theme.ink)
-            Text("حدود " + Theme.fa(String(a.words)) + " کلمه").font(.vz(12, false)).foregroundColor(Theme.muted)
+            Text(L.t("حدود ") + Theme.fa(String(a.words)) + L.t(" کلمه")).font(.vz(12, false)).foregroundColor(Theme.muted)
             if !a.meta.isEmpty {
                 Card {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("توضیح متا").font(.vz(12, true)).foregroundColor(Theme.green)
+                        Text(L.t("توضیح متا")).font(.vz(12, true)).foregroundColor(Theme.green)
                         Text(a.meta).font(.vz(13, false)).foregroundColor(Theme.ink)
                     }
                 }
@@ -247,7 +247,7 @@ struct ContentJobView: View {
             Button {
                 UIPasteboard.general.string = a.title + "\n\n" + a.body
                 copied = true
-            } label: { cButton(copied ? "کپی شد ✓" : "کپی کل مقاله", true) }
+            } label: { cButton(copied ? L.t("کپی شد ✓") : L.t("کپی کل مقاله"), true) }
         }
     }
 

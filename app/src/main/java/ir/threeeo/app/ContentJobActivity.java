@@ -34,7 +34,7 @@ public class ContentJobActivity extends ScreenActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        titleView.setText("تولید محتوا");
+        titleView.setText(L.t("تولید محتوا"));
         id = getIntent().getIntExtra("id", 0);
         if (getIntent().getBooleanExtra("form", false)) {
             try {
@@ -61,13 +61,13 @@ public class ContentJobActivity extends ScreenActivity {
     /** Outline settings form (topic, keyword, audience, tone, length, notes). */
     private void form(String topic, String kw) {
         content.removeAllViews();
-        titleView.setText("ساختار مقاله");
-        final EditText t = UI.input(this, "موضوع مقاله");
+        titleView.setText(L.t("ساختار مقاله"));
+        final EditText t = UI.input(this, L.t("موضوع مقاله"));
         t.setText(topic == null ? "" : topic);
-        final EditText k = UI.input(this, "کلمه‌ی کلیدی اصلی");
+        final EditText k = UI.input(this, L.t("کلمه‌ی کلیدی اصلی"));
         k.setText(kw == null ? "" : kw);
-        final EditText aud = UI.input(this, "مخاطب (اختیاری)");
-        final EditText notes = UI.input(this, "نکات و واقعیت‌های معتبر شما (اختیاری)");
+        final EditText aud = UI.input(this, L.t("مخاطب (اختیاری)"));
+        final EditText notes = UI.input(this, L.t("نکات و واقعیت‌های معتبر شما (اختیاری)"));
         notes.setSingleLine(false);
         notes.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         notes.setMinLines(3);
@@ -84,14 +84,14 @@ public class ContentJobActivity extends ScreenActivity {
         final Spinner ts = new Spinner(this);
         ts.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tn));
         ts.setBackground(UI.box(this, 0xFFF8FAFC, 12, UI.LINE));
-        content.addView(UI.text(this, "لحن نوشته", 12, UI.MUTED, false), UI.wrap(this, 10));
+        content.addView(UI.text(this, L.t("لحن نوشته"), 12, UI.MUTED, false), UI.wrap(this, 10));
         content.addView(ts, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 46), 4));
         final List<Integer> lv = new ArrayList<>();
         final List<String> ln = new ArrayList<>();
         JSONArray ls = cfg.optJSONArray("lengths");
         for (int i = 0; ls != null && i < ls.length(); i++) {
             lv.add(ls.optInt(i));
-            ln.add("حدود " + fa(ls.optInt(i)) + " کلمه");
+            ln.add(L.t("حدود ") + fa(ls.optInt(i)) + L.t(" کلمه"));
         }
         final Spinner lsp = new Spinner(this);
         lsp.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ln));
@@ -99,11 +99,11 @@ public class ContentJobActivity extends ScreenActivity {
         if (lv.size() > 1) {
             lsp.setSelection(1);
         }
-        content.addView(UI.text(this, "طول مقاله", 12, UI.MUTED, false), UI.wrap(this, 10));
+        content.addView(UI.text(this, L.t("طول مقاله"), 12, UI.MUTED, false), UI.wrap(this, 10));
         content.addView(lsp, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 46), 4));
         content.addView(notes, UI.wrap(this, 10));
-        String c = cfg.optBoolean("free") ? "رایگان" : fa(cfg.optJSONObject("cost").optInt("outline")) + " اعتبار";
-        Button go = UI.primary(this, "ساخت ساختار · " + c);
+        String c = cfg.optBoolean("free") ? L.t("رایگان") : fa(cfg.optJSONObject("cost").optInt("outline")) + L.t(" اعتبار");
+        Button go = UI.primary(this, L.t("ساخت ساختار · ") + c);
         go.setOnClickListener(v -> {
             JSONObject b = new JSONObject();
             try {
@@ -119,11 +119,11 @@ public class ContentJobActivity extends ScreenActivity {
             Api.post(this, "/api/app/content/outline", b, (j, e) -> {
                 go.setEnabled(true);
                 if (j == null || e != null) {
-                    Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, e == null ? L.t("خطایی رخ داد.") : e, Toast.LENGTH_LONG).show();
                     return;
                 }
                 id = j.optInt("id");
-                titleView.setText("تولید محتوا");
+                titleView.setText(L.t("تولید محتوا"));
                 poll(0);
             });
         });
@@ -140,7 +140,7 @@ public class ContentJobActivity extends ScreenActivity {
                     h.postDelayed(() -> poll(n + 1), 4000);
                 } else {
                     content.removeAllViews();
-                    content.addView(UI.text(this, e == null ? "خطا در دریافت." : e, 15, UI.RED, false));
+                    content.addView(UI.text(this, e == null ? L.t("خطا در دریافت.") : e, 15, UI.RED, false));
                 }
                 return;
             }
@@ -149,11 +149,11 @@ public class ContentJobActivity extends ScreenActivity {
                 show(j);
             } else if ("failed".equals(st)) {
                 content.removeAllViews();
-                content.addView(UI.text(this, "انجام نشد؛ اعتبار برگشت داده شد.", 15, UI.RED, true));
+                content.addView(UI.text(this, L.t("انجام نشد؛ اعتبار برگشت داده شد."), 15, UI.RED, true));
                 content.addView(UI.text(this, j.optString("error"), 12, UI.MUTED, false), UI.wrap(this, 6));
             } else {
                 content.removeAllViews();
-                content.addView(UI.text(this, "در حال نوشتن… معمولاً چند دقیقه طول می‌کشد. می‌توانید از این صفحه بیرون بروید؛ نتیجه در «کارهای اخیر» می‌ماند.", 14, UI.INK, false));
+                content.addView(UI.text(this, L.t("در حال نوشتن… معمولاً چند دقیقه طول می‌کشد. می‌توانید از این صفحه بیرون بروید؛ نتیجه در «کارهای اخیر» می‌ماند."), 14, UI.INK, false));
                 h.postDelayed(() -> poll(0), 5000);
             }
         });
@@ -164,7 +164,7 @@ public class ContentJobActivity extends ScreenActivity {
         String kind = j.optString("kind");
         titleView.setText(j.optString("title"));
         if ("topics".equals(kind)) {
-            content.addView(UI.text(this, "یکی را انتخاب کنید تا ساختار مقاله‌اش ساخته شود:", 13, UI.MUTED, false));
+            content.addView(UI.text(this, L.t("یکی را انتخاب کنید تا ساختار مقاله‌اش ساخته شود:"), 13, UI.MUTED, false));
             JSONArray ts = j.optJSONArray("topics");
             for (int i = 0; ts != null && i < ts.length(); i++) {
                 final JSONObject t = ts.optJSONObject(i);
@@ -187,7 +187,7 @@ public class ContentJobActivity extends ScreenActivity {
                 content.addView(c, UI.wrap(this, 10));
             }
         } else if ("outline".equals(kind)) {
-            content.addView(UI.text(this, "ساختار را می‌توانید ویرایش کنید (سرتیترها با «## » شروع می‌شوند)، بعد مقاله نوشته می‌شود.", 12, UI.MUTED, false));
+            content.addView(UI.text(this, L.t("ساختار را می‌توانید ویرایش کنید (سرتیترها با «## » شروع می‌شوند)، بعد مقاله نوشته می‌شود."), 12, UI.MUTED, false));
             final EditText ed = UI.input(this, "");
             ed.setSingleLine(false);
             ed.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -195,8 +195,8 @@ public class ContentJobActivity extends ScreenActivity {
             ed.setGravity(Gravity.TOP | Gravity.START);
             ed.setText(j.optString("outline"));
             content.addView(ed, UI.wrap(this, 8));
-            String c = j.optBoolean("free") ? "رایگان" : fa(j.optJSONObject("cost").optInt("article")) + " اعتبار";
-            final Button go = UI.primary(this, "نوشتن مقاله · " + c);
+            String c = j.optBoolean("free") ? L.t("رایگان") : fa(j.optJSONObject("cost").optInt("article")) + L.t(" اعتبار");
+            final Button go = UI.primary(this, L.t("نوشتن مقاله · ") + c);
             go.setOnClickListener(v -> {
                 JSONObject b = new JSONObject();
                 try {
@@ -207,7 +207,7 @@ public class ContentJobActivity extends ScreenActivity {
                 Api.post(this, "/api/app/content/" + id + "/article", b, (j2, e2) -> {
                     go.setEnabled(true);
                     if (j2 == null || e2 != null) {
-                        Toast.makeText(this, e2 == null ? "خطایی رخ داد." : e2, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, e2 == null ? L.t("خطایی رخ داد.") : e2, Toast.LENGTH_LONG).show();
                         return;
                     }
                     id = j2.optInt("id");
@@ -220,10 +220,10 @@ public class ContentJobActivity extends ScreenActivity {
             final String full = a.optString("title") + "\n\n" + a.optString("body");
             shareText = full;
             content.addView(UI.text(this, UI.bidi(a.optString("title")), 20, UI.INK, true));
-            content.addView(UI.text(this, "حدود " + fa(a.optInt("words")) + " کلمه", 12, UI.MUTED, false), UI.wrap(this, 2));
+            content.addView(UI.text(this, L.t("حدود ") + fa(a.optInt("words")) + L.t(" کلمه"), 12, UI.MUTED, false), UI.wrap(this, 2));
             if (!a.optString("meta").isEmpty()) {
                 LinearLayout m = UI.card(this);
-                m.addView(UI.text(this, "توضیح متا", 12, UI.GREEN, true));
+                m.addView(UI.text(this, L.t("توضیح متا"), 12, UI.GREEN, true));
                 m.addView(UI.text(this, a.optString("meta"), 13, UI.INK, false), UI.wrap(this, 3));
                 content.addView(m, UI.wrap(this, 10));
             }
@@ -231,11 +231,11 @@ public class ContentJobActivity extends ScreenActivity {
             body.setLineSpacing(UI.dp(this, 4), 1f);
             body.setTextIsSelectable(true);
             content.addView(body, UI.wrap(this, 12));
-            Button cp = UI.primary(this, "کپی کل مقاله");
+            Button cp = UI.primary(this, L.t("کپی کل مقاله"));
             cp.setOnClickListener(v -> {
                 ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 cm.setPrimaryClip(ClipData.newPlainText("article", full));
-                Toast.makeText(this, "کپی شد ✓", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, L.t("کپی شد ✓"), Toast.LENGTH_SHORT).show();
             });
             content.addView(cp, UI.wrap(this, 16));
         }

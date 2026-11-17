@@ -66,7 +66,7 @@ final class Blocks {
         UI.rtl(row);
         row.setGravity(Gravity.CENTER);
         String[] k = {"pass", "warn", "fail"};
-        String[] n = {"موفق", "هشدار", "خطا"};
+        String[] n = {L.t("موفق"), L.t("هشدار"), L.t("خطا")};
         int[] col = {UI.GREEN, UI.AMBER, UI.RED};
         for (int i = 0; i < 3; i++) {
             LinearLayout p = UI.column(c);
@@ -197,10 +197,10 @@ final class Blocks {
         int p = UI.dp(c, 10);
         t.setPadding(p, p, p, p);
         card.addView(t, UI.wrap(c, 8));
-        Button cp = UI.ghost(c, "کپی", UI.GREEN);
+        Button cp = UI.ghost(c, L.t("کپی"), UI.GREEN);
         cp.setOnClickListener(v -> {
             ((ClipboardManager) c.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("3eo", text));
-            Toast.makeText(c, "کپی شد ✓", Toast.LENGTH_SHORT).show();
+            Toast.makeText(c, L.t("کپی شد ✓"), Toast.LENGTH_SHORT).show();
         });
         card.addView(cp, UI.wrap(c, 8));
         return card;
@@ -251,7 +251,7 @@ final class Blocks {
         }
         Collections.sort(issues, (x, y) -> Double.compare(y.optDouble("gain"), x.optDouble("gain")));
         if (!issues.isEmpty()) {
-            box.addView(title(c, "مهم‌ترین کارها برای بهتر شدن"));
+            box.addView(title(c, L.t("مهم‌ترین کارها برای بهتر شدن")));
             int n = 0;
             for (JSONObject it : issues) {
                 if (n++ >= 8) {
@@ -261,7 +261,7 @@ final class Blocks {
             }
         }
         if (cats != null && cats.length() > 0) {
-            box.addView(title(c, "همه‌ی بخش‌ها"), UI.wrap(c, 18));
+            box.addView(title(c, L.t("همه‌ی بخش‌ها")), UI.wrap(c, 18));
             for (int i = 0; i < cats.length(); i++) {
                 box.addView(categoryCard(c, cats.optJSONObject(i)), UI.wrap(c, 8));
             }
@@ -283,7 +283,7 @@ final class Blocks {
             f.setBackground(UI.box(c, UI.GREEN_SOFT, 10, 0));
             int p = UI.dp(c, 10);
             f.setPadding(p, p, p, p);
-            f.addView(UI.text(c, "راه‌حل: " + fix, 13, UI.GREEN_DARK, false));
+            f.addView(UI.text(c, L.t("راه‌حل: ") + fix, 13, UI.GREEN_DARK, false));
             card.addView(f, UI.wrap(c, 8));
         }
         return card;
@@ -296,7 +296,7 @@ final class Blocks {
         head.setGravity(Gravity.CENTER_VERTICAL);
         head.addView(UI.text(c, cat.optString("title"), 15, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         int sc = cat.optInt("score");
-        head.addView(UI.text(c, UI.fa(String.valueOf(sc)) + "٪  ▾", 15, UI.scoreColor(sc), true));
+        head.addView(UI.text(c, UI.fa(String.valueOf(sc)) + L.t("٪  ▾"), 15, UI.scoreColor(sc), true));
         card.addView(head);
         final LinearLayout list = UI.column(c);
         list.setVisibility(View.GONE);

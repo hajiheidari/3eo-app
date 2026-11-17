@@ -4,6 +4,13 @@ import SwiftUI
 struct ThreeEOApp: App {
     @StateObject private var session = Session.shared
 
+    init() {
+        if Demo.on, let l = Demo.lang {
+            L.lang = l
+            Session.shared.lang = L.lang
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             Group {
@@ -16,7 +23,8 @@ struct ThreeEOApp: App {
                 }
             }
             .environmentObject(session)
-            .environment(\.layoutDirection, .rightToLeft)
+            .id(session.lang)
+            .environment(\.layoutDirection, Theme.dir)
             .tint(Theme.green)
             .font(.vz(15, false))
         }

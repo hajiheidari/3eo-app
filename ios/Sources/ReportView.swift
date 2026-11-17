@@ -10,7 +10,7 @@ struct ScoreGauge: View {
                 .rotationEffect(.degrees(-90))
             VStack(spacing: 0) {
                 Text(Theme.fa(String(score))).font(.vz(40, true)).foregroundColor(Theme.ink)
-                Text("از ۱۰۰").font(.vz(13, false)).foregroundColor(Theme.muted)
+                Text(L.t("از ۱۰۰")).font(.vz(13, false)).foregroundColor(Theme.muted)
             }
         }
         .frame(width: 170, height: 170)
@@ -40,7 +40,7 @@ struct IssueCard: View {
                     Text(Theme.bidi(check.detail)).font(.vz(13, false)).foregroundColor(Theme.muted)
                 }
                 if !check.fix.isEmpty {
-                    Text(Theme.bidi("راه‌حل: " + check.fix))
+                    Text(Theme.bidi(L.t("راه‌حل: ") + check.fix))
                         .font(.vz(13, false)).foregroundColor(Theme.greenDark)
                         .padding(10).frame(maxWidth: .infinity, alignment: .leading)
                         .background(Theme.greenSoft).clipShape(RoundedRectangle(cornerRadius: 10))
@@ -60,7 +60,7 @@ struct CategoryCard: View {
                     HStack {
                         Text(cat.title).font(.vz(15, true)).foregroundColor(Theme.ink)
                         Spacer()
-                        Text(Theme.fa(String(cat.score)) + "٪  " + (open ? "▴" : "▾"))
+                        Text(Theme.fa(String(cat.score)) + L.t("٪  ") + (open ? "▴" : "▾"))
                             .font(.vz(15, true)).foregroundColor(Theme.score(cat.score))
                     }
                 }
@@ -89,11 +89,11 @@ struct ReportView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button("‹  بازگشت") { dismiss() }
+                Button(L.t("‹  بازگشت")) { dismiss() }
                 Spacer()
                 Text(report.title).font(.vz(16, true)).foregroundColor(Theme.ink)
                 Spacer()
-                Button("اشتراک") { showShare = true }.opacity((report.share ?? "").isEmpty ? 0 : 1)
+                Button(L.t("اشتراک")) { showShare = true }.opacity((report.share ?? "").isEmpty ? 0 : 1)
             }
             .font(.vz(15, true))
             .padding(14).background(Color.white)
@@ -113,8 +113,8 @@ struct ReportView: View {
             }
         }
         .background(Theme.bg.ignoresSafeArea())
-        .environment(\.layoutDirection, .rightToLeft)
-        .sheet(isPresented: $showShare) { ShareSheet(items: ["گزارش \(report.title) \(report.host)\n\(report.share ?? "")"]) }
+        .environment(\.layoutDirection, Theme.dir)
+        .sheet(isPresented: $showShare) { ShareSheet(items: ["\(L.isFa ? "گزارش" : "Report") \(report.title) \(report.host)\n\(report.share ?? "")"]) }
     }
 }
 
@@ -129,10 +129,10 @@ struct ReportLoader: View {
             } else if let e = error {
                 Text(e).foregroundColor(Theme.red).padding()
             } else {
-                ProgressView("در حال دریافت گزارش…")
+                ProgressView(L.t("در حال دریافت گزارش…"))
             }
         }
-        .environment(\.layoutDirection, .rightToLeft)
+        .environment(\.layoutDirection, Theme.dir)
         .task {
             do { report = try await API.call("GET", "/api/app/report/" + token, as: Presented.self) }
             catch { self.error = error.localizedDescription }

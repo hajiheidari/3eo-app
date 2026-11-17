@@ -27,14 +27,14 @@ abstract class ScreenActivity extends AppCompatActivity {
         bar.setBackgroundColor(UI.CARD);
         int p = UI.dp(this, 14);
         bar.setPadding(p, UI.dp(this, 12), p, UI.dp(this, 12));
-        TextView back = UI.text(this, "‹  بازگشت", 15, UI.GREEN, true);
+        TextView back = UI.text(this, L.t("‹  بازگشت"), 15, UI.GREEN, true);
         back.setOnClickListener(v -> finish());
         bar.addView(back);
         titleView = UI.text(this, "", 16, UI.INK, true);
         titleView.setGravity(Gravity.CENTER);
         titleView.setSingleLine(true);
         bar.addView(titleView, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        TextView share = UI.text(this, "اشتراک", 15, UI.GREEN, true);
+        TextView share = UI.text(this, L.t("اشتراک"), 15, UI.GREEN, true);
         share.setOnClickListener(v -> {
             if (shareText.isEmpty()) {
                 return;
@@ -42,7 +42,7 @@ abstract class ScreenActivity extends AppCompatActivity {
             Intent s = new Intent(Intent.ACTION_SEND);
             s.setType("text/plain");
             s.putExtra(Intent.EXTRA_TEXT, shareText);
-            startActivity(Intent.createChooser(s, "اشتراک‌گذاری"));
+            startActivity(Intent.createChooser(s, L.t("اشتراک‌گذاری")));
         });
         bar.addView(share);
         root.addView(bar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

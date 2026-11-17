@@ -30,7 +30,7 @@ public class ClientActivity extends ScreenActivity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         id = getIntent().getIntExtra("id", 0);
-        titleView.setText("مشتری");
+        titleView.setText(L.t("مشتری"));
         load();
     }
 
@@ -46,7 +46,7 @@ public class ClientActivity extends ScreenActivity {
         Api.get(this, "/api/app/client/" + id, (j, e) -> {
             if (j == null || e != null) {
                 content.removeAllViews();
-                content.addView(UI.text(this, e == null ? "خطا در دریافت." : e, 15, UI.RED, false));
+                content.addView(UI.text(this, e == null ? L.t("خطا در دریافت.") : e, 15, UI.RED, false));
                 return;
             }
             data = j;
@@ -81,15 +81,15 @@ public class ClientActivity extends ScreenActivity {
                 row.addView(dt, lp);
             }
         } else {
-            row.addView(UI.text(this, "هنوز تحلیلی انجام نشده", 13, 0xFFD1FAE5, false));
+            row.addView(UI.text(this, L.t("هنوز تحلیلی انجام نشده"), 13, 0xFFD1FAE5, false));
         }
         hero.addView(row, UI.wrap(this, 8));
         content.addView(hero);
 
-        final Button run = UI.primary(this, "تحلیل کامل همین حالا");
+        final Button run = UI.primary(this, L.t("تحلیل کامل همین حالا"));
         run.setOnClickListener(v -> {
             run.setEnabled(false);
-            run.setText("در حال تحلیل… (تا ۳۰ ثانیه)");
+            run.setText(L.t("در حال تحلیل… (تا ۳۰ ثانیه)"));
             JSONObject body = new JSONObject();
             try {
                 body.put("url", host);
@@ -97,9 +97,9 @@ public class ClientActivity extends ScreenActivity {
             }
             Api.post(this, "/api/app/tool/analyze", body, (j, e) -> {
                 run.setEnabled(true);
-                run.setText("تحلیل کامل همین حالا");
+                run.setText(L.t("تحلیل کامل همین حالا"));
                 if (j == null || e != null) {
-                    Toast.makeText(this, e == null ? "خطایی رخ داد." : e, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, e == null ? L.t("خطایی رخ داد.") : e, Toast.LENGTH_LONG).show();
                     return;
                 }
                 Intent i = new Intent(this, ReportActivity.class);
@@ -110,8 +110,8 @@ public class ClientActivity extends ScreenActivity {
         content.addView(run, UI.wrap(this, 12));
 
         // automatic checks
-        content.addView(UI.text(this, "بررسی خودکار", 17, UI.INK, true), UI.wrap(this, 20));
-        content.addView(UI.text(this, "هر بار اجرا " + UI.fa(String.valueOf(data.optInt("cost"))) + " اعتبار از حساب شما کم می‌کند. اگر اعتبار تمام شود، بررسی خودکار متوقف می‌شود.", 12, UI.MUTED, false), UI.wrap(this, 4));
+        content.addView(UI.text(this, L.t("بررسی خودکار"), 17, UI.INK, true), UI.wrap(this, 20));
+        content.addView(UI.text(this, L.t("هر بار اجرا ") + UI.fa(String.valueOf(data.optInt("cost"))) + L.t(" اعتبار از حساب شما کم می‌کند. اگر اعتبار تمام شود، بررسی خودکار متوقف می‌شود."), 12, UI.MUTED, false), UI.wrap(this, 4));
         JSONArray sch = data.optJSONArray("schedules");
         JSONArray opts = data.optJSONArray("every_options");
         for (int i = 0; sch != null && i < sch.length(); i++) {
@@ -120,9 +120,9 @@ public class ClientActivity extends ScreenActivity {
 
         // reports
         JSONArray reps = data.optJSONArray("reports");
-        content.addView(UI.text(this, "گزارش‌های این سایت", 17, UI.INK, true), UI.wrap(this, 22));
+        content.addView(UI.text(this, L.t("گزارش‌های این سایت"), 17, UI.INK, true), UI.wrap(this, 22));
         if (reps == null || reps.length() == 0) {
-            content.addView(UI.text(this, "هنوز گزارشی ندارد.", 13, UI.MUTED, false), UI.wrap(this, 6));
+            content.addView(UI.text(this, L.t("هنوز گزارشی ندارد."), 13, UI.MUTED, false), UI.wrap(this, 6));
         }
         for (int i = 0; reps != null && i < reps.length(); i++) {
             final JSONObject r = reps.optJSONObject(i);
@@ -144,7 +144,7 @@ public class ClientActivity extends ScreenActivity {
                 LinearLayout sc2 = UI.column(this);
                 sc2.setGravity(Gravity.CENTER_HORIZONTAL);
                 sc2.addView(UI.text(this, UI.fa(String.valueOf(r.optInt("score"))), 18, UI.scoreColor(r.optInt("score")), true));
-                sc2.addView(UI.text(this, "امتیاز", 10, UI.MUTED, false));
+                sc2.addView(UI.text(this, L.t("امتیاز"), 10, UI.MUTED, false));
                 rr.addView(sc2);
             }
             rr.setOnClickListener(v -> {
@@ -155,18 +155,18 @@ public class ClientActivity extends ScreenActivity {
             content.addView(rr, UI.wrap(this, 8));
         }
 
-        Button mr = UI.ghost(this, "ساخت گزارش ماهانه برای مشتری (با سربرگ شما)", UI.GREEN);
+        Button mr = UI.ghost(this, L.t("ساخت گزارش ماهانه برای مشتری (با سربرگ شما)"), UI.GREEN);
         mr.setOnClickListener(v -> monthlyDialog());
         content.addView(mr, UI.wrap(this, 18));
 
-        Button edit = UI.ghost(this, "ویرایش نام و یادداشت", UI.GREEN);
+        Button edit = UI.ghost(this, L.t("ویرایش نام و یادداشت"), UI.GREEN);
         edit.setOnClickListener(v -> editDialog(c));
         content.addView(edit, UI.wrap(this, 24));
-        Button del = UI.ghost(this, "حذف این مشتری", UI.RED);
-        del.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("حذف مشتری")
-                .setMessage("مشتری و بررسی‌های خودکارش حذف می‌شود. گزارش‌ها می‌مانند.")
-                .setNegativeButton("انصراف", null)
-                .setPositiveButton("حذف", (d, w) -> Api.post(this, "/api/app/client/" + id + "/delete", new JSONObject(), (j, e) -> {
+        Button del = UI.ghost(this, L.t("حذف این مشتری"), UI.RED);
+        del.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle(L.t("حذف مشتری"))
+                .setMessage(L.t("مشتری و بررسی‌های خودکارش حذف می‌شود. گزارش‌ها می‌مانند."))
+                .setNegativeButton(L.t("انصراف"), null)
+                .setPositiveButton(L.t("حذف"), (d, w) -> Api.post(this, "/api/app/client/" + id + "/delete", new JSONObject(), (j, e) -> {
                     if (e != null) {
                         Toast.makeText(this, e, Toast.LENGTH_LONG).show();
                     } else {
@@ -179,13 +179,13 @@ public class ClientActivity extends ScreenActivity {
     private static String reportTitle(String t) {
         switch (t) {
             case "analyze":
-                return "تحلیل کامل سئو";
+                return L.t("تحلیل کامل سئو");
             case "speed":
-                return "سرعت سایت";
+                return L.t("سرعت سایت");
             case "ai":
-                return "دیده‌شدن در هوش مصنوعی";
+                return L.t("دیده‌شدن در هوش مصنوعی");
             default:
-                return "گزارش";
+                return L.t("گزارش");
         }
     }
 
@@ -197,20 +197,20 @@ public class ClientActivity extends ScreenActivity {
         head.addView(UI.text(this, s.optString("title"), 14, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         String st = s.optString("status");
         if ("active".equals(st)) {
-            head.addView(UI.text(this, "فعال", 12, UI.GREEN, true));
+            head.addView(UI.text(this, L.t("فعال"), 12, UI.GREEN, true));
         } else if ("paused".equals(st)) {
-            head.addView(UI.text(this, "متوقف", 12, UI.AMBER, true));
+            head.addView(UI.text(this, L.t("متوقف"), 12, UI.AMBER, true));
         }
         card.addView(head);
         if (!s.optString("error").isEmpty() && "paused".equals(st)) {
             card.addView(UI.text(this, s.optString("error"), 12, UI.RED, false), UI.wrap(this, 4));
         }
         if ("active".equals(st) && !s.optString("next_run").isEmpty()) {
-            card.addView(UI.text(this, "اجرای بعدی: " + UI.fa(s.optString("next_run")) + " (UTC)", 11, UI.MUTED, false), UI.wrap(this, 4));
+            card.addView(UI.text(this, L.t("اجرای بعدی: ") + UI.fa(s.optString("next_run")) + " (UTC)", 11, UI.MUTED, false), UI.wrap(this, 4));
         }
         final List<String> vals = new ArrayList<>(), names = new ArrayList<>();
         vals.add("");
-        names.add("غیرفعال");
+        names.add(L.t("غیرفعال"));
         for (int i = 0; opts != null && i < opts.length(); i++) {
             vals.add(opts.optJSONArray(i).optString(0));
             names.add(opts.optJSONArray(i).optString(1));
@@ -220,7 +220,7 @@ public class ClientActivity extends ScreenActivity {
         sp.setBackground(UI.box(this, 0xFFF8FAFC, 12, UI.LINE));
         sp.setSelection(Math.max(0, vals.indexOf(s.optString("every"))));
         card.addView(sp, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 46), 8));
-        Button save = UI.ghost(this, "ذخیره", UI.GREEN);
+        Button save = UI.ghost(this, L.t("ذخیره"), UI.GREEN);
         save.setOnClickListener(v -> {
             JSONObject body = new JSONObject();
             try {
@@ -232,7 +232,7 @@ public class ClientActivity extends ScreenActivity {
                 if (e != null) {
                     Toast.makeText(this, e, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(this, "ذخیره شد ✓", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, L.t("ذخیره شد ✓"), Toast.LENGTH_SHORT).show();
                     load();
                 }
             });
@@ -244,11 +244,11 @@ public class ClientActivity extends ScreenActivity {
     private void monthlyDialog() {
         Api.get(this, "/api/app/client/" + id + "/monthly", (j, e) -> {
             if (j == null || e != null) {
-                Toast.makeText(this, e == null ? "خطا" : e, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, e == null ? L.t("خطا") : e, Toast.LENGTH_LONG).show();
                 return;
             }
             if (!j.optBoolean("brand")) {
-                Toast.makeText(this, "اول از «سربرگ برند و کلید API» نام برند خود را ثبت کنید.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, L.t("اول از «سربرگ برند و کلید API» نام برند خود را ثبت کنید."), Toast.LENGTH_LONG).show();
                 return;
             }
             final List<Integer> days = new ArrayList<>();
@@ -264,11 +264,11 @@ public class ClientActivity extends ScreenActivity {
             final Spinner sp = new Spinner(this);
             sp.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, names));
             box.addView(sp);
-            final EditText note = UI.input(this, "یادداشت برای مشتری (اختیاری)");
+            final EditText note = UI.input(this, L.t("یادداشت برای مشتری (اختیاری)"));
             box.addView(note, UI.wrap(this, 10));
-            box.addView(UI.text(this, "هزینه: " + UI.fa(String.valueOf(j.optInt("cost"))) + " اعتبار", 12, UI.MUTED, false), UI.wrap(this, 8));
-            new AlertDialog.Builder(this).setTitle("گزارش ماهانه").setView(box).setNegativeButton("انصراف", null)
-                    .setPositiveButton("ساخت", (d, w) -> {
+            box.addView(UI.text(this, L.t("هزینه: ") + UI.fa(String.valueOf(j.optInt("cost"))) + L.t(" اعتبار"), 12, UI.MUTED, false), UI.wrap(this, 8));
+            new AlertDialog.Builder(this).setTitle(L.t("گزارش ماهانه")).setView(box).setNegativeButton(L.t("انصراف"), null)
+                    .setPositiveButton(L.t("ساخت"), (d, w) -> {
                         JSONObject b = new JSONObject();
                         try {
                             b.put("days", days.get(sp.getSelectedItemPosition()));
@@ -277,13 +277,13 @@ public class ClientActivity extends ScreenActivity {
                         }
                         Api.post(this, "/api/app/client/" + id + "/monthly", b, (r, er) -> {
                             if (r == null || er != null) {
-                                Toast.makeText(this, er == null ? "خطا" : er, Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, er == null ? L.t("خطا") : er, Toast.LENGTH_LONG).show();
                                 return;
                             }
                             Intent s = new Intent(Intent.ACTION_SEND);
                             s.setType("text/plain");
-                            s.putExtra(Intent.EXTRA_TEXT, "گزارش سئو\n" + r.optString("url") + "\n\nPDF:\n" + r.optString("pdf"));
-                            startActivity(Intent.createChooser(s, "ارسال گزارش به مشتری"));
+                            s.putExtra(Intent.EXTRA_TEXT, L.t("گزارش سئو\n") + r.optString("url") + "\n\nPDF:\n" + r.optString("pdf"));
+                            startActivity(Intent.createChooser(s, L.t("ارسال گزارش به مشتری")));
                         });
                     }).show();
         });
@@ -293,14 +293,14 @@ public class ClientActivity extends ScreenActivity {
         LinearLayout box = UI.column(this);
         int p = UI.dp(this, 16);
         box.setPadding(p, p, p, 0);
-        final EditText name = UI.input(this, "نام مشتری");
+        final EditText name = UI.input(this, L.t("نام مشتری"));
         name.setText(c.optString("name"));
-        final EditText note = UI.input(this, "یادداشت (اختیاری)");
+        final EditText note = UI.input(this, L.t("یادداشت (اختیاری)"));
         note.setText(c.optString("note"));
         box.addView(name);
         box.addView(note, UI.wrap(this, 10));
-        new AlertDialog.Builder(this).setTitle("ویرایش").setView(box).setNegativeButton("انصراف", null)
-                .setPositiveButton("ذخیره", (d, w) -> {
+        new AlertDialog.Builder(this).setTitle(L.t("ویرایش")).setView(box).setNegativeButton(L.t("انصراف"), null)
+                .setPositiveButton(L.t("ذخیره"), (d, w) -> {
                     JSONObject body = new JSONObject();
                     try {
                         body.put("name", name.getText().toString());

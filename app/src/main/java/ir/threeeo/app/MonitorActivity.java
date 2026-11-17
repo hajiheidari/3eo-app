@@ -21,7 +21,7 @@ public class MonitorActivity extends ScreenActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        titleView.setText("پایش برند در هوش مصنوعی");
+        titleView.setText(L.t("پایش برند در هوش مصنوعی"));
         load();
     }
 
@@ -29,7 +29,7 @@ public class MonitorActivity extends ScreenActivity {
         Api.get(this, "/api/app/monitor", (j, e) -> {
             if (j == null || e != null) {
                 content.removeAllViews();
-                content.addView(UI.text(this, e == null ? "خطا در دریافت." : e, 15, UI.RED, false));
+                content.addView(UI.text(this, e == null ? L.t("خطا در دریافت.") : e, 15, UI.RED, false));
                 return;
             }
             data = j;
@@ -39,18 +39,18 @@ public class MonitorActivity extends ScreenActivity {
 
     private void render() {
         content.removeAllViews();
-        String cost = data.optBoolean("free") ? "رایگان" : UI.fa(String.valueOf(data.optInt("cost"))) + " اعتبار";
-        content.addView(UI.text(this, "هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد و پیشنهاد می‌دهد یا نه. هر اجرا " + cost + " · اعتبار شما: " + UI.fa(String.valueOf(data.optInt("credits"))), 12, UI.MUTED, false));
+        String cost = data.optBoolean("free") ? L.t("رایگان") : UI.fa(String.valueOf(data.optInt("cost"))) + L.t(" اعتبار");
+        content.addView(UI.text(this, L.t("هر هفته می‌سنجیم هوش مصنوعی (ChatGPT و مشابه) برند شما را می‌شناسد و پیشنهاد می‌دهد یا نه. هر اجرا ") + cost + L.t(" · اعتبار شما: ") + UI.fa(String.valueOf(data.optInt("credits"))), 12, UI.MUTED, false));
         JSONArray ms = data.optJSONArray("monitors");
         for (int i = 0; ms != null && i < ms.length(); i++) {
             content.addView(card(ms.optJSONObject(i)), UI.wrap(this, 12));
         }
         if (ms == null || ms.length() < data.optInt("max")) {
-            Button add = UI.primary(this, "＋ پایش جدید");
+            Button add = UI.primary(this, L.t("＋ پایش جدید"));
             add.setOnClickListener(v -> addDialog());
             content.addView(add, UI.wrap(this, 16));
         } else {
-            content.addView(UI.text(this, "به سقف " + UI.fa(String.valueOf(data.optInt("max"))) + " پایش رسیده‌اید.", 12, UI.MUTED, false), UI.wrap(this, 12));
+            content.addView(UI.text(this, L.t("به سقف ") + UI.fa(String.valueOf(data.optInt("max"))) + L.t(" پایش رسیده‌اید."), 12, UI.MUTED, false), UI.wrap(this, 12));
         }
     }
 
@@ -61,12 +61,12 @@ public class MonitorActivity extends ScreenActivity {
         head.setGravity(Gravity.CENTER_VERTICAL);
         head.addView(UI.text(this, UI.bidi(m.optString("brand")), 16, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         boolean paused = "paused".equals(m.optString("status"));
-        head.addView(UI.text(this, paused ? "متوقف" : "فعال", 12, paused ? UI.AMBER : UI.GREEN, true));
+        head.addView(UI.text(this, paused ? L.t("متوقف") : L.t("فعال"), 12, paused ? UI.AMBER : UI.GREEN, true));
         card.addView(head);
         card.addView(UI.text(this, UI.bidi(m.optString("topic")) + (m.optString("domain").isEmpty() ? "" : " · " + UI.bidi(m.optString("domain"))), 12, UI.MUTED, false), UI.wrap(this, 2));
         JSONArray runs = m.optJSONArray("runs");
         if (runs == null || runs.length() == 0) {
-            card.addView(UI.text(this, "اولین اجرا تا چند دقیقه‌ی دیگر انجام می‌شود.", 12, UI.MUTED, false), UI.wrap(this, 8));
+            card.addView(UI.text(this, L.t("اولین اجرا تا چند دقیقه‌ی دیگر انجام می‌شود."), 12, UI.MUTED, false), UI.wrap(this, 8));
         } else {
             JSONObject last = runs.optJSONObject(0);
             LinearLayout row = new LinearLayout(this);
@@ -76,9 +76,9 @@ public class MonitorActivity extends ScreenActivity {
             row.addView(UI.text(this, UI.fa(String.valueOf(sc)), 30, UI.scoreColor(sc), true));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lp.setMarginStart(UI.dp(this, 10));
-            row.addView(UI.text(this, last.optBoolean("known") ? "هوش مصنوعی برند را می‌شناسد" : "هوش مصنوعی برند را نمی‌شناسد", 13, UI.INK, true), lp);
+            row.addView(UI.text(this, last.optBoolean("known") ? L.t("هوش مصنوعی برند را می‌شناسد") : L.t("هوش مصنوعی برند را نمی‌شناسد"), 13, UI.INK, true), lp);
             card.addView(row, UI.wrap(this, 8));
-            StringBuilder sb = new StringBuilder("روند اجراها: ");
+            StringBuilder sb = new StringBuilder(L.t("روند اجراها: "));
             for (int i = runs.length() - 1; i >= 0; i--) {
                 sb.append(UI.fa(String.valueOf(runs.optJSONObject(i).optInt("score")))).append(i > 0 ? " ← " : "");
             }
@@ -87,13 +87,13 @@ public class MonitorActivity extends ScreenActivity {
         LinearLayout acts = new LinearLayout(this);
         UI.rtl(acts);
         if (paused) {
-            Button rs = UI.ghost(this, "ازسرگیری", UI.GREEN);
+            Button rs = UI.ghost(this, L.t("ازسرگیری"), UI.GREEN);
             rs.setOnClickListener(v -> act(m, "resume"));
             acts.addView(rs, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         }
-        Button del = UI.ghost(this, "حذف", UI.RED);
-        del.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle("حذف پایش").setMessage("پایش و تاریخچه‌اش حذف می‌شود.")
-                .setNegativeButton("انصراف", null).setPositiveButton("حذف", (d, w) -> act(m, "delete")).show());
+        Button del = UI.ghost(this, L.t("حذف"), UI.RED);
+        del.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle(L.t("حذف پایش")).setMessage(L.t("پایش و تاریخچه‌اش حذف می‌شود."))
+                .setNegativeButton(L.t("انصراف"), null).setPositiveButton(L.t("حذف"), (d, w) -> act(m, "delete")).show());
         acts.addView(del, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         card.addView(acts, UI.wrap(this, 10));
         return card;
@@ -112,15 +112,15 @@ public class MonitorActivity extends ScreenActivity {
         LinearLayout box = UI.column(this);
         int p = UI.dp(this, 16);
         box.setPadding(p, p, p, 0);
-        final EditText brand = UI.input(this, "نام برند");
-        final EditText domain = UI.input(this, "آدرس سایت (اختیاری)");
+        final EditText brand = UI.input(this, L.t("نام برند"));
+        final EditText domain = UI.input(this, L.t("آدرس سایت (اختیاری)"));
         domain.setTextDirection(View.TEXT_DIRECTION_LTR);
-        final EditText topic = UI.input(this, "حوزه‌ی فعالیت (مثلاً طراحی سایت)");
+        final EditText topic = UI.input(this, L.t("حوزه‌ی فعالیت (مثلاً طراحی سایت)"));
         box.addView(brand);
         box.addView(domain, UI.wrap(this, 8));
         box.addView(topic, UI.wrap(this, 8));
-        new AlertDialog.Builder(this).setTitle("پایش جدید").setView(box).setNegativeButton("انصراف", null)
-                .setPositiveButton("شروع", (d, w) -> {
+        new AlertDialog.Builder(this).setTitle(L.t("پایش جدید")).setView(box).setNegativeButton(L.t("انصراف"), null)
+                .setPositiveButton(L.t("شروع"), (d, w) -> {
                     JSONObject b = new JSONObject();
                     try {
                         b.put("brand", brand.getText().toString());
