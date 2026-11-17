@@ -51,10 +51,10 @@ jobs:
           APP=$(find "$RUNNER_TEMP/dd" -name "ThreeEO.app" -path "*iphonesimulator*" | head -1)
           xcrun simctl install "$ID" "$APP"
           mkdir -p shots
-          for S in home report pro rank content blog reports monitor; do
+          for S in rank monitor home report pro content blog reports; do
             xcrun simctl terminate "$ID" com.espadna.seo || true
             xcrun simctl launch "$ID" com.espadna.seo -demo -screen $S
-            sleep 7
+            sleep 14
             xcrun simctl io "$ID" screenshot "shots/$S.png"
             if [ "$S" = rank ] || [ "$S" = monitor ]; then
               xcrun simctl spawn "$ID" log show --last 2m --style compact --predicate 'process == "ThreeEO"' | tail -60 > "shots/log-$S.txt" || true
