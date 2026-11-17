@@ -204,15 +204,14 @@ for (const [locale, locId] of Object.entries(vlocs)) {
 
 // ---- build ----
 await step('build', async () => {
-  const builds = await all(`/v1/builds?filter[app]=${app.id}&filter[preReleaseVersion.version]=${VERSION}&sort=-uploadedDate&limit=10`);
-  const build = builds.find((b) => b.attributes.processingState === 'VALID');
-  if (!build) {
-    const any = await all(`/v1/builds?filter[app]=${app.id}&sort=-uploadedDate&limit=8`);
-    for (const b of any) log(`  build ${b.attributes.version} uploaded ${b.attributes.uploadedDate} state ${b.attributes.processingState}`);
-  }
-  if (!build) throw new Error(`no processed build of ${VERSION} yet (Apple may still be processing it)`);
-  await api('PATCH', `/v1/appStoreVersions/${version.id}/relationships/build`, { data: { type: 'builds', id: build.id } });
-  log(`build attached: ${VERSION} (${build.attributes.version}), uploaded ${build.attributes.uploadedDate}`);
+  const r = await api('GET', `/v1/builds?filter[app]=${app.id}&include=preReleaseVersion&sort=-uploadedDate&limit=20`);
+  const ver = Object.fromEntries((r.included || []).map((i) => [i.id, i.attributes.version]));
+  const list = r.data.map((b) => ({ b, v: ver[b.relationships?.preReleaseVersion?.data?.id] }));
+  for (const x of list.slice(0, 4)) log(`  build ${x.v} (${x.b.attributes.version}) ${x.b.attributes.processingState}`);
+  const hit = list.find((x) => x.v === VERSION && x.b.attributes.processingState === 'VALID');
+  if (!hit) throw new Error(`no processed build of ${VERSION} yet (Apple may still be processing it)`);
+  await api('PATCH', `/v1/appStoreVersions/${version.id}/relationships/build`, { data: { type: 'builds', id: hit.b.id } });
+  log(`build attached: ${VERSION} (${hit.b.attributes.version}), uploaded ${hit.b.attributes.uploadedDate}`);
 });
 
 // ---- price and availability ----
