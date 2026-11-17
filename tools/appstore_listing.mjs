@@ -119,7 +119,7 @@ await step('age rating', async () => {
     violenceRealisticProlongedGraphicOrSadistic: 'NONE', gunsOrOtherWeapons: 'NONE',
     gambling: false, unrestrictedWebAccess: false, lootBox: false, messagingAndChat: false,
     parentalControls: false, ageAssurance: false, userGeneratedContent: false, advertising: false,
-    healthOrWellnessTopics: false,
+    healthOrWellnessTopics: false, socialMedia: false,
   });
   log('age rating: none (4+)');
 });
