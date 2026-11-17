@@ -1,0 +1,60 @@
+2026-11-17 14:56:53.210 Df ThreeEO[5925:5ac7] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1018d9680> (E268252C-9FF5-4409-8D6C-B508AA2228EC)
+2026-11-17 14:56:53.217 Df ThreeEO[5925:5ac7] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.espadna.seo-default  persistentID: E268252C-9FF5-4409-8D6C-B508AA2228EC
+2026-11-17 14:56:53.218 Df ThreeEO[5925:5ac7] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-11-17 14:56:53.218 Df ThreeEO[5925:5ac7] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-11-17 14:56:53.219 Df ThreeEO[5925:5ac7] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-11-17 14:56:53.220 Df ThreeEO[5925:5ac7] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-11-17 14:56:53.221 Df ThreeEO[5925:5adc] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x10205e4c0; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.espadna.seo-default; status: ancestor> was:target
+2026-11-17 14:56:53.227 Df ThreeEO[5925:5ac7] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1018d9680> (E268252C-9FF5-4409-8D6C-B508AA2228EC)
+2026-11-17 14:56:53.235 Df ThreeEO[5925:5ada] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-11-17 14:56:53.247 Df ThreeEO[5925:5ada] [com.apple.xpc:session] [0x102199360] Session created.
+2026-11-17 14:56:53.247 Df ThreeEO[5925:5ada] [com.apple.xpc:session] [0x102199360] Session created from connection [0x1023dc8c0]
+2026-11-17 14:56:53.247 Df ThreeEO[5925:5ada] [com.apple.xpc:connection] [0x1023dc8c0] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-11-17 14:56:53.248 Df ThreeEO[5925:5ada] [com.apple.xpc:session] [0x102199360] Session activated
+2026-11-17 14:56:53.253 A  ThreeEO[5925:5ac7] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-11-17 14:56:53.389 Df ThreeEO[5925:5ac7] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-11-17 14:56:53.389 Df ThreeEO[5925:5ac7] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-11-17 14:56:53.389 Df ThreeEO[5925:5ac7] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-11-17 14:56:53.389 Df ThreeEO[5925:5ac7] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-11-17 14:56:53.390 Df ThreeEO[5925:5ac7] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-11-17 14:56:53.400 Df ThreeEO[5925:5adc] [com.apple.xpc:connection] [0x1023dca00] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5adc] [com.apple.CoreAnalytics:client] No XPC connection in Simulator
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ac7] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [58D1F1E6-C68A-4BD3-900E-70172999439E] (reporting strategy default)>
+2026-11-17 14:56:53.491 E  ThreeEO[5925:5adc] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ac7] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [394874B5-0E40-4308-8506-858FE25E0C32] (reporting strategy default)>
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ada] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ac7] [com.apple.network:activity] Set activity <nw_activity 50:1 [58D1F1E6-C68A-4BD3-900E-70172999439E] (reporting strategy default)> as the global parent
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ada] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x1020897c0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 405 (elapsed = 1), _expireHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ac7] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ac7] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x1020884c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 405 (elapsed = 1), _expireHandler: (null)
+2026-11-17 14:56:53.491 Df ThreeEO[5925:5ada] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x1018d3530> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x1020897c0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 405 (elapsed = 1))
+2026-11-17 14:56:53.492 Df ThreeEO[5925:5ac7] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x1018d3530> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x1020884c0>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 405 (elapsed = 1))
+2026-11-17 14:56:53.492 Df ThreeEO[5925:5ac7] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x1018d3530> for task identifier: 1
+2026-11-17 14:56:53.492 Df ThreeEO[5925:5ac7] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-11-17 14:56:53.493 A  ThreeEO[5925:5adc] (RunningBoardServices) didChangeInheritances
+2026-11-17 14:56:53.493 Df ThreeEO[5925:5ac7] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.espadna.seo-default  persistentID: E268252C-9FF5-4409-8D6C-B508AA2228EC
+2026-11-17 14:56:53.493 Df ThreeEO[5925:5ac7] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1018d9680> (E268252C-9FF5-4409-8D6C-B508AA2228EC)
+2026-11-17 14:56:53.494 Df ThreeEO[5925:5ac7] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-11-17 14:56:53.501 A  ThreeEO[5925:5ada] (RunningBoardServices) didChangeInheritances
+2026-11-17 14:56:53.511 Df ThreeEO[5925:5ac7] [com.apple.UIKit:EventDeferring] [0x1022351f0] Scene target of event deferring environments did update: scene: 0x1018d9680; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-11-17 14:56:53.511 Df ThreeEO[5925:5ac7] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x1018d9680; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.espadna.seo-default
+2026-11-17 14:56:53.511 Df ThreeEO[5925:5ac7] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x1018d9680> (E268252C-9FF5-4409-8D6C-B508AA2228EC)
+2026-11-17 14:56:53.512 Df ThreeEO[5925:5ac7] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.espadna.seo-default  persistentID: E268252C-9FF5-4409-8D6C-B508AA2228EC
+2026-11-17 14:56:53.512 Df ThreeEO[5925:5ac7] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-11-17 14:56:53.512 Df ThreeEO[5925:5ac7] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-11-17 14:56:53.512 Df ThreeEO[5925:5ac7] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-11-17 14:56:53.596 A  ThreeEO[5925:5adc] (RunningBoardServices) didChangeInheritances
+2026-11-17 14:56:53.639 Df ThreeEO[5925:5ada] [com.apple.calls.callkit:Default] Call host has no calls
+2026-11-17 14:56:53.740 A  ThreeEO[5925:5adc] (RunningBoardServices) didChangeInheritances
+2026-11-17 14:56:53.757 Df ThreeEO[5925:5ac7] [com.apple.KeyboardArbiter:Client] startConnection
+2026-11-17 14:56:53.760 Df ThreeEO[5925:5ac7] [com.apple.xpc:connection] [0x109054f00] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-11-17 14:56:53.764 Df ThreeEO[5925:5ac7] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-11-17 14:56:53.765 Df ThreeEO[5925:5ac7] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-11-17 14:56:53.765 Df ThreeEO[5925:5ac7] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-11-17 14:56:53.766 Df ThreeEO[5925:5ac7] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-11-17 14:56:53.801 Df ThreeEO[5925:5ac7] [com.apple.network:activity] <nw_activity 50:1 [58D1F1E6-C68A-4BD3-900E-70172999439E] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1879ms
+2026-11-17 14:56:53.801 Df ThreeEO[5925:5ac7] [com.apple.network:activity] <nw_activity 50:2 [394874B5-0E40-4308-8506-858FE25E0C32] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1878ms
+2026-11-17 14:56:53.801 Df ThreeEO[5925:5ac7] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [58D1F1E6-C68A-4BD3-900E-70172999439E] (global parent) (reporting strategy default) complete (reason success)>
+2026-11-17 14:56:53.801 Df ThreeEO[5925:5ac7] [com.apple.network:activity] Unset the global parent activity
+2026-11-17 14:56:53.801 Df ThreeEO[5925:5ac7] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-11-17 14:56:53.801 E  ThreeEO[5925:5adc] [com.apple.app_launch_measurement:General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
