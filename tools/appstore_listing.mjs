@@ -279,6 +279,17 @@ await step('App Review details', async () => {
   log(`App Review: notes set${contact.contactPhone ? ', contact set' : ' (contact details not given yet)'}`);
 });
 
+await step('verify', async () => {
+  const i = await api('GET', `/v1/appInfos/${info.id}?include=primaryCategory,secondaryCategory`);
+  log(`CHECK categories: ${(i.included || []).map((c) => c.id).join(', ') || 'none set'}`);
+  const d = await one(`/v1/appStoreVersions/${version.id}/appStoreReviewDetail`);
+  const a = d?.attributes || {};
+  log(`CHECK review contact: ${a.contactFirstName || '-'} ${a.contactLastName || '-'} | phone ${a.contactPhone ? 'set' : 'MISSING'} | email ${a.contactEmail ? 'set' : 'MISSING'}`);
+  log(`CHECK demo account: required=${a.demoAccountRequired} user=${a.demoAccountName ? 'set' : 'MISSING'} password=${a.demoAccountPassword ? 'set' : 'MISSING'}`);
+  const v = await api('GET', `/v1/appStoreVersions/${version.id}?include=build`);
+  log(`CHECK build on version: ${(v.included || []).map((b) => b.attributes.version).join(',') || 'none'}`);
+}, true);
+
 if (process.env.SUBMIT === 'true') {
   await step('submit for review', async () => {
     if (problems) throw new Error(`not submitted: ${problems} problem(s) above must be fixed first`);
