@@ -97,7 +97,14 @@ await step('app info texts (name, subtitle, privacy URL)', async () => {
     const attributes = { name: t.name, subtitle: t.subtitle, privacyPolicyUrl: PRIVACY };
     const loc = have.find((h) => h.attributes.locale === locale);
     await step(`app info ${locale}`, async () => {
-      if (loc) await api('PATCH', `/v1/appInfoLocalizations/${loc.id}`, { data: { type: 'appInfoLocalizations', id: loc.id, attributes } });
+      if (loc) {
+        const cur = await api('GET', `/v1/appInfoLocalizations/${loc.id}`);
+        log(`current: ${JSON.stringify(cur.data.attributes)}`);
+        for (const [k, v] of Object.entries(attributes)) {
+          try { await api('PATCH', `/v1/appInfoLocalizations/${loc.id}`, { data: { type: 'appInfoLocalizations', id: loc.id, attributes: { [k]: v } } }); log(`  set ${k}`); }
+          catch (e) { warn(`app info ${k}: ${e.message.slice(0, 120)}`); }
+        }
+      }
       else {
         await api('POST', '/v1/appInfoLocalizations', {
           data: { type: 'appInfoLocalizations', attributes: { locale, ...attributes }, relationships: { appInfo: rel('appInfos', info.id) } },
