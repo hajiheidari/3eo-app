@@ -25,6 +25,18 @@ function token(kind = keyKind) {
 }
 
 async function api(method, path, body) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await apiOnce(method, path, body);
+    } catch (e) {
+      // Apple's API answers 500/401 now and then for no reason; try again a few times.
+      if (attempt >= 4 || !/→ (500|502|503|401|429) /.test(e.message)) throw e;
+      await new Promise((r) => setTimeout(r, 2500 * attempt));
+    }
+  }
+}
+
+async function apiOnce(method, path, body) {
   const send = (kind) =>
     fetch(`https://api.appstoreconnect.apple.com${path}`, {
       method,
