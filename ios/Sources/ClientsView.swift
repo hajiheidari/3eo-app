@@ -9,6 +9,7 @@ struct ClientsView: View {
     @State private var site = ""
     @State private var name = ""
     @State private var error: String?
+    @State private var showBrand = false
     @State private var showContent = false
     @State private var showRank = false
     @State private var showMon = false
@@ -28,6 +29,7 @@ struct ClientsView: View {
                 Text("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.")
                     .font(.vz(12, false)).foregroundColor(Theme.muted)
                 proRow("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی") { showContent = true }
+                proRow("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان") { showBrand = true }
                 proRow("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی") { showRank = true }
                 proRow("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند") { showMon = true }
                 if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
@@ -69,6 +71,7 @@ struct ClientsView: View {
             Button("انصراف", role: .cancel) { site = ""; name = "" }
             Button("افزودن") { add() }
         }
+        .fullScreenCover(isPresented: $showBrand) { BrandView() }
         .fullScreenCover(isPresented: $showContent) { ContentHomeView() }
         .fullScreenCover(isPresented: $showRank) { RankView() }
         .fullScreenCover(isPresented: $showMon) { MonitorView() }
@@ -122,6 +125,7 @@ struct ClientDetailView: View {
     @State private var confirmDelete = false
     @State private var choice: [String: String] = [:]
     @State private var saved: String?
+    @State private var showMonthly = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -140,6 +144,7 @@ struct ClientDetailView: View {
         .background(Theme.bg.ignoresSafeArea())
         .environment(\.layoutDirection, .rightToLeft)
         .task { await load() }
+        .sheet(isPresented: $showMonthly) { MonthlySheet(clientId: id) }
         .fullScreenCover(item: $report, onDismiss: { Task { await load() } }) { ReportView(report: $0) }
         .fullScreenCover(item: $openToken) { ReportLoader(token: $0.id) }
         .alert("ویرایش", isPresented: $editing) {
@@ -234,6 +239,10 @@ struct ClientDetailView: View {
             }.buttonStyle(.plain)
         }
 
+        Button { showMonthly = true } label: {
+            Text("ساخت گزارش ماهانه برای مشتری (با سربرگ شما)").font(.vz(15, true)).foregroundColor(Theme.green)
+                .frame(maxWidth: .infinity, minHeight: 44).overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))
+        }.padding(.top, 14)
         Button { editName = c.name; editNote = c.note; editing = true } label: {
             Text("ویرایش نام و یادداشت").font(.vz(15, true)).foregroundColor(Theme.green)
                 .frame(maxWidth: .infinity, minHeight: 44).overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.green, lineWidth: 1))

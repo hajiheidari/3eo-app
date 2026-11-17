@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
         col.addView(proCard("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی", ContentActivity.class), UI.wrap(this, 12));
         col.addView(proCard("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی", RankActivity.class), UI.wrap(this, 8));
         col.addView(proCard("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند", MonitorActivity.class), UI.wrap(this, 8));
+        col.addView(proCard("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان", BrandActivity.class), UI.wrap(this, 8));
         final LinearLayout list = UI.column(this);
         col.addView(list, UI.wrap(this, 10));
         paintClients(list);

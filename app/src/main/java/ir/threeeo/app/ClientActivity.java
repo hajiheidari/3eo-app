@@ -148,6 +148,10 @@ public class ClientActivity extends ScreenActivity {
             content.addView(rr, UI.wrap(this, 8));
         }
 
+        Button mr = UI.ghost(this, "ساخت گزارش ماهانه برای مشتری (با سربرگ شما)", UI.GREEN);
+        mr.setOnClickListener(v -> monthlyDialog());
+        content.addView(mr, UI.wrap(this, 18));
+
         Button edit = UI.ghost(this, "ویرایش نام و یادداشت", UI.GREEN);
         edit.setOnClickListener(v -> editDialog(c));
         content.addView(edit, UI.wrap(this, 24));
@@ -215,6 +219,54 @@ public class ClientActivity extends ScreenActivity {
         });
         card.addView(save, UI.wrap(this, 8));
         return card;
+    }
+
+    private void monthlyDialog() {
+        Api.get(this, "/api/app/client/" + id + "/monthly", (j, e) -> {
+            if (j == null || e != null) {
+                Toast.makeText(this, e == null ? "خطا" : e, Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (!j.optBoolean("brand")) {
+                Toast.makeText(this, "اول از «سربرگ برند و کلید API» نام برند خود را ثبت کنید.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            final List<Integer> days = new ArrayList<>();
+            final List<String> names = new ArrayList<>();
+            JSONArray ps = j.optJSONArray("periods");
+            for (int i = 0; ps != null && i < ps.length(); i++) {
+                days.add(ps.optJSONArray(i).optInt(0));
+                names.add(ps.optJSONArray(i).optString(1));
+            }
+            LinearLayout box = UI.column(this);
+            int p = UI.dp(this, 16);
+            box.setPadding(p, p, p, 0);
+            final Spinner sp = new Spinner(this);
+            sp.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, names));
+            box.addView(sp);
+            final EditText note = UI.input(this, "یادداشت برای مشتری (اختیاری)");
+            box.addView(note, UI.wrap(this, 10));
+            box.addView(UI.text(this, "هزینه: " + UI.fa(String.valueOf(j.optInt("cost"))) + " اعتبار", 12, UI.MUTED, false), UI.wrap(this, 8));
+            new AlertDialog.Builder(this).setTitle("گزارش ماهانه").setView(box).setNegativeButton("انصراف", null)
+                    .setPositiveButton("ساخت", (d, w) -> {
+                        JSONObject b = new JSONObject();
+                        try {
+                            b.put("days", days.get(sp.getSelectedItemPosition()));
+                            b.put("note", note.getText().toString());
+                        } catch (Exception ignored) {
+                        }
+                        Api.post(this, "/api/app/client/" + id + "/monthly", b, (r, er) -> {
+                            if (r == null || er != null) {
+                                Toast.makeText(this, er == null ? "خطا" : er, Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            Intent s = new Intent(Intent.ACTION_SEND);
+                            s.setType("text/plain");
+                            s.putExtra(Intent.EXTRA_TEXT, "گزارش سئو\n" + r.optString("url") + "\n\nPDF:\n" + r.optString("pdf"));
+                            startActivity(Intent.createChooser(s, "ارسال گزارش به مشتری"));
+                        });
+                    }).show();
+        });
     }
 
     private void editDialog(JSONObject c) {
