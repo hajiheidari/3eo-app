@@ -24,7 +24,7 @@ struct MainTabs: View {
     private var bar: some View {
         HStack(alignment: .center, spacing: 0) {
             barItem("گزارش‌ها", "doc.text.fill", 1)
-            barItem("مشتریان", "person.2.fill", 3)
+            barItem("حرفه‌ای", "briefcase.fill", 3)
             Button { tab = 0 } label: {
                 Image("Logo").resizable().scaledToFit().frame(height: 40)
                     .padding(.horizontal, 18).padding(.vertical, 6)

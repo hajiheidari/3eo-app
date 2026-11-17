@@ -134,6 +134,7 @@ struct ReportRow: Codable, Identifiable {
 struct Me: Codable {
     let mobile: String
     let credits: Int
+    let mode: String?
     let reports: [ReportRow]
 }
 

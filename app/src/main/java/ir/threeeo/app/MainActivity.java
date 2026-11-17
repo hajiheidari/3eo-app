@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout bar = new LinearLayout(this);
         UI.rtl(bar);
         bar.setBackgroundColor(UI.CARD);
-        String[] names = {"خانه", "گزارش‌ها", "حساب من", "مشتریان", "وبلاگ"};
+        String[] names = {"خانه", "گزارش‌ها", "حساب من", "حرفه‌ای", "وبلاگ"};
         String[] icons = {"", "▤", "☺", "♚", "✎"};
         int[] posOrder = {1, 3, 0, 4, 2};
         for (int pi = 0; pi < 5; pi++) {
@@ -432,22 +432,57 @@ public class MainActivity extends AppCompatActivity {
     // ---------- Clients
     private JSONObject clientsData;
 
+    private boolean seoer() {
+        return me != null && "seoer".equals(me.optString("mode"));
+    }
+
+    private void setMode(String mode) {
+        JSONObject b = new JSONObject();
+        try {
+            b.put("mode", mode);
+        } catch (Exception ignored) {
+        }
+        Api.post(this, "/api/app/mode", b, (j, e) -> {
+            if (e != null) {
+                Toast.makeText(this, e, Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                me.put("mode", mode);
+            } catch (Exception ignored) {
+            }
+            show(3);
+        });
+    }
+
     private View clientsView() {
         LinearLayout col = UI.column(this);
-        LinearLayout head = new LinearLayout(this);
-        UI.rtl(head);
-        head.setGravity(Gravity.CENTER_VERTICAL);
-        head.addView(UI.text(this, "مشتریان من", 20, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        Button add = UI.primary(this, "＋ افزودن سایت");
-        add.setMinHeight(UI.dp(this, 40));
-        add.setOnClickListener(v -> addClientDialog());
-        head.addView(add, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, UI.dp(this, 42)));
-        col.addView(head);
-        col.addView(UI.text(this, "سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.", 12, UI.MUTED, false), UI.wrap(this, 6));
+        col.addView(UI.text(this, "ابزارهای حرفه‌ای", 20, UI.INK, true));
+        col.addView(UI.text(this, "تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان.", 12, UI.MUTED, false), UI.wrap(this, 4));
         col.addView(proCard("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی", ContentActivity.class), UI.wrap(this, 12));
         col.addView(proCard("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی", RankActivity.class), UI.wrap(this, 8));
         col.addView(proCard("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند", MonitorActivity.class), UI.wrap(this, 8));
         col.addView(proCard("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان", BrandActivity.class), UI.wrap(this, 8));
+        if (!seoer()) {
+            LinearLayout box = UI.card(this);
+            box.addView(UI.text(this, "سئوکار هستید یا برای چند سایت کار می‌کنید؟", 15, UI.INK, true));
+            box.addView(UI.text(this, "با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید.", 12, UI.MUTED, false), UI.wrap(this, 4));
+            Button on = UI.primary(this, "فعال‌سازی حالت سئوکار");
+            on.setOnClickListener(v -> setMode("seoer"));
+            box.addView(on, UI.wrap(this, 10));
+            col.addView(box, UI.wrap(this, 18));
+            return scroller(col);
+        }
+        LinearLayout head = new LinearLayout(this);
+        UI.rtl(head);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        head.addView(UI.text(this, "مشتریان من", 18, UI.INK, true), new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        Button add = UI.primary(this, "＋ افزودن سایت");
+        add.setMinHeight(UI.dp(this, 40));
+        add.setOnClickListener(v -> addClientDialog());
+        head.addView(add, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, UI.dp(this, 42)));
+        col.addView(head, UI.wrap(this, 22));
+        col.addView(UI.text(this, "سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.", 12, UI.MUTED, false), UI.wrap(this, 6));
         final LinearLayout list = UI.column(this);
         col.addView(list, UI.wrap(this, 10));
         paintClients(list);
@@ -459,6 +494,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        Button off = UI.ghost(this, "خروج از حالت سئوکار", UI.MUTED);
+        off.setOnClickListener(v -> setMode("owner"));
+        col.addView(off, UI.wrap(this, 20));
         return scroller(col);
     }
 

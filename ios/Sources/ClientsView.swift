@@ -9,16 +9,39 @@ struct ClientsView: View {
     @State private var site = ""
     @State private var name = ""
     @State private var error: String?
+    @State private var mode = ""
     @State private var showBrand = false
     @State private var showContent = false
     @State private var showRank = false
     @State private var showMon = false
 
+    private var seoer: Bool { mode == "seoer" }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
+                Text("ابزارهای حرفه‌ای").font(.vz(20, true)).foregroundColor(Theme.ink)
+                Text("تولید محتوا، رتبه‌یابی، پایش برند و گزارش برای مشتریان.").font(.vz(12, false)).foregroundColor(Theme.muted)
+                proRow("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی") { showContent = true }
+                proRow("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان") { showBrand = true }
+                proRow("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی") { showRank = true }
+                proRow("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند") { showMon = true }
+                if !seoer {
+                    Card {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("سئوکار هستید یا برای چند سایت کار می‌کنید؟").font(.vz(15, true)).foregroundColor(Theme.ink)
+                            Text("با فعال‌کردن «حالت سئوکار» می‌توانید سایت مشتریان را ثبت کنید، امتیازشان را دنبال کنید، بررسی خودکار تنظیم کنید و گزارش ماهانه‌ی برندشده بدهید.")
+                                .font(.vz(12, false)).foregroundColor(Theme.muted)
+                            Button { setMode("seoer") } label: {
+                                Text("فعال‌سازی حالت سئوکار").font(.vz(14, true)).foregroundColor(.white)
+                                    .frame(maxWidth: .infinity).frame(height: 46).background(Theme.green).clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                    }.padding(.top, 8)
+                }
+                if seoer {
                 HStack {
-                    Text("مشتریان من").font(.vz(20, true)).foregroundColor(Theme.ink)
+                    Text("مشتریان من").font(.vz(18, true)).foregroundColor(Theme.ink)
                     Spacer()
                     Button { adding = true } label: {
                         Text("＋ افزودن سایت").font(.vz(14, true)).foregroundColor(.white)
@@ -28,10 +51,6 @@ struct ClientsView: View {
                 }
                 Text("سایت مشتریان را اضافه کنید، امتیازشان را دنبال کنید و بررسی خودکار برایشان تنظیم کنید.")
                     .font(.vz(12, false)).foregroundColor(Theme.muted)
-                proRow("تولید محتوا با هوش مصنوعی", "موضوع‌یاب، ساختار و مقاله‌ی کامل فارسی") { showContent = true }
-                proRow("سربرگ برند و کلید API", "نام و مشخصات شما روی گزارش مشتریان") { showBrand = true }
-                proRow("رتبه‌ی کلمات کلیدی", "جایگاه سایت در گوگل و پایش روزانه/هفتگی") { showRank = true }
-                proRow("پایش برند در هوش مصنوعی", "ببینید ChatGPT و مشابه برند شما را می‌شناسند") { showMon = true }
                 if let e = error { Text(e).font(.vz(13, true)).foregroundColor(Theme.red) }
                 if let d = data {
                     if d.clients.isEmpty {
@@ -59,6 +78,10 @@ struct ClientsView: View {
                     }
                 } else {
                     ProgressView().frame(maxWidth: .infinity).padding(.top, 20)
+                }
+                Button { setMode("owner") } label: {
+                    Text("خروج از حالت سئوکار").font(.vz(13, true)).foregroundColor(Theme.muted).frame(maxWidth: .infinity, minHeight: 40)
+                }.padding(.top, 14)
                 }
             }
             .padding(16).frame(maxWidth: .infinity, alignment: .leading)
@@ -93,7 +116,14 @@ struct ClientsView: View {
         }.buttonStyle(.plain)
     }
 
+    private func setMode(_ m: String) {
+        Task {
+            if (try? await API.call("POST", "/api/app/mode", body: ["mode": m], as: Empty.self)) != nil { mode = m; await load() }
+        }
+    }
+
     private func load() async {
+        if let me = try? await API.call("GET", "/api/app/me", as: Me.self) { mode = me.mode ?? "owner" }
         if let d = try? await API.call("GET", "/api/app/clients", as: ClientsResponse.self) { data = d }
     }
 
