@@ -20,6 +20,7 @@ enum Blog {
     static let qs = "per_page=12&_embed=wp:featuredmedia&_fields=id,date,title,excerpt,content,link,_embedded"
 
     static func posts(page: Int) async throws -> [WPPost] {
+        if Demo.on { return page == 1 ? try JSONDecoder().decode([WPPost].self, from: Data(Demo.blog.utf8)) : [] }
         let urls = ["\(base)/wp-json/wp/v2/posts?\(qs)&page=\(page)", "\(base)/?rest_route=/wp/v2/posts&\(qs)&page=\(page)"]
         for u in urls {
             guard let url = URL(string: u) else { continue }

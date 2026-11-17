@@ -122,6 +122,10 @@ struct Presented: Decodable, Identifiable {
     }
 }
 
+extension Presented {
+    static var empty: Presented { try! JSONDecoder().decode(Presented.self, from: Data("{}".utf8)) }
+}
+
 struct ReportRow: Codable, Identifiable {
     let token: String
     let type: String
@@ -162,6 +166,7 @@ enum API {
     static let base = "https://3eo.ir"
 
     static func call<T: Decodable>(_ method: String, _ path: String, body: [String: Any]? = nil, as type: T.Type) async throws -> T {
+        if Demo.on { return try Demo.respond(path, as: type) }
         guard let url = URL(string: base + path) else { throw APIError(message: "آدرس نامعتبر است.") }
         var req = URLRequest(url: url)
         req.httpMethod = method

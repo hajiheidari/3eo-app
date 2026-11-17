@@ -4,7 +4,7 @@ struct ReportToken: Identifiable { let id: String }
 
 struct MainTabs: View {
     @EnvironmentObject var session: Session
-    @State private var tab = 0
+    @State private var tab = Demo.on ? Demo.initialTab : 0
     @State private var me: Me?
     @State private var tools: ToolsResponse?
 

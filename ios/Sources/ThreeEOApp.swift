@@ -7,7 +7,9 @@ struct ThreeEOApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if session.token == nil {
+                if Demo.on {
+                    demoRoot
+                } else if session.token == nil {
                     LoginView()
                 } else {
                     MainTabs()
@@ -17,6 +19,16 @@ struct ThreeEOApp: App {
             .environment(\.layoutDirection, .rightToLeft)
             .tint(Theme.green)
             .font(.vz(15, false))
+        }
+    }
+
+    @ViewBuilder private var demoRoot: some View {
+        switch Demo.screen {
+        case "report": ReportView(report: (try? Demo.respond("/api/app/report/a1", as: Presented.self)) ?? Presented.empty)
+        case "rank": RankView()
+        case "monitor": MonitorView()
+        case "content": ContentJobView(start: CSheet(jobId: 1), cfg: nil)
+        default: MainTabs()
         }
     }
 }
