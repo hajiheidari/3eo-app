@@ -57,7 +57,7 @@ enum Theme {
 
     static func fa(_ s: String) -> String {
         if !L.isFa { return s }
-        String(s.map { c -> Character in
+        return String(s.map { c -> Character in
             if let d = c.wholeNumberValue, c.isASCII, let u = UnicodeScalar(0x06F0 + d) { return Character(u) }
             return c
         })
