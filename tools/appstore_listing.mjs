@@ -32,7 +32,7 @@ const SITE = 'https://3eo.ir/';
 const PAGE = { 'en-US': SITE };
 const PRIVACY = 'https://3eo.ir/privacy';
 const SHOTS = { 'en-US': 'en' };
-const DISPLAY = { iphone: 'APP_IPHONE_69' };
+const DISPLAY = { iphone: 'APP_IPHONE_67' };
 
 const rel = (type, id) => ({ data: { type, id } });
 const log = (...a) => console.log(...a);
@@ -42,11 +42,12 @@ const warn = (msg) => {
   console.log(`::warning::${msg}`);
 };
 /** Runs a step; a failure is reported and the next step still runs. */
-async function step(name, fn) {
+async function step(name, fn, soft = false) {
   try {
     await fn();
   } catch (e) {
-    warn(`${name}: ${e.message}`);
+    if (soft) console.log(`::notice::${name} skipped: ${e.message.slice(0, 160)}`);
+    else warn(`${name}: ${e.message}`);
   }
 }
 async function all(path) {
@@ -74,10 +75,11 @@ log(`app: ${app.attributes.name} (${app.id}), primary locale ${app.attributes.pr
 
 await step('content rights', () => api('PATCH', `/v1/apps/${app.id}`, {
   data: { type: 'apps', id: app.id, attributes: { contentRightsDeclaration: 'DOES_NOT_USE_THIRD_PARTY_CONTENT' } },
-}).then(() => log('content rights: no third-party content')));
+}).then(() => log('content rights: no third-party content')), true);
 
 // ---- app info: categories, names, age rating ----
 const infos = await all(`/v1/apps/${app.id}/appInfos`);
+for (const i of infos) log(`appInfo ${i.id} ${JSON.stringify(i.attributes)}`);
 const info = infos.find((i) => !/READY_FOR_(SALE|DISTRIBUTION)|REPLACED/.test(i.attributes.appStoreState || i.attributes.state || '')) || infos[0];
 
 await step('categories', async () => {
@@ -86,11 +88,11 @@ await step('categories', async () => {
     if (L[k]) r[k] = rel('appCategories', L[k]);
   }
   await api('PATCH', `/v1/appInfos/${info.id}`, { data: { type: 'appInfos', id: info.id, relationships: r } });
-  log(`categories: ${L.primaryCategory} (${L.primarySubcategoryOne}, ${L.primarySubcategoryTwo}), ${L.secondaryCategory}`);
-});
+  log(`categories: ${L.primaryCategory}, ${L.secondaryCategory}`);
+}, true);
 
-await step('app info texts', async () => {
-  const have = await all(`/v1/appInfos/${info.id}/appInfoLocalizations?limit=50`);
+await step('app info texts (name, subtitle, privacy URL)', async () => {
+  const have = (await api('GET', `/v1/appInfos/${info.id}?include=appInfoLocalizations`)).included || [];
   for (const [locale, t] of Object.entries(L.locales)) {
     const attributes = { name: t.name, subtitle: t.subtitle, privacyPolicyUrl: PRIVACY };
     const loc = have.find((h) => h.attributes.locale === locale);
@@ -104,7 +106,7 @@ await step('app info texts', async () => {
       log(`name/subtitle ${locale}: ${t.name} — ${t.subtitle}`);
     });
   }
-});
+}, true);
 
 await step('age rating', async () => {
   const decl = await one(`/v1/appInfos/${info.id}/ageRatingDeclaration`);
@@ -204,6 +206,10 @@ for (const [locale, locId] of Object.entries(vlocs)) {
 await step('build', async () => {
   const builds = await all(`/v1/builds?filter[app]=${app.id}&filter[preReleaseVersion.version]=${VERSION}&sort=-uploadedDate&limit=10`);
   const build = builds.find((b) => b.attributes.processingState === 'VALID');
+  if (!build) {
+    const any = await all(`/v1/builds?filter[app]=${app.id}&sort=-uploadedDate&limit=8`);
+    for (const b of any) log(`  build ${b.attributes.version} uploaded ${b.attributes.uploadedDate} state ${b.attributes.processingState}`);
+  }
   if (!build) throw new Error(`no processed build of ${VERSION} yet (Apple may still be processing it)`);
   await api('PATCH', `/v1/appStoreVersions/${version.id}/relationships/build`, { data: { type: 'builds', id: build.id } });
   log(`build attached: ${VERSION} (${build.attributes.version}), uploaded ${build.attributes.uploadedDate}`);
