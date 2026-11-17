@@ -97,8 +97,8 @@ private func solidButton(_ t: String, _ filled: Bool, _ color: Color = Theme.gre
 struct RankView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var d: RankResponse?
-    @State private var domain = ""
-    @State private var kws = ""
+    @State private var domain = Demo.on ? "karno-shop.ir" : ""
+    @State private var kws = Demo.on ? "خرید کفش ورزشی\nکفش پیاده‌روی زنانه" : ""
     @State private var error: String?
     @State private var job: RankJob?
     @State private var busy = false
