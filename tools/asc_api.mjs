@@ -57,7 +57,7 @@ async function apiOnce(method, path, body) {
   if (!r.ok) {
     const detail = (() => {
       try {
-        return JSON.parse(text).errors.map((e) => `${e.title}: ${e.detail}`).join('; ');
+        return JSON.parse(text).errors.map((e) => `${e.title}: ${e.detail} ${JSON.stringify(e.meta || {})}`).join('; ');
       } catch {
         return text.slice(0, 300);
       }
