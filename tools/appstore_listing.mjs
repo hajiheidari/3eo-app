@@ -30,7 +30,7 @@ const VERSION = process.env.VERSION || '1.0.0';
 const L = JSON.parse(readFileSync(`${ROOT}store/listing.json`, 'utf8'));
 const SITE = 'https://3eo.ir/';
 const PAGE = { 'en-US': SITE };
-const PRIVACY = 'https://3eo.ir/privacy';
+const PRIVACY = 'https://3eo.ir/privacy-en';
 const SHOTS = { 'en-US': 'en' };
 const DISPLAY = { iphone: 'APP_IPHONE_67' };
 
