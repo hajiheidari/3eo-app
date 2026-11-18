@@ -648,7 +648,7 @@ public class MainActivity extends AppCompatActivity {
         Button privacy = UI.ghost(this, L.t("حریم خصوصی و قوانین"), UI.GREEN);
         privacy.setOnClickListener(v -> {
             Intent i = new Intent(this, WebActivity.class);
-            i.putExtra("url", "https://3eo.ir/privacy");
+            i.putExtra("url", L.fa() ? "https://3eo.ir/privacy" : "https://3eo.ir/privacy-en");
             startActivity(i);
         });
         col.addView(privacy, UI.wrap(this, 10));
@@ -661,9 +661,12 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
         col.addView(out, UI.wrap(this, 10));
-        Button del = UI.ghost(this, L.t("حذف حساب کاربری"), UI.RED);
+        TextView del = UI.text(this, L.t("حذف حساب کاربری"), 12, UI.MUTED, false);
+        del.setPaintFlags(del.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG);
+        del.setGravity(android.view.Gravity.CENTER);
+        del.setPadding(0, UI.dp(this, 14), 0, UI.dp(this, 14));
         del.setOnClickListener(v -> confirmDelete());
-        col.addView(del, UI.wrap(this, 10));
+        col.addView(del, UI.wrap(this, 60));
         return scroller(col);
     }
 

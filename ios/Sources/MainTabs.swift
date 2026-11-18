@@ -213,6 +213,7 @@ struct ReportsView: View {
                     .buttonStyle(.plain)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
         }
         .background(Theme.bg.ignoresSafeArea())
@@ -241,11 +242,17 @@ struct AccountView: View {
                     }
                 }
                 LangButton()
-                outline(L.t("حریم خصوصی و قوانین"), Theme.green) { if let u = URL(string: "https://3eo.ir/privacy") { web = WebItem(url: u) } }
+                outline(L.t("حریم خصوصی و قوانین"), Theme.green) { if let u = URL(string: L.lang == "en" ? "https://3eo.ir/privacy-en" : "https://3eo.ir/privacy") { web = WebItem(url: u) } }
                 outline(L.t("خروج از حساب"), Theme.ink) { session.logout() }
-                outline(L.t("حذف حساب کاربری"), Theme.red) { confirmDelete = true }
                 if let e = error { Text(e).font(.vz(13, false)).foregroundColor(Theme.red) }
+                Spacer().frame(height: 60)
+                Button { confirmDelete = true } label: {
+                    Text(L.t("حذف حساب کاربری")).font(.vz(12, false)).foregroundColor(Theme.muted).underline()
+                }
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
         }
         .background(Theme.bg.ignoresSafeArea())
