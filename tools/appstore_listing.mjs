@@ -223,9 +223,14 @@ await step('build', async () => {
 
 // ---- price and availability ----
 await step('price', async () => {
-  if (await one(`/v1/apps/${app.id}/appPriceSchedule`)) {
-    log('price: already set');
-    return;
+  const sched = await one(`/v1/apps/${app.id}/appPriceSchedule`);
+  if (sched) {
+    const mp = await all(`/v1/appPriceSchedules/${sched.id}/manualPrices?limit=50`).catch((e) => { log('manualPrices: ' + e.message); return null; });
+    log(`price schedule ${sched.id}: manualPrices=${mp ? mp.length : 'unknown'}`);
+    if (mp && mp.length) {
+      log('price: already set');
+      return;
+    }
   }
   const points = await all(`/v1/apps/${app.id}/appPricePoints?filter[territory]=USA&limit=200`);
   const free = points.find((p) => Number(p.attributes.customerPrice) === 0);
