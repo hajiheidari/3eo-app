@@ -264,6 +264,16 @@ await step('availability', async () => {
   log(`availability: all ${territories.length} territories`);
 });
 
+await step('availability: remove China mainland', async () => {
+  const av = await one(`/v1/apps/${app.id}/appAvailabilityV2`);
+  const tas = await all(`/v2/appAvailabilities/${av.id}/territoryAvailabilities?include=territory&limit=200`);
+  const chn = tas.find((t) => /(^|[^A-Z])CHN([^A-Z]|$)/.test(JSON.stringify(t.relationships?.territory?.data || '') + t.id) || JSON.stringify(t).includes('"CHN"'));
+  if (!chn) throw new Error('CHN territory availability not found');
+  if (chn.attributes.available === false) { log('availability: China mainland already removed'); return; }
+  await api('PATCH', `/v2/territoryAvailabilities/${chn.id}`, { data: { type: 'territoryAvailabilities', id: chn.id, attributes: { available: false } } });
+  log('availability: China mainland removed');
+});
+
 // ---- App Review ----
 const contact = {
   contactFirstName: process.env.REVIEW_FIRST_NAME || undefined,
