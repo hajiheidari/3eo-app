@@ -270,7 +270,7 @@ await step('availability: remove China mainland', async () => {
   const chn = tas.find((t) => /(^|[^A-Z])CHN([^A-Z]|$)/.test(JSON.stringify(t.relationships?.territory?.data || '') + t.id) || JSON.stringify(t).includes('"CHN"'));
   if (!chn) throw new Error('CHN territory availability not found');
   if (chn.attributes.available === false) { log('availability: China mainland already removed'); return; }
-  await api('PATCH', `/v2/territoryAvailabilities/${chn.id}`, { data: { type: 'territoryAvailabilities', id: chn.id, attributes: { available: false } } });
+  await api('PATCH', `/v1/territoryAvailabilities/${chn.id}`, { data: { type: 'territoryAvailabilities', id: chn.id, attributes: { available: false } } });
   log('availability: China mainland removed');
 });
 
