@@ -4,6 +4,9 @@ name: Build Android APK
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,3 +54,16 @@ jobs:
         with:
           name: 3eo-android-apk
           path: app/build/outputs/apk/release/*.apk
+
+      # Also keep the signed APK on its own branch so it can be fetched without the Actions UI.
+      - name: Publish APK to branch apk-builds
+        run: |
+          set -e
+          VN=$(grep -m1 versionName app/build.gradle | sed "s/.*'\(.*\)'.*/\1/")
+          mkdir -p "$RUNNER_TEMP/apk"
+          cp app/build/outputs/apk/release/*.apk "$RUNNER_TEMP/apk/3eo-seo-$VN-build${{ github.run_number }}.apk"
+          cd "$RUNNER_TEMP/apk"
+          git init -q && git checkout -q -b apk-builds
+          git config user.name "github-actions" && git config user.email "actions@users.noreply.github.com"
+          git add . && git commit -qm "APK $VN build ${{ github.run_number }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" apk-builds
