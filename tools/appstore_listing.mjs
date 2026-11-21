@@ -91,7 +91,11 @@ await step('categories', async () => {
   log(`categories: ${L.primaryCategory}, ${L.secondaryCategory}`);
 }, true);
 
+const infoLocked = /READY_FOR_(SALE|DISTRIBUTION)|REPLACED/.test(info.attributes.appStoreState || info.attributes.state || '');
+if (infoLocked) log('app info: live and locked for this update (unchanged from the approved version); skipping name, subtitle, privacy URL and age rating');
+
 await step('app info texts (name, subtitle, privacy URL)', async () => {
+  if (infoLocked) return;
   const have = (await api('GET', `/v1/appInfos/${info.id}?include=appInfoLocalizations`)).included || [];
   for (const [locale, t] of Object.entries(L.locales)) {
     const attributes = { name: t.name, subtitle: t.subtitle, privacyPolicyUrl: PRIVACY };
@@ -116,6 +120,7 @@ await step('app info texts (name, subtitle, privacy URL)', async () => {
 }, true);
 
 await step('age rating', async () => {
+  if (infoLocked) return;
   const decl = await one(`/v1/appInfos/${info.id}/ageRatingDeclaration`);
   if (!decl) throw new Error('no age rating declaration found');
   const patch = (attributes) => api('PATCH', `/v1/ageRatingDeclarations/${decl.id}`, { data: { type: 'ageRatingDeclarations', id: decl.id, attributes } });
