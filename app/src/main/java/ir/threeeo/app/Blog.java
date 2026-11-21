@@ -99,12 +99,76 @@ final class Blog {
         });
     }
 
-    static String thumb(JSONObject p) {
-        try {
-            return p.getJSONObject("_embedded").getJSONArray("wp:featuredmedia").getJSONObject(0).getString("source_url");
-        } catch (Exception e) {
+    /** Safe image URL: https, Persian/space characters percent-encoded. */
+    static String fixUrl(String u) {
+        if (u == null) {
             return "";
         }
+        u = u.trim().replace("&amp;", "&");
+        if (u.startsWith("//")) {
+            u = "https:" + u;
+        } else if (u.startsWith("/")) {
+            u = "https://3eo.ir" + u;
+        }
+        if (u.startsWith("http://") && u.contains("3eo.ir")) {
+            u = "https://" + u.substring(7);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : u.toCharArray()) {
+            if (c > 127 || c == ' ') {
+                try {
+                    sb.append(java.net.URLEncoder.encode(String.valueOf(c), "UTF-8").replace("+", "%20"));
+                } catch (Exception e) {
+                    sb.append(c);
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    static String thumb(JSONObject p) {
+        try {
+            JSONObject m = p.getJSONObject("_embedded").getJSONArray("wp:featuredmedia").getJSONObject(0);
+            JSONObject sz = m.optJSONObject("media_details") == null ? null : m.optJSONObject("media_details").optJSONObject("sizes");
+            for (String k : new String[]{"medium_large", "large", "medium", "full"}) {
+                if (sz != null && sz.optJSONObject(k) != null && !sz.optJSONObject(k).optString("source_url").isEmpty()) {
+                    return fixUrl(sz.optJSONObject(k).optString("source_url"));
+                }
+            }
+            if (!m.optString("source_url").isEmpty()) {
+                return fixUrl(m.optString("source_url"));
+            }
+        } catch (Exception ignored) {
+        }
+        // no featured image: first picture inside the article
+        try {
+            String html = p.optJSONObject("content") == null ? "" : p.optJSONObject("content").optString("rendered");
+            Matcher m = Pattern.compile("<img\\b[^>]*?(?:data-src|src)=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(html);
+            while (m.find()) {
+                String u = m.group(1);
+                if (!u.startsWith("data:")) {
+                    return fixUrl(u);
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return "";
+    }
+
+    /** Summary: the excerpt, or the first paragraph of the article when the excerpt is empty. */
+    static String summary(JSONObject p) {
+        String ex = text(p.optJSONObject("excerpt") == null ? "" : p.optJSONObject("excerpt").optString("rendered"));
+        if (!ex.isEmpty()) {
+            return ex;
+        }
+        for (String[] b : blocks(p.optJSONObject("content") == null ? "" : p.optJSONObject("content").optString("rendered"))) {
+            if ("p".equals(b[0]) && b[1].length() > 20) {
+                return b[1];
+            }
+        }
+        return "";
     }
 
     static String text(String html) {
@@ -125,7 +189,7 @@ final class Blog {
         Matcher m = Pattern.compile("<(h[1-6]|p|li|blockquote)\\b[^>]*>(.*?)</\\1>|<img\\b[^>]*?src=\"([^\"]+)\"[^>]*>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(html);
         while (m.find()) {
             if (m.group(3) != null) {
-                out.add(new String[]{"img", m.group(3)});
+                out.add(new String[]{"img", fixUrl(m.group(3))});
                 continue;
             }
             String tag = m.group(1).toLowerCase();

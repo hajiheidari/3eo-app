@@ -2,7 +2,9 @@ import SwiftUI
 
 struct WPPost: Decodable, Identifiable {
     struct R: Decodable { let rendered: String }
-    struct Media: Decodable { let source_url: String? }
+    struct Size: Decodable { let source_url: String? }
+    struct Details: Decodable { let sizes: [String: Size]? }
+    struct Media: Decodable { let source_url: String?; let media_details: Details? }
     struct Emb: Decodable { let media: [Media]?; enum K: String, CodingKey { case media = "wp:featuredmedia" } 
         init(from d: Decoder) throws { let c = try d.container(keyedBy: K.self); media = try? c.decode([Media].self, forKey: .media) } }
     let id: Int
@@ -12,7 +14,27 @@ struct WPPost: Decodable, Identifiable {
     let content: R?
     let link: String
     let _embedded: Emb?
-    var thumb: URL? { _embedded?.media?.first?.source_url.flatMap { URL(string: $0) } }
+    var thumb: URL? {
+        if let m = _embedded?.media?.first {
+            for k in ["medium_large", "large", "medium"] { if let u = m.media_details?.sizes?[k]?.source_url, let r = Blog.url(u) { return r } }
+            if let u = m.source_url, let r = Blog.url(u) { return r }
+        }
+        // no featured image: first picture inside the article
+        if let html = content?.rendered, let re = try? NSRegularExpression(pattern: "<img\\b[^>]*?(?:data-src|src)=[\"']([^\"']+)[\"']", options: [.caseInsensitive, .dotMatchesLineSeparators]) {
+            let ns = html as NSString
+            for m in re.matches(in: html, range: NSRange(location: 0, length: ns.length)) {
+                let u = ns.substring(with: m.range(at: 1))
+                if !u.hasPrefix("data:"), let r = Blog.url(u) { return r }
+            }
+        }
+        return nil
+    }
+    /// Summary: the excerpt, or the first paragraph of the article when the excerpt is empty.
+    var summary: String {
+        let ex = Blog.plain(excerpt?.rendered ?? "")
+        if !ex.isEmpty { return ex }
+        return Blog.blocks(content?.rendered ?? "").first(where: { $0.kind == "p" && $0.text.count > 20 })?.text ?? ""
+    }
 }
 
 enum Blog {
@@ -30,6 +52,16 @@ enum Blog {
                let list = try? JSONDecoder().decode([WPPost].self, from: data) { return list }
         }
         throw APIError(message: L.t("دریافت مقاله‌ها ممکن نشد. اتصال اینترنت را بررسی کنید."))
+    }
+
+    /// https + percent-encoded (Persian file names) URL.
+    static func url(_ raw: String) -> URL? {
+        var u = raw.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "&amp;", with: "&")
+        if u.hasPrefix("//") { u = "https:" + u } else if u.hasPrefix("/") { u = "https://3eo.ir" + u }
+        if u.hasPrefix("http://") && u.contains("3eo.ir") { u = "https://" + u.dropFirst(7) }
+        if let x = URL(string: u), x.host != nil, !u.unicodeScalars.contains(where: { $0.value > 127 }) { return x }
+        var allowed = CharacterSet.urlQueryAllowed; allowed.insert(charactersIn: "#%")
+        return URL(string: u.addingPercentEncoding(withAllowedCharacters: allowed) ?? u)
     }
 
     static func plain(_ html: String) -> String {
@@ -84,12 +116,16 @@ struct BlogView: View {
                     Button { opened = p } label: {
                         Card {
                             VStack(alignment: .leading, spacing: 8) {
-                                if let u = p.thumb {
-                                    AsyncImage(url: u) { img in img.resizable().scaledToFill() } placeholder: { Theme.greenSoft }
-                                        .frame(height: 150).frame(maxWidth: .infinity).clipShape(RoundedRectangle(cornerRadius: 10))
+                                Group {
+                                    if let u = p.thumb {
+                                        AsyncImage(url: u) { img in img.resizable().scaledToFill() } placeholder: { Theme.greenSoft }
+                                    } else {
+                                        ZStack { Theme.greenSoft; Image("Logo").resizable().scaledToFit().padding(30) }
+                                    }
                                 }
+                                .frame(height: 150).frame(maxWidth: .infinity).clipShape(RoundedRectangle(cornerRadius: 10))
                                 Text(Theme.bidi(Blog.plain(p.title.rendered))).font(.vz(16, true)).foregroundColor(Theme.ink)
-                                let ex = Blog.plain(p.excerpt?.rendered ?? "")
+                                let ex = p.summary
                                 if !ex.isEmpty { Text(Theme.bidi(String(ex.prefix(140)) + (ex.count > 140 ? "…" : ""))).font(.vz(12, false)).foregroundColor(Theme.muted) }
                                 Text(Theme.fa(String(p.date.prefix(10)))).font(.vz(11, true)).foregroundColor(Theme.green)
                             }
@@ -146,7 +182,7 @@ struct BlogPostView: View {
                     ForEach(Blog.blocks(post.content?.rendered ?? "")) { b in
                         switch b.kind {
                         case "img":
-                            AsyncImage(url: URL(string: b.text)) { img in img.resizable().scaledToFit() } placeholder: { Color.clear.frame(height: 1) }
+                            AsyncImage(url: Blog.url(b.text)) { img in img.resizable().scaledToFit() } placeholder: { Color.clear.frame(height: 1) }
                         case "h":
                             Text(Theme.bidi(b.text)).font(.vz(18, true)).foregroundColor(Theme.ink).padding(.top, 8)
                         default:

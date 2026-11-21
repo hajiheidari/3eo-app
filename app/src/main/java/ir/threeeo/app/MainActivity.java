@@ -201,15 +201,19 @@ public class MainActivity extends AppCompatActivity {
             int pd = UI.dp(this, 12);
             card.setPadding(pd, pd, pd, pd);
             String th = Blog.thumb(p);
+            android.widget.ImageView iv = new android.widget.ImageView(this);
+            iv.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+            iv.setBackground(UI.box(this, UI.GREEN_SOFT, 10, UI.LINE));
+            card.addView(iv, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 150), 0));
             if (!th.isEmpty()) {
-                android.widget.ImageView iv = new android.widget.ImageView(this);
-                iv.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-                iv.setBackground(UI.box(this, UI.GREEN_SOFT, 10, UI.LINE));
-                card.addView(iv, UI.lp(this, ViewGroup.LayoutParams.MATCH_PARENT, UI.dp(this, 150), 0));
                 Blog.image(iv, th);
+            } else {
+                iv.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
+                iv.setPadding(UI.dp(this, 40), UI.dp(this, 20), UI.dp(this, 40), UI.dp(this, 20));
+                iv.setImageResource(R.mipmap.ic_launcher);
             }
             card.addView(UI.text(this, UI.bidi(Blog.text(p.optJSONObject("title").optString("rendered"))), 16, UI.INK, true), UI.wrap(this, 8));
-            String ex = Blog.text(p.optJSONObject("excerpt") == null ? "" : p.optJSONObject("excerpt").optString("rendered"));
+            String ex = Blog.summary(p);
             if (!ex.isEmpty()) {
                 card.addView(UI.text(this, UI.bidi(ex.length() > 140 ? ex.substring(0, 140) + "…" : ex), 12, UI.MUTED, false), UI.wrap(this, 4));
             }
