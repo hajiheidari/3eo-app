@@ -27,7 +27,7 @@ final class Blog {
     }
 
     static final String BASE = "https://3eo.ir/blog";
-    private static final String QS = "per_page=12&_embed=wp:featuredmedia&_fields=id,date,title,excerpt,content,link,_embedded";
+    private static final String QS = "per_page=12&_embed=wp:featuredmedia";
     private static final ExecutorService POOL = Executors.newFixedThreadPool(3);
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final android.util.LruCache<String, Bitmap> CACHE = new android.util.LruCache<>(24);

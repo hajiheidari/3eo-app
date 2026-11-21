@@ -39,7 +39,7 @@ struct WPPost: Decodable, Identifiable {
 
 enum Blog {
     static let base = "https://3eo.ir/blog"
-    static let qs = "per_page=12&_embed=wp:featuredmedia&_fields=id,date,title,excerpt,content,link,_embedded"
+    static let qs = "per_page=12&_embed=wp:featuredmedia"
 
     static func posts(page: Int) async throws -> [WPPost] {
         if Demo.on { return page == 1 ? try JSONDecoder().decode([WPPost].self, from: Data(Demo.localize(Demo.blog).utf8)) : [] }
