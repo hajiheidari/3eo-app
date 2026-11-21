@@ -156,6 +156,7 @@ await step('store texts', async () => {
       description: t.description, keywords: t.keywords, promotionalText: t.promotionalText,
       supportUrl: PAGE[locale], marketingUrl: PAGE[locale],
     };
+    if (t.whatsNew && !/^1\.0\.0$/.test(VERSION)) attributes.whatsNew = t.whatsNew;
     await step(`store texts ${locale}`, async () => {
       let loc = have.find((h) => h.attributes.locale === locale);
       if (loc) await api('PATCH', `/v1/appStoreVersionLocalizations/${loc.id}`, { data: { type: 'appStoreVersionLocalizations', id: loc.id, attributes } });
