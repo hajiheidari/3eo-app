@@ -35,7 +35,7 @@ public class ReportActivity extends ScreenActivity {
         content.removeAllViews();
         titleView.setText(j.optString("title"));
         String host = j.optString("host");
-        shareText = j.optString("share").isEmpty() ? "" : L.t("گزارش ") + j.optString("title") + " " + host + "\n" + j.optString("share");
+        shareText = j.optString("share").isEmpty() ? "" : L.shareText(j.optString("title"), host, j.optString("share"));
         LinearLayout head = new LinearLayout(this);
         UI.rtl(head);
         head.setGravity(Gravity.CENTER_VERTICAL);

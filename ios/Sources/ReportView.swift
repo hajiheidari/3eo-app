@@ -114,7 +114,7 @@ struct ReportView: View {
         }
         .background(Theme.bg.ignoresSafeArea())
         .environment(\.layoutDirection, Theme.dir)
-        .sheet(isPresented: $showShare) { ShareSheet(items: ["\(L.isFa ? "گزارش" : "Report") \(report.title) \(report.host)\n\(report.share ?? "")"]) }
+        .sheet(isPresented: $showShare) { ShareSheet(items: [L.shareText(title: report.title, host: report.host, url: report.share ?? "")]) }
     }
 }
 

@@ -50,3 +50,12 @@ enum L {
         })
     }
 }
+
+extension L {
+    /// Share text: Persian lines are marked right-to-left, English lines (host, links) left-to-right.
+    static func shareText(title: String, host: String, url: String) -> String {
+        let head = (isFa ? "گزارش " : "Report ") + title
+        let rtl = isFa ? "\u{200F}" : "\u{200E}"
+        return rtl + head + "\n\u{200E}" + host + "\n\u{200E}" + url
+    }
+}

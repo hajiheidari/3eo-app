@@ -59,7 +59,7 @@ struct ToolView: View {
         }
         .background(Theme.bg.ignoresSafeArea())
         .environment(\.layoutDirection, Theme.dir)
-        .sheet(isPresented: $showShare) { ShareSheet(items: ["\(L.isFa ? "گزارش" : "Report") \(result?.title ?? "") \(result?.host ?? "")\n\(result?.share ?? "")"]) }
+        .sheet(isPresented: $showShare) { ShareSheet(items: [L.shareText(title: result?.title ?? "", host: result?.host ?? "", url: result?.share ?? "")]) }
         .onAppear(perform: seed)
     }
 

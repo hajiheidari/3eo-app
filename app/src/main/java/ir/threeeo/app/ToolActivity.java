@@ -192,7 +192,7 @@ public class ToolActivity extends ScreenActivity {
                 return;
             }
             if (!j.optString("share").isEmpty()) {
-                shareText = L.t("گزارش ") + j.optString("title") + " " + j.optString("host") + "\n" + j.optString("share");
+                shareText = L.shareText(j.optString("title"), j.optString("host"), j.optString("share"));
             }
             result.addView(UI.text(this, L.t("نتیجه"), 18, UI.INK, true));
             Blocks.render(this, result, j.optJSONArray("blocks"));

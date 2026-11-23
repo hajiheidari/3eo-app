@@ -113,4 +113,11 @@ final class L {
         }
         return b.toString();
     }
+
+    /** Share text: Persian lines are marked right-to-left, English lines (host, links) left-to-right. */
+    static String shareText(String title, String host, String url) {
+        String head = (fa() ? "گزارش " : "Report ") + title;
+        String rtl = fa() ? "\u200F" : "\u200E";
+        return rtl + head + "\n\u200E" + host + "\n\u200E" + url;
+    }
 }
