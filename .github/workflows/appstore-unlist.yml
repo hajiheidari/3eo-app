@@ -1,0 +1,24 @@
+# Removes the app from sale in all territories (App Store Connect API). Run by hand.
+name: App Store remove from sale
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unlist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Remove from sale
+        env:
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_KEY_P8 }}
+          IOS_BUNDLE_ID: com.espadna.seo
+        run: node tools/appstore_unlist.mjs
